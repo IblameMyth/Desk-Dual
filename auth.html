@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#6e3e1e">
+  <title>Sign In — Desk Duel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="menu-page auth-page">
+  <main class="auth-shell">
+    <a class="auth-back" href="index.html">← BACK TO HOME</a>
+    <div class="auth-board">
+      <p class="auth-kicker">STD 9-A • CLASSROOM PEN FIGHT</p>
+      <h1 class="auth-title">PLAYER ACCOUNT</h1>
+      <p class="auth-intro">Sign in to keep your Desk Duel data separate for each account on this device.</p>
+      <div id="auth-current" class="auth-current" aria-live="polite">Checking account status…</div>
+      <form id="email-form" class="auth-form">
+        <label for="email-address">Gmail address</label>
+        <input id="email-address" type="email" autocomplete="email" placeholder="you@gmail.com" required>
+        <label for="email-password">Password</label>
+        <input id="email-password" type="password" autocomplete="current-password" minlength="6" placeholder="At least 6 characters" required>
+        <button class="btn btn-primary auth-action" id="email-submit" type="submit">SIGN IN WITH GMAIL</button>
+        <button class="btn auth-action auth-signout" id="email-mode-toggle" type="button">NEW PLAYER? CREATE ACCOUNT</button>
+      </form>
+      <button id="google-signin" class="btn auth-action" type="button">CONTINUE WITH GOOGLE</button>
+      <p id="auth-message" class="auth-message" role="status" aria-live="polite"></p>
+      <button id="signout" class="btn auth-action auth-signout" type="button" hidden>SIGN OUT</button>
+      <p class="auth-footnote">Google sign-in and email/password sign-in require Firebase Authentication setup by the project owner.</p>
+    </div>
+  </main>
+  <script src="js/account-scope.js"></script>
+  <script type="module" src="js/auth.js"></script>
+</body>
+</html>
