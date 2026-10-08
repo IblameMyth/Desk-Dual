@@ -30,6 +30,10 @@ $('google-signin')?.addEventListener('click', async () => {
 $('signout')?.addEventListener('click', async () => { try { if (auth && firebaseAuth) await firebaseAuth.signOut(auth); } catch(e) { message(e.message, true); } });
 $('auth-current').textContent = 'Account status ready';
 $('signout').hidden = true;
+// Keep UI controls responsive even when Firebase has not been configured yet.
+$('email-mode-toggle')?.removeAttribute('disabled');
+$('google-signin')?.removeAttribute('disabled');
+$('email-submit')?.removeAttribute('disabled');
 if (!isFirebaseConfigured) {
   message('Firebase configuration is missing. Add your real web app values in js/firebase-config.js.', true);
 } else {
