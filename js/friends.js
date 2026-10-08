@@ -64,6 +64,9 @@ export async function startFriendsGame() {
   const stage = document.getElementById('stage');
   const canvas = document.getElementById('desk');
   const renderer = new DeskRenderer(canvas);
+  // Ensure every chosen real pen model is ready before showing the first round.
+  // The rest of game initialization remains unchanged while images load.
+  await renderer.preloadPens(players.map((p) => (PEN_BY_ID[p.penId] || STARTER).asset));
   let physics = null, dirty = true, phase = 'boot', turn = 0, round = 1, moveStart = 0, fallAt = 0, endTimer = 0;
   let scores = players.map(() => 0);
   let last = performance.now(), slideLevel = -1;

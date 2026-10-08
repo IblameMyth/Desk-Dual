@@ -144,6 +144,22 @@ export class DeskRenderer {
     return img;
   }
 
+  // Load the selected real pen textures before the first playable frame. This
+  // prevents the temporary blue procedural fallback from appearing at round
+  // start and then suddenly changing to photographed pen models after a shot.
+  preloadPens(assets = []) {
+    const unique = [...new Set(assets.filter(Boolean))];
+    return Promise.all(unique.map((src) => {
+      const img = this._getImage(src);
+      if (img.complete && img.naturalWidth > 0) return Promise.resolve(img);
+      return new Promise((resolve) => {
+        const done = () => resolve(img);
+        img.addEventListener('load', done, { once: true });
+        img.addEventListener('error', done, { once: true });
+      });
+    }));
+  }
+
   resize({ cssW, cssH, dpr, world }) {
     // Keep the canvas bitmap tied to the physics world, not the browser's
     // changing CSS viewport. Mobile browsers can resize the viewport when
@@ -205,44 +221,31 @@ export class DeskRenderer {
     // still collides as a simple, stable rectangle.
     const img = pen.asset ? this._getImage(pen.asset) : null;
     const imageReady = img && img.complete && img.naturalWidth > 0;
-    // The uploaded pen photos are not all oriented the same way: some are
-    // horizontal and some are vertical. Fit every model into the same
-    // physical-length box while preserving its original aspect ratio.
-    // Vertical source photos are rotated so the pen lies naturally on the desk.
+    // Normalize every pen image to the same in-game physical footprint.
+    // Portrait source images are rotated 90 degrees; after rotation they are
+    // drawn into exactly L x W, just like landscape images. This avoids
+    // portrait assets (notably Ball Pen and V7) becoming visibly shorter.
     const sourceW = imageReady ? img.naturalWidth : L;
     const sourceH = imageReady ? img.naturalHeight : W;
-    const sourceRatio = imageReady ? sourceH / sourceW : W / L;
     const portraitSource = imageReady && sourceH > sourceW * 1.25;
-    // Keep the visible model inside the same length/width footprint as its
-    // Matter.js collision body. Some supplied photos are taller than the
-    // physics rectangle; drawing them at full length made two pens appear to
-    // cross even when their collision boxes had already separated.
-    let drawW = imageReady ? (portraitSource ? L * (sourceW / sourceH) : L) : L;
-    let drawH = imageReady ? (portraitSource ? L : L * sourceRatio) : W;
-    if (imageReady && portraitSource && drawW > W) {
-      const scale = W / drawW;
-      drawW *= scale;
-      drawH *= scale;
-    } else if (imageReady && !portraitSource && drawH > W) {
-      const scale = W / drawH;
-      drawW *= scale;
-      drawH *= scale;
-    }
+    const drawW = L;
+    const drawH = W;
 
     // No artificial pen contact shadow: the supplied pen model is rendered cleanly.
     ctx.rotate(angle);
 
     if (imageReady) {
-      // Preserve the supplied model exactly. Portrait uploads are rotated 90°
-      // so their long axis matches the physics pen. No stretching/cropping.
+      // Render all pens at the same target size. For portrait photos, swap
+      // the draw dimensions before rotating so the final horizontal footprint
+      // remains L x W instead of shrinking due to the source aspect ratio.
       ctx.imageSmoothingEnabled = true;
       if (portraitSource) {
         ctx.save();
         ctx.rotate(Math.PI / 2);
-        ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+        ctx.drawImage(img, -W / 2, -L / 2, W, L);
         ctx.restore();
       } else {
-        ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+        ctx.drawImage(img, -L / 2, -W / 2, L, W);
       }
     } else {
       // Loading fallback only; this is replaced automatically once the image loads.

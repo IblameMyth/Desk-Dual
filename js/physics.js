@@ -12,8 +12,8 @@ export const CONFIG = {
     portrait: { w: 800, h: 1200, playArea: { x: 105, y: 90, w: 590, h: 1020 } },
   },
   pen: {
-    length: 122,
-    width: 15,
+    length: 153,
+    width: 19,
     density: 0.0017,
     restitution: 0.10,
     friction: 0.34,
