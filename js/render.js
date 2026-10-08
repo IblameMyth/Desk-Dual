@@ -2,9 +2,17 @@
  * Classroom renderer: the playable desk sits in a top-down classroom scene.
  * Everything is procedural so the project stays self-contained.
  */
+// Trimax-style ballpoint skins: transparent cap, faceted grip, metal tip
+// and a narrow branded barrel. The colours remain player-specific for gameplay.
 export const PEN_SKINS = {
-  blue: { barrel: '#2d73d5', barrelDark: '#16458e', cap: '#0c2a5b', trim: '#d9e5ef', tip: '#d7dde4', ink: '#174fa8' },
-  red: { barrel: '#d84b42', barrelDark: '#7f201e', cap: '#5a1517', trim: '#eadfce', tip: '#d7dde4', ink: '#8b1818' },
+  blue: {
+    barrel: '#1671c8', barrelDark: '#0b3e78', cap: '#cfe7f5',
+    trim: '#e8edf2', tip: '#b9c0c8', ink: '#0753a0', grip: '#0d5ba8'
+  },
+  red: {
+    barrel: '#d63f38', barrelDark: '#741a1a', cap: '#f0d7d2',
+    trim: '#f0e9df', tip: '#b9c0c8', ink: '#9b1515', grip: '#a72b28'
+  },
 };
 
 function mulberry32(seed) {
@@ -115,11 +123,25 @@ function drawBackpack(ctx, x, y, w, h, color, rng) {
 export class DeskRenderer {
   constructor(canvas) {
     this.canvas = canvas;
-    this.ctx = canvas.getContext('2d', { alpha: false });
+    this.ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
+    this.ctx.imageSmoothingEnabled = true;
+    this.ctx.imageSmoothingQuality = 'high';
     this.bg = null;
     this.world = { w: 1, h: 1 };
     this.sx = 1;
     this.sy = 1;
+    this.penImages = new Map();
+    this.starterImage = null;
+  }
+
+  _getImage(src) {
+    if (!src) return null;
+    if (this.penImages.has(src)) return this.penImages.get(src);
+    const img = new Image();
+    img.onload = () => this.canvas.dispatchEvent(new Event('pen-model-loaded'));
+    img.src = src;
+    this.penImages.set(src, img);
+    return img;
   }
 
   resize({ cssW, cssH, dpr, world }) {
@@ -147,68 +169,73 @@ export class DeskRenderer {
   }
 
   _drawPen(ctx, pen, skin) {
-    const { x, y } = pen.body.position;
+    const pose = pen.renderPose || { x: pen.body.position.x, y: pen.body.position.y, angle: pen.body.angle };
+    const { x, y } = pose;
     const L = pen.length;
     const W = pen.width;
-    const h = W / 2;
-    const angle = pen.body.angle;
-    const k = L / 122;
-    const capLen = 31 * k;
-    const barrelInset = 26 * k;
-    const tipInset = 8 * k;
-    const trimX = 28 * k;
-    const shineX = 35 * k;
+    const angle = pose.angle;
 
     ctx.save();
     ctx.translate(x, y);
-    ctx.save();
-    ctx.translate(4, 6);
+    // Pens are flat on the desk: no drop/contact shadow is drawn here.
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+
+    // Real photographed Reynolds Trimax pen supplied as the in-game model.
+    // Keep the physics body independent from the visual texture so the pen
+    // still collides as a simple, stable rectangle.
+    const img = pen.asset ? this._getImage(pen.asset) : null;
+    const imageReady = img && img.complete && img.naturalWidth > 0;
+    // The uploaded pen photos are not all oriented the same way: some are
+    // horizontal and some are vertical. Fit every model into the same
+    // physical-length box while preserving its original aspect ratio.
+    // Vertical source photos are rotated so the pen lies naturally on the desk.
+    const sourceW = imageReady ? img.naturalWidth : L;
+    const sourceH = imageReady ? img.naturalHeight : W;
+    const sourceRatio = imageReady ? sourceH / sourceW : W / L;
+    const portraitSource = imageReady && sourceH > sourceW * 1.25;
+    const drawW = imageReady ? (portraitSource ? L * (sourceW / sourceH) : L) : L;
+    const drawH = imageReady ? (portraitSource ? L : L * sourceRatio) : W;
+
+    // No artificial pen contact shadow: the supplied pen model is rendered cleanly.
     ctx.rotate(angle);
-    ctx.fillStyle = 'rgba(20,12,5,.28)';
-    roundRect(ctx, -L / 2, -h, L, W, h);
-    ctx.fill();
-    ctx.restore();
-    ctx.rotate(angle);
 
-    const g = ctx.createLinearGradient(0, -h, 0, h);
-    g.addColorStop(0, skin.barrel);
-    g.addColorStop(1, skin.barrelDark);
-    ctx.fillStyle = g;
-    roundRect(ctx, -L / 2 + barrelInset, -h, L - barrelInset * 2, W, h);
-    ctx.fill();
+    if (imageReady) {
+      // Preserve the supplied model exactly. Portrait uploads are rotated 90°
+      // so their long axis matches the physics pen. No stretching/cropping.
+      ctx.imageSmoothingEnabled = true;
+      if (portraitSource) {
+        ctx.save();
+        ctx.rotate(Math.PI / 2);
+        ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+        ctx.restore();
+      } else {
+        ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+      }
+    } else {
+      // Loading fallback only; this is replaced automatically once the image loads.
+      const h = W / 2;
+      ctx.fillStyle = skin.barrel;
+      roundRect(ctx, -L / 2, -h, L, W, h * .8);
+      ctx.fill();
+      ctx.fillStyle = skin.tip;
+      ctx.beginPath();
+      ctx.moveTo(L / 2, 0);
+      ctx.lineTo(L / 2 - 14, -h);
+      ctx.lineTo(L / 2 - 14, h);
+      ctx.closePath();
+      ctx.fill();
+    }
 
-    ctx.beginPath();
-    ctx.moveTo(L / 2 - barrelInset, -h);
-    ctx.lineTo(L / 2 - tipInset, -3 * k);
-    ctx.lineTo(L / 2 - tipInset, 3 * k);
-    ctx.lineTo(L / 2 - barrelInset, h);
-    ctx.closePath();
-    ctx.fillStyle = g;
-    ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(L / 2 - 8, -3);
-    ctx.lineTo(L / 2, -1.2 * k);
-    ctx.lineTo(L / 2, 1.2 * k);
-    ctx.lineTo(L / 2 - tipInset, 3 * k);
-    ctx.closePath();
-    ctx.fillStyle = skin.tip;
-    ctx.fill();
-
-    ctx.fillStyle = skin.cap;
-    roundRect(ctx, -L / 2, -h, capLen, W, h);
-    ctx.fill();
-    ctx.fillStyle = skin.trim;
-    ctx.fillRect(-L / 2 + trimX, -h, 3 * k, W);
-    ctx.fillStyle = 'rgba(255,255,255,.38)';
-    ctx.fillRect(-L / 2 + shineX, -h + 3 * k, L - 67 * k, 2 * k);
-    ctx.fillStyle = 'rgba(255,255,255,.18)';
-    ctx.fillRect(-L / 2 + 33 * k, -h + 7 * k, L - 60 * k, 1.5 * k);
     ctx.restore();
   }
 
   _drawTurnRing(ctx, pen, skin) {
     ctx.save();
-    ctx.translate(pen.body.position.x, pen.body.position.y);
+    const pose = pen.renderPose || { x: pen.body.position.x, y: pen.body.position.y, angle: pen.body.angle };
+    ctx.translate(pose.x, pose.y);
     ctx.rotate(pen.body.angle);
     ctx.strokeStyle = skin.barrel;
     ctx.globalAlpha = 0.9;
@@ -291,27 +318,8 @@ export class DeskRenderer {
     g.fillStyle = light;
     g.fillRect(0, 0, w, h);
 
-    // Top chalkboard and wall trim.
-    const boardX = w * 0.36;
-    const boardY = 22;
-    const boardW = w * 0.42;
-    const boardH = 112;
-    g.fillStyle = '#51341d';
-    roundRect(g, boardX - 9, boardY - 7, boardW + 18, boardH + 15, 4);
-    g.fill();
-    g.fillStyle = '#17291d';
-    roundRect(g, boardX, boardY, boardW, boardH, 2);
-    g.fill();
-    g.fillStyle = 'rgba(255,255,255,.5)';
-    g.font = '14px sans-serif';
-    g.fillText('STD 9-A', boardX + 24, boardY + 24);
-    g.fillText('SUB : MATHS', boardX + 24, boardY + 43);
-    g.font = 'bold 17px sans-serif';
-    g.fillText('PEN FIGHT', boardX + boardW * .38, boardY + 62);
-    g.font = '12px sans-serif';
-    g.fillText('Practice makes a man perfect', boardX + boardW * .28, boardY + 84);
-    g.fillStyle = '#76502c';
-    g.fillRect(boardX + boardW * .34, boardY + boardH + 6, boardW * .34, 6);
+    // The match scoreboard is the single classroom blackboard in the HTML header.
+    // Keep the playfield wall clean here so a duplicate board is not rendered behind the desk.
 
     // Tall classroom window / light panel on the opposite wall.
     const winX = w * .16, winY = 34, winW = w * .12, winH = 92;

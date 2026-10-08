@@ -8,3 +8,12 @@
 - Improved the game-page CSS framing, desk shadow, and HUD readability.
 
 - Reduced maximum shot speed from 13.5 to 6.75 (50% slower).
+
+
+## Clean pen model refresh
+- Replaced the 10 collectible pen textures with the supplied higher-resolution models.
+- Replaced the starter pencil texture with the supplied cleaner model.
+- Removed the opaque black background from the Writometer asset and trimmed transparent padding.
+- Gameplay physics, controls, scoring, turns, and pen IDs remain unchanged.
+
+- AI mode now uses the same smooth 120 Hz physics/interpolated rendering as Friends mode, with parallel non-crossing starting lanes.

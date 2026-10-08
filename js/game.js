@@ -10,10 +10,11 @@ import { FlickInput } from './input.js';
 import { DeskRenderer } from './render.js';
 import { settings, vibrate } from './settings.js';
 import { audio } from './audio.js';
+import { AI_BY_LEVEL, PEN_BY_ID, STARTER, loadProgress, completeLevel } from './pens.js';
 
 const params = new URLSearchParams(location.search);
-const MODE = params.get('mode') === 'local' ? 'local' : 'ai';
-const LEVEL = ['easy', 'medium', 'hard'].includes(params.get('diff')) ? params.get('diff') : 'medium';
+const MODE = params.get('mode') === 'friends' ? 'friends' : (params.get('mode') === 'local' ? 'local' : 'ai');
+const LEVEL = Math.max(1, Math.min(10, Number.parseInt(params.get('level') || '1', 10) || 1));
 const WIN_SCORE = 3; // best of 5
 const FALL_DELAY_MS = 350; // let a falling pen visibly go before the round is called
 const MAX_MOVE_MS = 12000; // safety net so a round can never hang
@@ -23,16 +24,24 @@ const hud = ui.createHud();
 const stage = document.getElementById('stage');
 const canvas = document.getElementById('desk');
 
+const savedPlayerName = (() => { try { return (localStorage.getItem('deskduel.playerName') || '').trim(); } catch (_) { return ''; } })();
 const players = [
-  { id: 'p1', name: 'PLAYER 1', ai: false },
-  { id: 'p2', name: MODE === 'ai' ? 'CPU' : 'PLAYER 2', ai: MODE === 'ai' },
+  { id: 'p1', name: savedPlayerName || 'YOU', ai: false },
+  { id: 'p2', name: MODE === 'ai' ? AI_BY_LEVEL[LEVEL].name : 'PLAYER 2', ai: MODE === 'ai' },
 ];
 
 function spawnFor(index, portrait) {
-  // The reference scene uses a vertical school desk even on desktop.
+  // Start both pens perfectly parallel and comfortably separated.  This is
+  // intentionally identical to the smooth Friends-mode setup so the AI mode
+  // never starts with the long pen artwork visually crossing or jittering.
+  if (portrait) {
+    return index === 0
+      ? { fx: 0.5, fy: 0.73, angle: 0 }
+      : { fx: 0.5, fy: 0.27, angle: Math.PI };
+  }
   return index === 0
-    ? { fx: 0.5, fy: 0.73, angle: -0.06 }
-    : { fx: 0.5, fy: 0.27, angle: Math.PI + 0.06 };
+    ? { fx: 0.30, fy: 0.50, angle: 0 }
+    : { fx: 0.70, fy: 0.50, angle: Math.PI };
 }
 
 async function main() {
@@ -42,6 +51,7 @@ async function main() {
   }
   const [{ PhysicsWorld, CONFIG }, { planShot }] = await Promise.all([import('./physics.js'), import('./ai.js')]);
   const renderer = new DeskRenderer(canvas);
+  canvas.addEventListener('pen-model-loaded', () => { dirty = true; });
 
   let physics = null;
   let dirty = true;
@@ -56,7 +66,11 @@ async function main() {
   let endTimer = 0;
   let slideLevel = -1;
 
-  document.title = `Desk Duel - ${MODE === 'ai' ? `vs Computer (${LEVEL})` : 'Local 2 player'}`;
+  const progress = loadProgress();
+  if (MODE === 'ai' && LEVEL > progress.unlockedLevel) { location.replace('levels.html'); return; }
+  const playerPen = progress.equipped === 'starter' ? STARTER : PEN_BY_ID[progress.equipped] || STARTER;
+  const opponentPen = MODE === 'ai' ? PEN_BY_ID[AI_BY_LEVEL[LEVEL].penId] : STARTER;
+  document.title = `Desk Duel - ${MODE === 'ai' ? `Level ${LEVEL} vs ${AI_BY_LEVEL[LEVEL].name}` : 'Local 2 player'}`;
   hud.setNames(players[0].name, players[1].name);
 
   // ---------- input ----------
@@ -110,7 +124,10 @@ async function main() {
     if (first) {
       physics = new PhysicsWorld(d.w, d.h, d.playArea);
       const portrait = d.h > d.w;
-      players.forEach((p, i) => physics.addPen(p.id, { ...spawnFor(i, portrait), skin: i === 0 ? 'blue' : 'red' }));
+      players.forEach((p, i) => {
+        const model = i === 0 ? playerPen : opponentPen;
+        physics.addPen(p.id, { ...spawnFor(i, portrait), skin: i === 0 ? 'blue' : 'red', asset: model.asset, modelId: model.id, strength: model.strength || 1 });
+      });
       physics.onCollision = ({ speed }) => {
         if (speed < 0.5) return;
         stats.collisions++;
@@ -150,7 +167,7 @@ async function main() {
       aiPlan = null;
       return;
     }
-    aiPlan = { ...planShot(LEVEL, penPos(turn), penPos(1 - turn), physics.size), t0: performance.now() + extraDelayMs };
+    aiPlan = { ...planShot(LEVEL, penPos(turn), penPos(1 - turn), physics.size, physics.playArea), t0: performance.now() + extraDelayMs };
   }
 
   function updateHud() {
@@ -247,10 +264,24 @@ async function main() {
     phase = 'matchEnd';
     audio.matchWin();
     ui.confetti();
+    const playerWon = MODE === 'ai' && winner === 0;
+    const reward = playerWon ? PEN_BY_ID[AI_BY_LEVEL[LEVEL].penId] : null;
+    if (playerWon) completeLevel(LEVEL);
+    const next = Math.min(10, LEVEL + 1);
+    const buttons = [];
+    if (playerWon && LEVEL < 10) {
+      buttons.push({ label: `NEXT: LEVEL ${next}`, primary: true, onClick: () => (location.href = `game.html?mode=ai&level=${next}`) });
+    } else if (playerWon && LEVEL === 10) {
+      buttons.push({ label: 'PLAY AGAIN', primary: true, onClick: restartMatch });
+    } else {
+      buttons.push({ label: 'TRY AGAIN', primary: true, onClick: restartMatch });
+    }
+    buttons.push({ label: 'PEN COLLECTION', onClick: () => (location.href = 'levels.html') });
+    buttons.push({ label: 'MAIN MENU', onClick: () => (location.href = 'index.html') });
     ui.showOverlay({
-      kicker: 'MATCH COMPLETE',
-      title: `\u{1F3C6} ${players[winner].name} WINS`,
-      scoreLabel: 'Final score',
+      kicker: playerWon ? 'PEN CAPTURED' : 'MATCH COMPLETE',
+      title: playerWon ? `🏆 ${players[winner].name} WINS` : `💥 ${players[winner].name} WINS`,
+      scoreLabel: playerWon ? `You won ${reward?.name || 'the opponent pen'}` : 'Final score',
       score: `${scores[0]} - ${scores[1]}`,
       side: winner === 0 ? 'p1' : 'p2',
       stats: [
@@ -258,10 +289,7 @@ async function main() {
         ['collisions', String(stats.collisions)],
         ['top shot', `${Math.round(stats.strongest * 100)}%`],
       ],
-      buttons: [
-        { label: 'PLAY AGAIN', primary: true, onClick: restartMatch },
-        { label: 'MAIN MENU', onClick: () => (location.href = 'index.html') },
-      ],
+      buttons,
     });
   }
 
@@ -376,6 +404,7 @@ async function main() {
     }
 
     if (needDraw || ((phase === 'roundEnd' || phase === 'matchEnd') && !physics.allResting())) {
+      for (const pen of physics.pens.values()) pen.renderPose = physics.getRenderPose(pen.id);
       renderer.draw(physics, aim, { guide: settings.guide, highlight: phase === 'aim' ? players[turn].id : null });
       dirty = false;
     }
@@ -386,4 +415,8 @@ async function main() {
   requestAnimationFrame(frame);
 }
 
-main();
+if (MODE === 'friends') {
+  import('./friends.js').then(({ startFriendsGame }) => startFriendsGame());
+} else {
+  main();
+}

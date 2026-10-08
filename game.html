@@ -13,10 +13,29 @@
 </head>
 <body class="game-page">
   <div class="game">
-    <header class="hud" aria-label="Scoreboard">
-      <div class="hud-player hud-p1"><span class="hud-name" id="name1">PLAYER 1</span><span class="hud-score" id="score1">0</span></div>
-      <div class="hud-round"><span class="hud-round-label">ROUND</span><span class="hud-round-num" id="round">1</span></div>
-      <div class="hud-player hud-p2"><span class="hud-score" id="score2">0</span><span class="hud-name" id="name2">PLAYER 2</span></div>
+    <header class="blackboard-score" aria-label="Pen Fight classroom blackboard scoreboard">
+      <div class="chalk-class">STD 9-A<br><span>SUB : MATHS</span></div>
+      <div class="chalk-date">DATE : <span id="board-date">8/10</span><br><span>H.W.</span><br><small>CH. 6 · Q. 1-5</small></div>
+      <div class="chalk-thought">Thought for the Day<br><em>“Practice makes a man perfect”</em></div>
+
+      <section class="chalk-scorebox">
+        <div class="chalk-title">✎ PEN FIGHT <small>BEST OF 5 · FIRST TO 3</small></div>
+        <div class="chalk-match">
+          <div class="chalk-team chalk-team-you">
+            <span class="chalk-name" id="name1">YOU</span>
+            <span class="chalk-score" id="score1">0</span>
+          </div>
+          <span class="chalk-vs">vs</span>
+          <div class="chalk-team chalk-team-ai">
+            <span class="chalk-name" id="name2">AI</span>
+            <span class="chalk-score" id="score2">0</span>
+          </div>
+        </div>
+        <div class="chalk-round">ROUND <span id="round">1</span> · <span id="board-win-rule">FIRST TO 3</span></div>
+      </section>
+
+      <div class="chalk-doodles" aria-hidden="true">♡ &nbsp; □ □ □ □ □</div>
+      <div class="chalk-sign">Mentor : Rinku</div>
     </header>
 
     <main class="stage" id="stage">

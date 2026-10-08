@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Desk Duel — Play With Friends</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="friends-page">
+<main class="friends-wrap">
+  <header class="friends-head">
+    <div>
+      <p class="friends-kicker">LOCAL MULTIPLAYER</p>
+      <h1>PLAY WITH <span>FRIENDS</span></h1>
+      <p>Choose 2–5 players. Every player can use any pen from your full pen list.</p>
+    </div>
+    <a class="btn btn-small" href="index.html">MENU</a>
+  </header>
+
+  <section class="friends-card">
+    <div class="friends-card-head">
+      <div><h2>Players</h2><small>Win 3 rounds to win the match.</small></div>
+      <div class="count-pill"><b id="player-count">2</b> / 5</div>
+    </div>
+    <div id="player-list" class="player-list"></div>
+    <div class="friends-actions">
+      <button class="btn" id="add-player" type="button">+ ADD PLAYER</button>
+      <button class="btn btn-primary" id="start-friends" type="button">START MATCH</button>
+    </div>
+  </section>
+
+  <section class="friends-help">
+    <b>How it works</b>
+    <span>Take turns flicking your own pen. If your pen falls off the desk, you're out. The last pen standing wins the round. Win 3 rounds to take the match.</span>
+  </section>
+</main>
+<script type="module" src="js/friends-setup.js"></script>
+</body>
+</html>

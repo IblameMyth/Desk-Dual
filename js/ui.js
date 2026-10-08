@@ -37,16 +37,52 @@ export function createHud() {
 
   return {
     setNames(a, b) {
+      const match = document.querySelector('.chalk-match');
+      if (Array.isArray(a)) {
+        const key = `multi:${a.join('|')}`;
+        if (cache.names === key) return;
+        cache.names = key;
+        match.className = 'chalk-match chalk-multi';
+        match.replaceChildren(...a.map((name, i) => {
+          const team = document.createElement('div');
+          team.className = 'chalk-multi-player';
+          team.dataset.player = `p${i + 1}`;
+          const n = document.createElement('span');
+          n.className = 'chalk-name';
+          n.textContent = name;
+          const score = document.createElement('span');
+          score.className = 'chalk-score';
+          score.id = `multi-score-${i}`;
+          score.textContent = '•';
+          team.append(n, score);
+          return team;
+        }));
+        return;
+      }
+      if (!match.classList.contains('chalk-multi')) match.className = 'chalk-match';
       setText('name1', a);
       setText('name2', b);
     },
     setScores(a, b) {
+      if (Array.isArray(a)) {
+        a.forEach((v, i) => {
+          const el = document.getElementById(`multi-score-${i}`);
+          if (!el) return;
+          const next = String(v);
+          if (el.textContent === next) return;
+          el.textContent = next;
+          el.classList.remove('pop');
+          void el.offsetWidth;
+          el.classList.add('pop');
+        });
+        return;
+      }
       for (const [key, v] of [['score1', a], ['score2', b]]) {
         const changed = cache[key] !== undefined && cache[key] !== String(v);
         setText(key, String(v));
         if (changed) {
           els[key].classList.remove('pop');
-          void els[key].offsetWidth; // restart the CSS animation
+          void els[key].offsetWidth;
           els[key].classList.add('pop');
         }
       }

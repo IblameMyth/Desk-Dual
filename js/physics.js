@@ -15,27 +15,31 @@ export const CONFIG = {
     length: 122,
     width: 15,
     density: 0.0017,
-    restitution: 0.72,
-    friction: 0.055,
-    frictionStatic: 0.025,
-    frictionAir: 0.012,
+    restitution: 0.10,
+    friction: 0.34,
+    frictionStatic: 0.48,
+    frictionAir: 0.014,
   },
   // Small constant slowdown gives the characteristic classroom-desk glide.
-  deskFriction: 0.058,
+  // Damping is expressed per 60 Hz reference frame and scaled by dt so
+  // motion stays identical and smooth on 60/90/120 Hz displays.
+  deskFriction: 0.055,
   angularDamping: 0.985,
   maxPull: 175,
   minPull: 12,
-  maxSpeed: 6.75,
-  spinFactor: 1 / 6200,
-  maxSpin: 0.34,
+  maxSpeed: 12.6,
+  spinFactor: 1 / 5200,
+  maxSpin: 0.62,
   grabPadding: 18,
   restSpeed: 0.045,
   restSpin: 0.00055,
   wallThickness: 220,
   solidWalls: false,
-  wallRestitution: 0.72,
-  step: 1000 / 60,
-  maxStepsPerFrame: 6,
+  wallRestitution: 0.42,
+  // Run the simulation at 120 Hz. Rendering still follows requestAnimationFrame,
+  // giving much smoother pen trajectories and more stable collision response.
+  step: 1000 / 120,
+  maxStepsPerFrame: 12,
 };
 
 export class PhysicsWorld {
@@ -46,6 +50,11 @@ export class PhysicsWorld {
     this.pens = new Map();
     this.walls = [];
     this.accumulator = 0;
+    // Render interpolation state: the physics runs at a fixed 120 Hz while
+    // the browser renders at whatever refresh rate is available. Keeping the
+    // previous and current physics poses lets the renderer smoothly blend
+    // between simulation ticks instead of visibly stepping/jittering.
+    this.renderState = new Map();
     this._buildWalls();
     this.onCollision = null;
 
@@ -53,14 +62,28 @@ export class PhysicsWorld {
     Events.on(this.engine, 'collisionStart', (e) => {
       for (const { bodyA: a, bodyB: b } of e.pairs) {
         if (a.label.startsWith('pen:') && b.label.startsWith('pen:')) {
-          const speed = Math.hypot(a.velocity.x - b.velocity.x, a.velocity.y - b.velocity.y);
+          const rvx = a.velocity.x - b.velocity.x;
+          const rvy = a.velocity.y - b.velocity.y;
+          const speed = Math.hypot(rvx, rvy);
+
+          // A real pen-on-pen hit loses a lot of energy to plastic, rubber,
+          // rolling and spin. Matter's restitution is intentionally low, but
+          // this extra tangential damping prevents a hard flick from turning
+          // the opponent into a second projectile.
+          if (speed > 0.2) {
+            const damp = 0.78;
+            Body.setVelocity(a, { x: a.velocity.x * damp, y: a.velocity.y * damp });
+            Body.setVelocity(b, { x: b.velocity.x * damp, y: b.velocity.y * damp });
+            Body.setAngularVelocity(a, a.angularVelocity * 0.92);
+            Body.setAngularVelocity(b, b.angularVelocity * 0.92);
+          }
           this.onCollision?.({ speed });
         }
       }
     });
   }
 
-  addPen(id, { fx = 0.5, fy = 0.5, angle = 0, skin = 'blue' } = {}) {
+  addPen(id, { fx = 0.5, fy = 0.5, angle = 0, skin = 'blue', asset = null, modelId = 'starter', strength = 1 } = {}) {
     const { length, width, density, restitution, friction, frictionStatic, frictionAir } = CONFIG.pen;
     const body = Bodies.rectangle(
       this.playArea.x + fx * this.playArea.w,
@@ -79,8 +102,12 @@ export class PhysicsWorld {
       },
     );
     Composite.add(this.engine.world, body);
-    const pen = { id, body, skin, length, width, fx, fy, angle };
+    const pen = { id, body, skin, length, width, fx, fy, angle, asset, modelId, strength }; 
     this.pens.set(id, pen);
+    this.renderState.set(id, {
+      prevX: body.position.x, prevY: body.position.y, prevA: body.angle,
+      currX: body.position.x, currY: body.position.y, currA: body.angle,
+    });
     return pen;
   }
 
@@ -95,6 +122,10 @@ export class PhysicsWorld {
     Body.setAngle(pen.body, pen.angle);
     Body.setVelocity(pen.body, { x: 0, y: 0 });
     Body.setAngularVelocity(pen.body, 0);
+    this.renderState.set(id, {
+      prevX: pen.body.position.x, prevY: pen.body.position.y, prevA: pen.body.angle,
+      currX: pen.body.position.x, currY: pen.body.position.y, currA: pen.body.angle,
+    });
   }
 
   resize(width, height, playArea = null) {
@@ -173,7 +204,11 @@ export class PhysicsWorld {
     if (len < CONFIG.minPull) return null;
 
     const power = Math.min(len / CONFIG.maxPull, 1);
-    const speed = CONFIG.maxSpeed * power;
+    // A slightly sub-linear curve keeps short flicks controllable while
+    // allowing a committed flick to launch the pen noticeably faster.
+    const launchPower = Math.pow(power, 1.12);
+    // Every pen has its own strength. Better pens launch faster from the same flick.
+    const speed = CONFIG.maxSpeed * launchPower * (pen.strength || 1);
     const vx = (pull.x / len) * speed;
     const vy = (pull.y / len) * speed;
     Body.setVelocity(pen.body, { x: vx, y: vy });
@@ -188,28 +223,78 @@ export class PhysicsWorld {
   }
 
   update(dtMs) {
-    this.accumulator += dtMs;
+    // Clamp large tab-switch/frame stalls, then consume the time in small
+    // deterministic 120 Hz steps. This prevents visible teleporting after
+    // a dropped frame while keeping the simulation responsive.
+    this.accumulator += Math.min(Math.max(dtMs, 0), 50);
     let steps = 0;
     while (this.accumulator >= CONFIG.step && steps < CONFIG.maxStepsPerFrame) {
+      // Capture the pose immediately before this fixed simulation step.
+      for (const [id, pen] of this.pens) {
+        const b = pen.body;
+        const r = this.renderState.get(id);
+        if (!r) continue;
+        r.prevX = b.position.x;
+        r.prevY = b.position.y;
+        r.prevA = b.angle;
+      }
+
       Engine.update(this.engine, CONFIG.step);
+
+      // And the pose immediately after it. The renderer interpolates between
+      // these two poses on every animation frame.
+      for (const [id, pen] of this.pens) {
+        const b = pen.body;
+        const r = this.renderState.get(id);
+        if (!r) continue;
+        r.currX = b.position.x;
+        r.currY = b.position.y;
+        r.currA = b.angle;
+      }
       this.accumulator -= CONFIG.step;
       steps++;
     }
-    if (steps === CONFIG.maxStepsPerFrame) this.accumulator = 0;
+    if (steps === CONFIG.maxStepsPerFrame && this.accumulator >= CONFIG.step) {
+      this.accumulator = 0;
+    }
+  }
+
+  getRenderPose(id) {
+    const pen = this.pens.get(id);
+    if (!pen) return null;
+    const r = this.renderState.get(id);
+    if (!r) return { x: pen.body.position.x, y: pen.body.position.y, angle: pen.body.angle };
+
+    // Interpolate the last two fixed-step poses. Angle interpolation uses the
+    // shortest path so a wrap from +PI to -PI never causes a visual spin.
+    const alpha = Math.max(0, Math.min(1, this.accumulator / CONFIG.step));
+    let da = r.currA - r.prevA;
+    while (da > Math.PI) da -= Math.PI * 2;
+    while (da < -Math.PI) da += Math.PI * 2;
+    return {
+      x: r.prevX + (r.currX - r.prevX) * alpha,
+      y: r.prevY + (r.currY - r.prevY) * alpha,
+      angle: r.prevA + da * alpha,
+    };
   }
 
   _applyDeskFriction() {
+    // Scale damping to the actual physics step. Without this scaling, moving
+    // from 60 -> 120 Hz would double the friction and make pens feel sticky.
+    const frameScale = CONFIG.step / (1000 / 60);
     for (const { body } of this.pens.values()) {
       const { x, y } = body.velocity;
       const s = Math.hypot(x, y);
       if (s > 0) {
-        const next = s - CONFIG.deskFriction;
+        const next = Math.max(0, s - CONFIG.deskFriction * frameScale);
         if (next <= CONFIG.restSpeed) Body.setVelocity(body, { x: 0, y: 0 });
         else Body.setVelocity(body, { x: (x * next) / s, y: (y * next) / s });
       }
-      let w = body.angularVelocity * CONFIG.angularDamping;
-      if (Math.abs(w) < CONFIG.restSpin) w = 0;
-      if (w !== body.angularVelocity) Body.setAngularVelocity(body, w);
+      const w = body.angularVelocity;
+      const damp = Math.pow(CONFIG.angularDamping, frameScale);
+      let nextW = w * damp;
+      if (Math.abs(nextW) < CONFIG.restSpin) nextW = 0;
+      if (nextW !== w) Body.setAngularVelocity(body, nextW);
     }
   }
 

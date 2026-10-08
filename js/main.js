@@ -8,13 +8,46 @@ function openDialog(d) {
   else d.setAttribute('open', '');
 }
 
+const nameDialog = document.getElementById('name-dialog');
+const nameForm = document.getElementById('name-form');
+const nameInput = document.getElementById('player-name-input');
+const playerNameKey = 'deskduel.playerName';
+const getPlayerName = () => { try { return (localStorage.getItem(playerNameKey) || '').trim(); } catch (_) { return ''; } };
+const savePlayerName = (name) => { try { localStorage.setItem(playerNameKey, name); } catch (_) {} };
+
+function requirePlayerName(destination) {
+  const current = getPlayerName();
+  if (current) { location.href = destination; return; }
+  nameDialog.showModal();
+  nameInput.focus();
+  nameForm.dataset.destination = destination;
+}
+
+nameForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const name = nameInput.value.trim().replace(/\s+/g, ' ');
+  if (!name) return;
+  savePlayerName(name);
+  const destination = nameForm.dataset.destination || 'levels.html';
+  nameDialog.close();
+  location.href = destination;
+});
+
+document.querySelectorAll('.menu-buttons a[href^="levels.html"], .menu-buttons a[href^="game.html"]').forEach((link) => {
+  link.addEventListener('click', (e) => {
+    const current = getPlayerName();
+    if (current) return;
+    e.preventDefault();
+    requirePlayerName(link.href);
+  });
+});
+
 document.querySelectorAll('dialog').forEach((d) => {
   d.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => d.close()));
   d.addEventListener('click', (e) => {
     if (e.target === d) d.close(); // click on the backdrop
   });
 });
-document.getElementById('btn-ai').addEventListener('click', () => openDialog(document.getElementById('ai-dialog')));
 document.getElementById('btn-how').addEventListener('click', () => openDialog(document.getElementById('how-dialog')));
 document.getElementById('btn-settings').addEventListener('click', () => openDialog(document.getElementById('settings-dialog')));
 

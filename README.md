@@ -26,3 +26,7 @@ Press your pen, drag backwards, release. Farther pull = stronger flick. A pen th
 
 Everything lives in `CONFIG` at the top of `js/physics.js`
 (`maxSpeed`, `maxPull`, `deskFriction`, `frictionAir`, `spinFactor`, ...).
+
+
+### Physics update
+The current build uses a higher full-power launch speed, reduced air drag, more realistic desk friction/static friction, softer pen-to-pen impacts, and a Trimax-style procedural ballpoint model.

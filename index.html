@@ -35,18 +35,32 @@
     <p class="subtitle">Flick. Fight. Win.</p>
 
     <nav class="menu-buttons" aria-label="Main menu">
-      <button class="btn btn-primary" type="button" id="btn-ai">PLAY VS AI</button>
-      <a class="btn" href="game.html?mode=local">LOCAL 2 PLAYER</a>
+      <a class="btn btn-primary" href="levels.html">PLAY VS AI</a>
+      <a class="btn" href="friends.html">PLAY WITH FRIENDS</a>
       <button class="btn is-soon" type="button" data-soon="Online play" aria-label="Play online, coming soon">PLAY ONLINE <span class="tag">SOON</span></button>
       <div class="menu-row">
         <button class="btn btn-small" type="button" id="btn-how">HOW TO PLAY</button>
         <button class="btn btn-small" type="button" id="btn-settings">SETTINGS</button>
       </div>
+      <div class="menu-row menu-row-info">
+        <a class="btn btn-about" href="about.html">ABOUT</a>
+        <a class="btn btn-contact" href="contact.html">CONTACT</a>
+      </div>
     </nav>
   </main>
 
+
+  <dialog id="name-dialog" aria-labelledby="name-title">
+    <h2 id="name-title">What's your name?</h2>
+    <p class="name-dialog-note">This name will be written on the classroom scoreboard.</p>
+    <form id="name-form" method="dialog">
+      <input id="player-name-input" name="playerName" maxlength="16" autocomplete="nickname" placeholder="Enter your name" required>
+      <button class="btn btn-primary" value="continue">START GAME</button>
+    </form>
+  </dialog>
+
   <dialog id="ai-dialog" aria-labelledby="ai-title">
-    <h2 id="ai-title">Pick a difficulty</h2>
+    <h2 id="ai-title">AI Levels</h2>
     <div class="diff-list">
       <a class="btn" href="game.html?mode=ai&amp;diff=easy">EASY <span class="diff-note">wild aim, random power</span></a>
       <a class="btn" href="game.html?mode=ai&amp;diff=medium">MEDIUM <span class="diff-note">decent aim, sensible power</span></a>
