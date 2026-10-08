@@ -113,7 +113,16 @@ async function main() {
     if (cw < 50 || ch < 50) return;
 
     const d = cw < ch ? CONFIG.desk.portrait : CONFIG.desk.landscape; // portrait screens get a portrait desk
-    const scale = Math.min(cw / d.w, ch / d.h);
+
+    // Desktop landscape: use a cover-style fit so the classroom scene fills
+    // the whole available stage instead of leaving large empty side bands.
+    // The physics world stays exactly the same (1400x800); only the rendered
+    // classroom canvas is allowed to extend slightly beyond the stage and is
+    // clipped by the stage. Portrait/mobile keeps the safer contain fit.
+    const landscapeCover = d === CONFIG.desk.landscape && cw > ch;
+    const scale = landscapeCover
+      ? Math.max(cw / d.w, ch / d.h)
+      : Math.min(cw / d.w, ch / d.h);
     const cssW = Math.floor(d.w * scale);
     const cssH = Math.floor(d.h * scale);
     canvas.style.width = `${cssW}px`;

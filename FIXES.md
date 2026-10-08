@@ -16,3 +16,6 @@
 ## Clean friend-mode starting positions
 - Removed diagonal starting angles that made the long pen sprites visually cross into an X.
 - Friend-mode pens now spawn parallel in separated lanes; physics rotation remains unchanged after shots.
+
+### Mobile viewport black-flash fix
+The game canvas now keeps its internal bitmap resolution tied to the physics world instead of resizing the bitmap whenever a mobile browser changes its CSS viewport. This prevents the one-frame black canvas flash seen during play while preserving the existing classroom scaling and gameplay physics.

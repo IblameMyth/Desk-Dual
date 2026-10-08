@@ -145,14 +145,31 @@ export class DeskRenderer {
   }
 
   resize({ cssW, cssH, dpr, world }) {
-    const bw = Math.round(cssW * dpr);
-    const bh = Math.round(cssH * dpr);
-    this.canvas.width = bw;
-    this.canvas.height = bh;
+    // Keep the canvas bitmap tied to the physics world, not the browser's
+    // changing CSS viewport. Mobile browsers can resize the viewport when
+    // their address bar expands/collapses; resizing an HTML canvas clears it
+    // for one paint and can produce a distracting black flash.
+    //
+    // The CSS width/height are still controlled by game.js, so the classroom
+    // continues to scale to the available screen without touching physics.
+    const bw = Math.round(world.w * dpr);
+    const bh = Math.round(world.h * dpr);
+    const changed = this.canvas.width !== bw || this.canvas.height !== bh;
+
     this.world = world;
     this.sx = bw / world.w;
     this.sy = bh / world.h;
-    this.bg = this._buildBackground(bw, bh, world);
+
+    if (changed || !this.bg) {
+      this.canvas.width = bw;
+      this.canvas.height = bh;
+      this.bg = this._buildBackground(bw, bh, world);
+    }
+
+    // Keep the CSS size explicit even though it does not affect the internal
+    // rendering resolution. This preserves the existing cover/contain layout.
+    this.canvas.style.width = `${Math.max(1, Math.round(cssW))}px`;
+    this.canvas.style.height = `${Math.max(1, Math.round(cssH))}px`;
   }
 
   draw(physics, aim, { guide = true, highlight = null } = {}) {

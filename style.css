@@ -690,8 +690,11 @@ body.game-page {
 
 .game-page #desk {
   display: block;
-  max-width: 100%;
-  max-height: 100%;
+  /* The JS uses a cover fit on desktop landscape so the classroom fills the
+     stage. Do not cap the canvas height here or it would recreate the side gaps. */
+  max-width: none;
+  max-height: none;
+  flex: 0 0 auto;
 }
 
 .game-page .controls {
@@ -704,8 +707,8 @@ body.game-page {
    instead of collapsing into a short strip. */
 @media (min-width: 900px) and (min-height: 650px) {
   .game-page .stage { padding: 8px 18px 14px; }
-  /* JS sizes the canvas to the real stage box. Do not override those inline dimensions. */
-  .game-page #desk { max-width: 100%; max-height: 100%; }
+  /* JS controls the exact cover/contain size. */
+  .game-page #desk { max-width: none; max-height: none; }
 }
 
 /* Keep the controls as a separate UI band. It must never visually merge with
