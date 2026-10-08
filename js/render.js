@@ -30,6 +30,7 @@ function roundRect(ctx, x, y, w, h, r) {
 
 function fillDesk(ctx, x, y, w, h, rng, radius = 7) {
   ctx.save();
+<<<<<<< HEAD
   ctx.shadowColor = 'rgba(15, 9, 4, 0.52)';
   ctx.shadowBlur = 26;
   ctx.shadowOffsetY = 14;
@@ -39,11 +40,21 @@ function fillDesk(ctx, x, y, w, h, rng, radius = 7) {
   wood.addColorStop(0.52, '#b96f32');
   wood.addColorStop(0.82, '#a25e2a');
   wood.addColorStop(1, '#7e451f');
+=======
+  ctx.shadowColor = 'rgba(20, 14, 8, 0.34)';
+  ctx.shadowBlur = 18;
+  ctx.shadowOffsetY = 9;
+  const wood = ctx.createLinearGradient(x, y, x + w, y + h);
+  wood.addColorStop(0, '#a96732');
+  wood.addColorStop(0.5, '#c0803f');
+  wood.addColorStop(1, '#94582b');
+>>>>>>> f8ba19dcf5439849741a6a8ecfb048d3b2f87de3
   ctx.fillStyle = wood;
   roundRect(ctx, x, y, w, h, radius);
   ctx.fill();
   ctx.restore();
 
+<<<<<<< HEAD
   // Thick rounded edge / bevel gives the desk a physical 3D lip.
   ctx.save();
   roundRect(ctx, x, y, w, h, radius);
@@ -90,6 +101,26 @@ function fillDesk(ctx, x, y, w, h, rng, radius = 7) {
   ctx.stroke();
   ctx.restore();
 }
+=======
+  ctx.save();
+  roundRect(ctx, x, y, w, h, radius);
+  ctx.clip();
+  for (let i = 0; i < Math.max(16, Math.round(w / 20)); i++) {
+    const yy = y + rng() * h;
+    const amp = 1.5 + rng() * 4;
+    ctx.beginPath();
+    ctx.moveTo(x - 20, yy);
+    for (let xx = x; xx <= x + w + 20; xx += 20) {
+      ctx.lineTo(xx, yy + Math.sin(xx * 0.018 + i) * amp);
+    }
+    ctx.strokeStyle = i % 3 === 0 ? 'rgba(255,225,175,.10)' : 'rgba(65,35,14,.11)';
+    ctx.lineWidth = 1 + rng();
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+>>>>>>> f8ba19dcf5439849741a6a8ecfb048d3b2f87de3
 function drawBackpack(ctx, x, y, w, h, color, rng) {
   ctx.save();
   ctx.translate(x, y);
@@ -174,7 +205,11 @@ export class DeskRenderer {
     g.addColorStop(0, skin.barrel);
     g.addColorStop(1, skin.barrelDark);
     ctx.fillStyle = g;
+<<<<<<< HEAD
     roundRect(ctx, -L / 2 + barrelInset, -h, L - barrelInset * 2, W, h);
+=======
+    roundRect(ctx, -L / 2 + 26, -h, L - 48, W, h);
+>>>>>>> f8ba19dcf5439849741a6a8ecfb048d3b2f87de3
     ctx.fill();
 
     ctx.beginPath();
@@ -187,14 +222,21 @@ export class DeskRenderer {
     ctx.fill();
     ctx.beginPath();
     ctx.moveTo(L / 2 - 8, -3);
+<<<<<<< HEAD
     ctx.lineTo(L / 2, -1.2 * k);
     ctx.lineTo(L / 2, 1.2 * k);
     ctx.lineTo(L / 2 - tipInset, 3 * k);
+=======
+    ctx.lineTo(L / 2, -1.2);
+    ctx.lineTo(L / 2, 1.2);
+    ctx.lineTo(L / 2 - 8, 3);
+>>>>>>> f8ba19dcf5439849741a6a8ecfb048d3b2f87de3
     ctx.closePath();
     ctx.fillStyle = skin.tip;
     ctx.fill();
 
     ctx.fillStyle = skin.cap;
+<<<<<<< HEAD
     roundRect(ctx, -L / 2, -h, capLen, W, h);
     ctx.fill();
     ctx.fillStyle = skin.trim;
@@ -203,6 +245,16 @@ export class DeskRenderer {
     ctx.fillRect(-L / 2 + shineX, -h + 3 * k, L - 67 * k, 2 * k);
     ctx.fillStyle = 'rgba(255,255,255,.18)';
     ctx.fillRect(-L / 2 + 33 * k, -h + 7 * k, L - 60 * k, 1.5 * k);
+=======
+    roundRect(ctx, -L / 2, -h, 31, W, h);
+    ctx.fill();
+    ctx.fillStyle = skin.trim;
+    ctx.fillRect(-L / 2 + 28, -h, 3, W);
+    ctx.fillStyle = 'rgba(255,255,255,.38)';
+    ctx.fillRect(-L / 2 + 35, -h + 3, L - 67, 2);
+    ctx.fillStyle = 'rgba(255,255,255,.18)';
+    ctx.fillRect(-L / 2 + 33, -h + 7, L - 60, 1.5);
+>>>>>>> f8ba19dcf5439849741a6a8ecfb048d3b2f87de3
     ctx.restore();
   }
 
@@ -214,7 +266,11 @@ export class DeskRenderer {
     ctx.globalAlpha = 0.9;
     ctx.lineWidth = 3;
     ctx.setLineDash([7, 6]);
+<<<<<<< HEAD
     roundRect(ctx, -pen.length / 2 - 10, -pen.width / 2 - 10, pen.length + 20, pen.width + 20, 11);
+=======
+    roundRect(ctx, -pen.length / 2 - 12, -pen.width / 2 - 12, pen.length + 24, pen.width + 24, 14);
+>>>>>>> f8ba19dcf5439849741a6a8ecfb048d3b2f87de3
     ctx.stroke();
     ctx.restore();
   }
@@ -266,6 +322,7 @@ export class DeskRenderer {
     const { w, h, playArea } = world;
     const rng = mulberry32(8024);
 
+<<<<<<< HEAD
     // Warm classroom floor with perspective-like plank seams and subtle variation.
     const floor = g.createLinearGradient(0, 0, 0, h);
     floor.addColorStop(0, '#c9c3aa');
@@ -295,6 +352,23 @@ export class DeskRenderer {
     const boardX = w * 0.405;
     const boardY = 22;
     const boardW = w * 0.38;
+=======
+    // Warm classroom floor.
+    g.fillStyle = '#b9b39a';
+    g.fillRect(0, 0, w, h);
+    g.fillStyle = 'rgba(255,255,255,.08)';
+    for (let y = 0; y < h; y += 52) g.fillRect(0, y, w, 2);
+    for (let x = 0; x < w; x += 58) g.fillRect(x, 0, 2, h);
+    g.strokeStyle = 'rgba(65,58,42,.34)';
+    g.lineWidth = 2;
+    for (let y = 0; y <= h; y += 52) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); }
+    for (let x = 0; x <= w; x += 58) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke(); }
+
+    // Top chalkboard.
+    const boardX = w * 0.36;
+    const boardY = 22;
+    const boardW = w * 0.42;
+>>>>>>> f8ba19dcf5439849741a6a8ecfb048d3b2f87de3
     const boardH = 112;
     g.fillStyle = '#51341d';
     roundRect(g, boardX - 9, boardY - 7, boardW + 18, boardH + 15, 4);
@@ -313,6 +387,7 @@ export class DeskRenderer {
     g.fillStyle = '#76502c';
     g.fillRect(boardX + boardW * .34, boardY + boardH + 6, boardW * .34, 6);
 
+<<<<<<< HEAD
     // Tall classroom window / light panel on the opposite wall.
     const winX = w * .27, winY = 38, winW = w * .12, winH = 88;
     g.fillStyle = '#76502d';
@@ -348,6 +423,25 @@ export class DeskRenderer {
     // School bags beside the front desks.
     drawBackpack(g, leftX + sideW * .76, 225, 52, 86, '#263f68', rng);
     drawBackpack(g, rightX + sideW * .25, 445, 54, 88, '#6d2528', rng);
+=======
+    // Surrounding classroom benches/desks.
+    const sideY = [150, 370, 590];
+    for (const yy of sideY) {
+      fillDesk(g, 20, yy, 320, 76, rng, 5);
+      fillDesk(g, w - 340, yy + 15, 320, 76, rng, 5);
+      g.strokeStyle = '#1d1713';
+      g.lineWidth = 9;
+      for (const xx of [50, 290, w - 310, w - 70]) {
+        g.beginPath(); g.moveTo(xx, yy + 72); g.lineTo(xx - 28, yy + 135); g.stroke();
+      }
+    }
+    fillDesk(g, 10, h - 72, 250, 68, rng, 5);
+    fillDesk(g, w - 260, h - 72, 250, 68, rng, 5);
+
+    // School bags beside the front desks.
+    drawBackpack(g, w * .18, 245, 74, 105, '#263f68', rng);
+    drawBackpack(g, w * .82, 445, 76, 108, '#6d2528', rng);
+>>>>>>> f8ba19dcf5439849741a6a8ecfb048d3b2f87de3
 
     // Central playable wooden desk.
     fillDesk(g, playArea.x, playArea.y, playArea.w, playArea.h, rng, 8);
@@ -381,6 +475,7 @@ export class DeskRenderer {
     g.restore();
 
     // Desk front lip and legs.
+<<<<<<< HEAD
     const lipY = playArea.y + playArea.h - 11;
     const lip = g.createLinearGradient(0, lipY, 0, lipY + 17);
     lip.addColorStop(0, '#8b5128');
@@ -393,6 +488,12 @@ export class DeskRenderer {
     g.beginPath(); g.moveTo(playArea.x, lipY + 1); g.lineTo(playArea.x + playArea.w, lipY + 1); g.stroke();
     g.strokeStyle = '#24160e';
     g.lineWidth = 14;
+=======
+    g.fillStyle = '#6e3e1e';
+    g.fillRect(playArea.x, playArea.y + playArea.h - 8, playArea.w, 11);
+    g.strokeStyle = '#24160e';
+    g.lineWidth = 12;
+>>>>>>> f8ba19dcf5439849741a6a8ecfb048d3b2f87de3
     g.beginPath();
     g.moveTo(playArea.x + 50, playArea.y + playArea.h); g.lineTo(playArea.x + 85, h + 25);
     g.moveTo(playArea.x + playArea.w - 50, playArea.y + playArea.h); g.lineTo(playArea.x + playArea.w - 85, h + 25);

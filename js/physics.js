@@ -8,8 +8,13 @@ const { Engine, Bodies, Body, Composite, Events } = window.Matter;
 export const CONFIG = {
   // The canvas is the whole classroom. `playArea` is the actual desk.
   desk: {
+<<<<<<< HEAD
     landscape: { w: 1400, h: 800, playArea: { x: 560, y: 100, w: 280, h: 600 } },
     portrait: { w: 800, h: 1200, playArea: { x: 260, y: 135, w: 280, h: 900 } },
+=======
+    landscape: { w: 1400, h: 800, playArea: { x: 485, y: 95, w: 430, h: 610 } },
+    portrait: { w: 800, h: 1200, playArea: { x: 135, y: 120, w: 530, h: 900 } },
+>>>>>>> f8ba19dcf5439849741a6a8ecfb048d3b2f87de3
   },
   pen: {
     length: 122,
@@ -21,6 +26,7 @@ export const CONFIG = {
     frictionAir: 0.012,
   },
   // Small constant slowdown gives the characteristic classroom-desk glide.
+<<<<<<< HEAD
   deskFriction: 0.058,
   angularDamping: 0.985,
   maxPull: 175,
@@ -29,6 +35,16 @@ export const CONFIG = {
   spinFactor: 1 / 6200,
   maxSpin: 0.34,
   grabPadding: 18,
+=======
+  deskFriction: 0.045,
+  angularDamping: 0.985,
+  maxPull: 175,
+  minPull: 12,
+  maxSpeed: 24,
+  spinFactor: 1 / 6200,
+  maxSpin: 0.34,
+  grabPadding: 26,
+>>>>>>> f8ba19dcf5439849741a6a8ecfb048d3b2f87de3
   restSpeed: 0.045,
   restSpin: 0.00055,
   wallThickness: 220,
