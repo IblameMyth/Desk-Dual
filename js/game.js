@@ -29,10 +29,10 @@ const players = [
 ];
 
 function spawnFor(index, portrait) {
-  if (!portrait) return index === 0 ? { fx: 0.25, fy: 0.55, angle: 0.15 } : { fx: 0.75, fy: 0.45, angle: Math.PI + 0.15 };
+  // The reference scene uses a vertical school desk even on desktop.
   return index === 0
-    ? { fx: 0.45, fy: 0.75, angle: -Math.PI / 2 + 0.15 }
-    : { fx: 0.55, fy: 0.25, angle: Math.PI / 2 + 0.15 };
+    ? { fx: 0.5, fy: 0.73, angle: -0.06 }
+    : { fx: 0.5, fy: 0.27, angle: Math.PI + 0.06 };
 }
 
 async function main() {
@@ -108,7 +108,7 @@ async function main() {
 
     const first = !physics;
     if (first) {
-      physics = new PhysicsWorld(d.w, d.h);
+      physics = new PhysicsWorld(d.w, d.h, d.playArea);
       const portrait = d.h > d.w;
       players.forEach((p, i) => physics.addPen(p.id, { ...spawnFor(i, portrait), skin: i === 0 ? 'blue' : 'red' }));
       physics.onCollision = ({ speed }) => {
@@ -119,7 +119,9 @@ async function main() {
       };
     } else if (physics.size.w !== d.w || physics.size.h !== d.h) {
       input.cancel();
-      physics.resize(d.w, d.h);
+      physics.resize(d.w, d.h, d.playArea);
+      const portrait = d.h > d.w;
+      players.forEach((p, i) => physics.resetPen(p.id, spawnFor(i, portrait)));
       if (aiPlan) planAi(0);
     }
     renderer.resize({ cssW, cssH, dpr, world: d });

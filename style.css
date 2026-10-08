@@ -329,3 +329,121 @@ dialog > .btn-small { width: 100%; }
 .confetti { position: fixed; inset: 0; z-index: 16; overflow: hidden; pointer-events: none; }
 .confetti span { position: absolute; top: -20px; width: 10px; height: 16px; border-radius: 2px; animation: confetti-fall linear forwards; }
 @keyframes confetti-fall { to { transform: translate(var(--drift), 110vh) rotate(720deg); } }
+
+/* ===================== v0.3 classroom edition ===================== */
+.menu-page {
+  color: #2a241b;
+  background-color: #b7b19a;
+  background-image:
+    linear-gradient(rgba(70,62,43,.28) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(70,62,43,.28) 2px, transparent 2px),
+    linear-gradient(135deg, rgba(255,255,255,.08), transparent 50%);
+  background-size: 58px 52px, 58px 52px, 100% 100%;
+}
+.menu {
+  position: relative;
+}
+.menu::before {
+  content: 'STD 9-A   •   CLASSROOM PEN FIGHT';
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 7px 16px;
+  color: #d9dfd2;
+  background: #19301f;
+  border: 5px solid #5a3920;
+  border-radius: 3px;
+  box-shadow: 0 8px 0 rgba(30,20,10,.2);
+  font: 700 .72rem/1 var(--font-body);
+  letter-spacing: .12em;
+}
+.hero { filter: drop-shadow(0 9px 5px rgba(35,20,8,.25)); }
+.title { color: #332619; text-shadow: 3px 4px 0 rgba(255,224,167,.65); }
+.title-desk { text-shadow: 4px 4px 0 #2b5e9d; }
+.title-duel { text-shadow: 4px 4px 0 #9d302c; }
+.subtitle { background: linear-gradient(transparent 38%, #e2c55d 38%, #e2c55d 88%, transparent 88%); }
+.menu-buttons .btn {
+  color: #332619;
+  background: #eadfc8;
+  border-color: #3b2a1b;
+  box-shadow: 0 5px 0 #3b2a1b;
+}
+.menu-buttons .btn-primary { color: #fff; background: #2f5f9f; }
+.menu-buttons .btn.is-soon { background: #d8ccb3; }
+.tag { color: #332619; background: #e2c55d; }
+
+.game-page {
+  color: #2c251b;
+  background: #b7b19a;
+}
+.game {
+  background:
+    linear-gradient(rgba(80,72,51,.26) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(80,72,51,.26) 2px, transparent 2px),
+    #b7b19a;
+  background-size: 58px 52px;
+}
+.hud {
+  color: #f5ead5;
+  background: linear-gradient(180deg, rgba(48,31,18,.92), rgba(70,43,22,.82));
+  border-bottom: 4px solid rgba(30,18,10,.5);
+}
+.hud-name { text-shadow: 1px 2px 0 rgba(0,0,0,.35); }
+.hud-p1 .hud-name { color: #86b9ff; }
+.hud-p2 .hud-name { color: #ff9d96; }
+.hud-score {
+  color: #332619;
+  background: #eadfc8;
+  border-color: #3b2a1b;
+  box-shadow: 0 4px 0 rgba(0,0,0,.3);
+}
+.hud-round-label { color: #d6c6a9; }
+.hud-round-num { color: #f5ead5; }
+.stage { background: transparent; }
+#desk {
+  border-radius: 0;
+  box-shadow: 0 10px 28px rgba(20,13,7,.42);
+}
+.controls {
+  color: #f5ead5;
+  background: rgba(48,31,18,.92);
+  border-top: 4px solid rgba(30,18,10,.48);
+}
+.turn {
+  color: #fff;
+  background: #2f5f9f;
+  border: 2px solid rgba(255,255,255,.18);
+}
+.turn[data-side='p2'] { background: #9d302c; }
+.power { background: rgba(255,255,255,.18); }
+.hint { color: #eadfc8; }
+.actions .btn {
+  color: #332619;
+  background: #eadfc8;
+  border-color: #2f2317;
+}
+
+/* Classroom-style dialogs */
+dialog {
+  color: #332619;
+  background: #eadfc8;
+  border-color: #3b2a1b;
+  box-shadow: 0 8px 0 #3b2a1b;
+}
+dialog::backdrop { background: rgba(24,22,15,.62); }
+.seg { border-color: #3b2a1b; background: #f4ead6; }
+.seg button { color: #332619; }
+.seg button[aria-pressed='true'] { background: #2f5f9f; }
+.overlay { background: rgba(35,28,18,.62); }
+.overlay .card { color: #332619; background: #eadfc8; border-color: #3b2a1b; box-shadow: 0 8px 0 #3b2a1b; }
+.overlay .card[data-side='p1'] h2 { color: #2f5f9f; }
+.overlay .card[data-side='p2'] h2 { color: #9d302c; }
+.ov-stats li { background: #f4ead6; border-color: #3b2a1b; }
+.banner { background: #17301f; border-color: #e2c55d; }
+
+@media (max-width: 700px) {
+  .menu::before { font-size: .58rem; top: 10px; }
+  .hud { padding-top: 7px; }
+  .hud-score { min-width: 40px; height: 40px; }
+}

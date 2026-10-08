@@ -1,13 +1,11 @@
 /*
- * Canvas rendering: wooden desk + notebook paper (cached), pens, aim guide.
- * Pens are drawn from "skins", so adding a new pen look = adding an entry to PEN_SKINS.
+ * Classroom renderer: the playable desk sits in a top-down classroom scene.
+ * Everything is procedural so the project stays self-contained.
  */
 export const PEN_SKINS = {
-  blue: { barrel: '#2f6bff', barrelDark: '#1b3fb8', cap: '#14267a', trim: '#ffd34d', tip: '#d5dae2', ink: '#1d3fd1' },
-  red: { barrel: '#ff4a4a', barrelDark: '#b81f2a', cap: '#7a1018', trim: '#ffd34d', tip: '#d5dae2', ink: '#d31d2e' },
+  blue: { barrel: '#2d73d5', barrelDark: '#16458e', cap: '#0c2a5b', trim: '#d9e5ef', tip: '#d7dde4', ink: '#174fa8' },
+  red: { barrel: '#d84b42', barrelDark: '#7f201e', cap: '#5a1517', trim: '#eadfce', tip: '#d7dde4', ink: '#8b1818' },
 };
-
-const PAPER_INSET = 36;
 
 function mulberry32(seed) {
   return () => {
@@ -28,6 +26,60 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.arcTo(x, y + h, x, y, r);
   ctx.arcTo(x, y, x + w, y, r);
   ctx.closePath();
+}
+
+function fillDesk(ctx, x, y, w, h, rng, radius = 7) {
+  ctx.save();
+  ctx.shadowColor = 'rgba(20, 14, 8, 0.34)';
+  ctx.shadowBlur = 18;
+  ctx.shadowOffsetY = 9;
+  const wood = ctx.createLinearGradient(x, y, x + w, y + h);
+  wood.addColorStop(0, '#a96732');
+  wood.addColorStop(0.5, '#c0803f');
+  wood.addColorStop(1, '#94582b');
+  ctx.fillStyle = wood;
+  roundRect(ctx, x, y, w, h, radius);
+  ctx.fill();
+  ctx.restore();
+
+  ctx.save();
+  roundRect(ctx, x, y, w, h, radius);
+  ctx.clip();
+  for (let i = 0; i < Math.max(16, Math.round(w / 20)); i++) {
+    const yy = y + rng() * h;
+    const amp = 1.5 + rng() * 4;
+    ctx.beginPath();
+    ctx.moveTo(x - 20, yy);
+    for (let xx = x; xx <= x + w + 20; xx += 20) {
+      ctx.lineTo(xx, yy + Math.sin(xx * 0.018 + i) * amp);
+    }
+    ctx.strokeStyle = i % 3 === 0 ? 'rgba(255,225,175,.10)' : 'rgba(65,35,14,.11)';
+    ctx.lineWidth = 1 + rng();
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawBackpack(ctx, x, y, w, h, color, rng) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate((rng() - 0.5) * 0.08);
+  ctx.shadowColor = 'rgba(0,0,0,.35)';
+  ctx.shadowBlur = 10;
+  ctx.shadowOffsetY = 7;
+  ctx.fillStyle = color;
+  roundRect(ctx, -w / 2, -h / 2, w, h, 18);
+  ctx.fill();
+  ctx.shadowColor = 'transparent';
+  ctx.fillStyle = 'rgba(255,255,255,.07)';
+  roundRect(ctx, -w * .31, -h * .18, w * .62, h * .34, 9);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(0,0,0,.35)';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(0, -h * .48, w * .22, Math.PI, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
 }
 
 export class DeskRenderer {
@@ -73,26 +125,22 @@ export class DeskRenderer {
 
     ctx.save();
     ctx.translate(x, y);
-
-    // soft drop shadow (offset in screen space, so it doesn't rotate with the pen)
     ctx.save();
-    ctx.translate(4, 7);
+    ctx.translate(4, 6);
     ctx.rotate(angle);
-    ctx.fillStyle = 'rgba(40, 25, 10, 0.26)';
+    ctx.fillStyle = 'rgba(20,12,5,.28)';
     roundRect(ctx, -L / 2, -h, L, W, h);
     ctx.fill();
     ctx.restore();
-
     ctx.rotate(angle);
 
-    // barrel
     const g = ctx.createLinearGradient(0, -h, 0, h);
     g.addColorStop(0, skin.barrel);
     g.addColorStop(1, skin.barrelDark);
     ctx.fillStyle = g;
-    ctx.fillRect(-L / 2 + 34, -h, L - 34 - 26, W);
+    roundRect(ctx, -L / 2 + 26, -h, L - 48, W, h);
+    ctx.fill();
 
-    // cone + metal tip
     ctx.beginPath();
     ctx.moveTo(L / 2 - 26, -h);
     ctx.lineTo(L / 2 - 8, -3);
@@ -103,63 +151,52 @@ export class DeskRenderer {
     ctx.fill();
     ctx.beginPath();
     ctx.moveTo(L / 2 - 8, -3);
-    ctx.lineTo(L / 2, -1);
-    ctx.lineTo(L / 2, 1);
+    ctx.lineTo(L / 2, -1.2);
+    ctx.lineTo(L / 2, 1.2);
     ctx.lineTo(L / 2 - 8, 3);
     ctx.closePath();
     ctx.fillStyle = skin.tip;
     ctx.fill();
-    ctx.fillStyle = skin.ink;
-    ctx.beginPath();
-    ctx.arc(L / 2, 0, 1.6, 0, Math.PI * 2);
-    ctx.fill();
 
-    // cap (back end) + trim ring + clip
     ctx.fillStyle = skin.cap;
-    roundRect(ctx, -L / 2, -h, 40, W, h);
+    roundRect(ctx, -L / 2, -h, 31, W, h);
     ctx.fill();
     ctx.fillStyle = skin.trim;
-    ctx.fillRect(-L / 2 + 36, -h, 4, W);
-    ctx.fillStyle = skin.trim;
-    roundRect(ctx, -L / 2 + 6, -h - 2.5, 24, 4, 2);
-    ctx.fill();
-
-    // glossy highlight
-    ctx.fillStyle = 'rgba(255,255,255,0.38)';
-    ctx.fillRect(-L / 2 + 44, -h + 3, L - 44 - 32, 2.5);
-
+    ctx.fillRect(-L / 2 + 28, -h, 3, W);
+    ctx.fillStyle = 'rgba(255,255,255,.38)';
+    ctx.fillRect(-L / 2 + 35, -h + 3, L - 67, 2);
+    ctx.fillStyle = 'rgba(255,255,255,.18)';
+    ctx.fillRect(-L / 2 + 33, -h + 7, L - 60, 1.5);
     ctx.restore();
   }
 
-  /** Dashed outline around the pen whose turn it is. */
   _drawTurnRing(ctx, pen, skin) {
     ctx.save();
     ctx.translate(pen.body.position.x, pen.body.position.y);
     ctx.rotate(pen.body.angle);
     ctx.strokeStyle = skin.barrel;
-    ctx.globalAlpha = 0.75;
+    ctx.globalAlpha = 0.9;
     ctx.lineWidth = 3;
-    ctx.setLineDash([9, 7]);
-    roundRect(ctx, -pen.length / 2 - 10, -pen.width / 2 - 10, pen.length + 20, pen.width + 20, 16);
+    ctx.setLineDash([7, 6]);
+    roundRect(ctx, -pen.length / 2 - 12, -pen.width / 2 - 12, pen.length + 24, pen.width + 24, 14);
     ctx.stroke();
     ctx.restore();
   }
 
   _drawAim(ctx, a, guide) {
-    const color = `hsl(${Math.round(120 - 120 * a.power)} 85% 42%)`;
+    const color = `hsl(${Math.round(115 - 115 * a.power)} 72% 45%)`;
     ctx.save();
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-
-    // pull-back line + grab ring + finger knob
-    ctx.strokeStyle = 'rgba(23, 34, 74, 0.55)';
+    ctx.strokeStyle = 'rgba(40,28,17,.48)';
     ctx.lineWidth = 3;
-    ctx.setLineDash([8, 8]);
+    ctx.setLineDash([7, 8]);
     ctx.beginPath();
     ctx.moveTo(a.grab.x, a.grab.y);
     ctx.lineTo(a.current.x, a.current.y);
     ctx.stroke();
     ctx.setLineDash([]);
+    ctx.strokeStyle = 'rgba(40,28,17,.65)';
     ctx.beginPath();
     ctx.arc(a.grab.x, a.grab.y, 9, 0, Math.PI * 2);
     ctx.stroke();
@@ -167,111 +204,123 @@ export class DeskRenderer {
     ctx.beginPath();
     ctx.arc(a.current.x, a.current.y, 11, 0, Math.PI * 2);
     ctx.fill();
-    ctx.stroke();
 
-    // launch direction guide (length grows with power)
     if (guide && a.power > 0.02) {
-      const len = 50 + a.power * 230;
+      const len = 45 + a.power * 250;
       const ex = a.pen.x + a.dir.x * len;
       const ey = a.pen.y + a.dir.y * len;
       ctx.strokeStyle = color;
-      ctx.lineWidth = 6;
-      ctx.setLineDash([1, 14]);
+      ctx.lineWidth = 5;
+      ctx.setLineDash([1, 13]);
       ctx.beginPath();
       ctx.moveTo(a.pen.x, a.pen.y);
       ctx.lineTo(ex, ey);
       ctx.stroke();
       ctx.setLineDash([]);
-      const ang = Math.atan2(a.dir.y, a.dir.x);
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(ex + Math.cos(ang) * 14, ey + Math.sin(ang) * 14);
-      ctx.lineTo(ex + Math.cos(ang + 2.5) * 14, ey + Math.sin(ang + 2.5) * 14);
-      ctx.lineTo(ex + Math.cos(ang - 2.5) * 14, ey + Math.sin(ang - 2.5) * 14);
-      ctx.closePath();
-      ctx.fill();
     }
     ctx.restore();
   }
 
-  /** Wooden desk + ruled notebook sheet, rendered once per resize. */
   _buildBackground(bw, bh, world) {
     const c = document.createElement('canvas');
     c.width = bw;
     c.height = bh;
     const g = c.getContext('2d', { alpha: false });
     g.scale(bw / world.w, bh / world.h);
-    const { w, h } = world;
-    const rng = mulberry32(1987);
+    const { w, h, playArea } = world;
+    const rng = mulberry32(8024);
 
-    // wood base + grain
-    const wood = g.createLinearGradient(0, 0, w, h);
-    wood.addColorStop(0, '#c48a52');
-    wood.addColorStop(1, '#a8703c');
-    g.fillStyle = wood;
+    // Warm classroom floor.
+    g.fillStyle = '#b9b39a';
     g.fillRect(0, 0, w, h);
-    g.lineWidth = 1;
-    for (let i = 0; i < 120; i++) {
-      const y = rng() * h;
-      const amp = 2 + rng() * 6;
-      const freq = 0.004 + rng() * 0.01;
-      const phase = rng() * 6;
-      g.strokeStyle = i % 3 === 0 ? `rgba(255,220,170,${0.05 + rng() * 0.08})` : `rgba(80,42,16,${0.05 + rng() * 0.1})`;
-      g.lineWidth = 1 + rng() * 2;
-      g.beginPath();
-      for (let x = 0; x <= w; x += 20) {
-        const yy = y + Math.sin(x * freq + phase) * amp;
-        if (x === 0) g.moveTo(x, yy);
-        else g.lineTo(x, yy);
-      }
-      g.stroke();
-    }
+    g.fillStyle = 'rgba(255,255,255,.08)';
+    for (let y = 0; y < h; y += 52) g.fillRect(0, y, w, 2);
+    for (let x = 0; x < w; x += 58) g.fillRect(x, 0, 2, h);
+    g.strokeStyle = 'rgba(65,58,42,.34)';
+    g.lineWidth = 2;
+    for (let y = 0; y <= h; y += 52) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); }
+    for (let x = 0; x <= w; x += 58) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke(); }
 
-    // notebook sheet
-    const px = PAPER_INSET;
-    const pw = w - PAPER_INSET * 2;
-    const ph = h - PAPER_INSET * 2;
-    g.save();
-    g.shadowColor = 'rgba(40, 20, 5, 0.45)';
-    g.shadowBlur = 18;
-    g.shadowOffsetY = 5;
-    g.fillStyle = '#f7faff';
-    roundRect(g, px, px, pw, ph, 6);
+    // Top chalkboard.
+    const boardX = w * 0.36;
+    const boardY = 22;
+    const boardW = w * 0.42;
+    const boardH = 112;
+    g.fillStyle = '#51341d';
+    roundRect(g, boardX - 9, boardY - 7, boardW + 18, boardH + 15, 4);
     g.fill();
+    g.fillStyle = '#17291d';
+    roundRect(g, boardX, boardY, boardW, boardH, 2);
+    g.fill();
+    g.fillStyle = 'rgba(255,255,255,.5)';
+    g.font = '14px sans-serif';
+    g.fillText('STD 9-A', boardX + 24, boardY + 24);
+    g.fillText('SUB : MATHS', boardX + 24, boardY + 43);
+    g.font = 'bold 17px sans-serif';
+    g.fillText('PEN FIGHT', boardX + boardW * .38, boardY + 62);
+    g.font = '12px sans-serif';
+    g.fillText('Practice makes a man perfect', boardX + boardW * .28, boardY + 84);
+    g.fillStyle = '#76502c';
+    g.fillRect(boardX + boardW * .34, boardY + boardH + 6, boardW * .34, 6);
+
+    // Surrounding classroom benches/desks.
+    const sideY = [150, 370, 590];
+    for (const yy of sideY) {
+      fillDesk(g, 20, yy, 320, 76, rng, 5);
+      fillDesk(g, w - 340, yy + 15, 320, 76, rng, 5);
+      g.strokeStyle = '#1d1713';
+      g.lineWidth = 9;
+      for (const xx of [50, 290, w - 310, w - 70]) {
+        g.beginPath(); g.moveTo(xx, yy + 72); g.lineTo(xx - 28, yy + 135); g.stroke();
+      }
+    }
+    fillDesk(g, 10, h - 72, 250, 68, rng, 5);
+    fillDesk(g, w - 260, h - 72, 250, 68, rng, 5);
+
+    // School bags beside the front desks.
+    drawBackpack(g, w * .18, 245, 74, 105, '#263f68', rng);
+    drawBackpack(g, w * .82, 445, 76, 108, '#6d2528', rng);
+
+    // Central playable wooden desk.
+    fillDesk(g, playArea.x, playArea.y, playArea.w, playArea.h, rng, 8);
+    g.save();
+    g.globalAlpha = 0.25;
+    g.fillStyle = '#7a451e';
+    g.font = 'bold 16px sans-serif';
+    g.rotate(-0.05);
+    g.fillText('9-A', playArea.x + 42, playArea.y + 160);
+    g.fillText('MATHS', playArea.x + playArea.w - 92, playArea.y + 280);
     g.restore();
 
+    // Scratches / doodles visible on the desk, matching the reference feel.
     g.save();
-    roundRect(g, px, px, pw, ph, 6);
+    g.beginPath();
+    roundRect(g, playArea.x, playArea.y, playArea.w, playArea.h, 8);
     g.clip();
-    g.strokeStyle = 'rgba(70, 120, 200, 0.28)';
-    g.lineWidth = 1.5;
-    for (let y = px + 56; y < px + ph; y += 32) {
-      g.beginPath();
-      g.moveTo(px, y);
-      g.lineTo(px + pw, y);
-      g.stroke();
+    for (let i = 0; i < 32; i++) {
+      const x = playArea.x + rng() * playArea.w;
+      const y = playArea.y + rng() * playArea.h;
+      const len = 12 + rng() * 55;
+      g.strokeStyle = i % 2 ? 'rgba(255,235,190,.16)' : 'rgba(70,35,12,.13)';
+      g.lineWidth = 1.3;
+      g.beginPath(); g.moveTo(x, y); g.lineTo(x + len * .35, y - len); g.stroke();
     }
-    g.strokeStyle = 'rgba(225, 70, 80, 0.45)';
+    g.strokeStyle = 'rgba(80,42,18,.22)';
     g.lineWidth = 2;
     g.beginPath();
-    g.moveTo(px + 74, px);
-    g.lineTo(px + 74, px + ph);
+    g.arc(playArea.x + playArea.w * .58, playArea.y + playArea.h * .17, 13, 0, Math.PI * 2);
     g.stroke();
-    g.fillStyle = 'rgba(110, 70, 35, 0.9)'; // binder holes show the desk through the paper
-    for (const f of [0.2, 0.5, 0.8]) {
-      g.beginPath();
-      g.arc(px + 26, px + ph * f, 8, 0, Math.PI * 2);
-      g.fill();
-    }
     g.restore();
 
-    // desk edge lip
-    g.strokeStyle = 'rgba(50, 25, 8, 0.6)';
+    // Desk front lip and legs.
+    g.fillStyle = '#6e3e1e';
+    g.fillRect(playArea.x, playArea.y + playArea.h - 8, playArea.w, 11);
+    g.strokeStyle = '#24160e';
     g.lineWidth = 12;
-    g.strokeRect(0, 0, w, h);
-    g.strokeStyle = 'rgba(255, 225, 175, 0.28)';
-    g.lineWidth = 2;
-    g.strokeRect(7, 7, w - 14, h - 14);
+    g.beginPath();
+    g.moveTo(playArea.x + 50, playArea.y + playArea.h); g.lineTo(playArea.x + 85, h + 25);
+    g.moveTo(playArea.x + playArea.w - 50, playArea.y + playArea.h); g.lineTo(playArea.x + playArea.w - 85, h + 25);
+    g.stroke();
 
     return c;
   }
