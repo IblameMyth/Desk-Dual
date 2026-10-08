@@ -439,7 +439,22 @@ body.game-page { min-height: 100vh; min-height: 100dvh; height: 100%; margin: 0;
 
 @media (max-width: 520px) {
   .hud-name { font-size: 0.85rem; }
-  .controls { grid-template-columns: auto 1fr; grid-template-areas: 'turn power' 'hint hint' 'actions actions'; }
+  .controls {
+    grid-template-columns: auto 1fr;
+    grid-template-areas: 'turn power' 'hint hint' 'actions actions';
+    /* Keep the footer height stable on Android. The hint changes between one
+       and two lines during a turn; letting that change the footer height also
+       changes the stage height, which makes the canvas resize/jump visibly. */
+    height: 202px;
+    min-height: 202px;
+    box-sizing: border-box;
+    align-content: start;
+  }
+  .hint {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
   .actions .btn { flex: 1; }
 }
 @media (max-height: 520px) and (orientation: landscape) {
@@ -722,6 +737,20 @@ body.game-page {
   margin: 0;
   border-top: 0;
   box-shadow: inset 0 1px 0 rgba(255,236,205,.10), 0 -8px 18px rgba(20, 12, 6, .16);
+}
+
+/* Android stability: use the small viewport as the stable game viewport so
+   browser address-bar expand/collapse does not repeatedly resize the stage. */
+@media (max-width: 700px) {
+  .game-page,
+  .game-page .game {
+    height: 100svh;
+    min-height: 100svh;
+  }
+
+  .game-page .stage {
+    min-height: 0;
+  }
 }
 
 /* ---------- friends setup ---------- */
