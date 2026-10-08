@@ -161,7 +161,8 @@ dialog li::marker { font-family: var(--font-display); color: var(--blue); }
 .fatal p { margin: 0; max-width: 28ch; }
 
 /* ---------- game screen ---------- */
-html:has(.game-page), .game-page { height: 100%; }
+html:has(.game-page) { height: 100%; min-height: 100%; }
+body.game-page { min-height: 100vh; min-height: 100dvh; height: 100%; margin: 0; }
 .game-page {
   overflow: hidden;
   overscroll-behavior: none;
@@ -169,11 +170,32 @@ html:has(.game-page), .game-page { height: 100%; }
   -webkit-user-select: none;
   -webkit-touch-callout: none;
   color: #fff;
-  background: radial-gradient(120% 90% at 50% 0%, #26356b 0%, var(--ink) 70%);
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(246, 220, 168, 0.22), transparent 52%),
+    linear-gradient(180deg, #2a2a27 0%, #171815 100%);
+  position: relative;
+}
+.game-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 45%, transparent 45%, rgba(0,0,0,.32) 100%),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px);
+  background-size: auto, 48px 48px, 48px 48px;
+  mix-blend-mode: overlay;
+  z-index: 0;
+}
+.game > * { position: relative; z-index: 1; }
 }
 .game {
+  width: 100%;
   height: 100vh;
   height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
@@ -203,29 +225,36 @@ html:has(.game-page), .game-page { height: 100%; }
 .hud-round-num { font: 1.7rem/1 var(--font-display); }
 
 .stage {
-  flex: 1 1 auto;
+  flex: 1 1 0;
+  width: 100%;
+  height: 100%;
   min-height: 0;
   display: grid;
   place-items: center;
-  padding: 8px 12px;
+  padding: 4px 8px 6px;
   touch-action: none;
 }
 #desk {
   display: block;
-  border-radius: 14px;
-  box-shadow: 0 0 0 5px var(--oak-dark), 0 18px 36px rgba(0, 0, 0, 0.5);
+  border-radius: 16px;
+  box-shadow:
+    0 0 0 4px rgba(54, 31, 15, .95),
+    0 0 0 7px rgba(126, 78, 35, .42),
+    0 22px 42px rgba(0, 0, 0, .58),
+    0 4px 8px rgba(255, 218, 160, .08) inset;
   touch-action: none;
   cursor: grab;
 }
 .is-aiming #desk { cursor: grabbing; }
 
 .controls {
+  flex: 0 0 auto;
   display: grid;
   grid-template-columns: auto 1fr auto;
   grid-template-areas: 'turn power actions' 'hint hint actions';
   align-items: center;
   gap: 8px 14px;
-  padding: 6px 14px 14px;
+  padding: 5px 14px 12px;
 }
 .turn {
   grid-area: turn; padding: 8px 14px; font: 1rem/1 var(--font-display); letter-spacing: 0.04em; color: #fff;
@@ -239,7 +268,7 @@ html:has(.game-page), .game-page { height: 100%; }
   background-size: calc(100% / max(var(--power), 0.02)) 100%;
   will-change: transform;
 }
-.hint { grid-area: hint; margin: 0; font-size: 0.95rem; opacity: 0.85; }
+.hint { grid-area: hint; margin: 0; font-size: 0.9rem; opacity: 0.82; text-shadow: 0 1px 2px rgba(0,0,0,.5); }
 .actions { grid-area: actions; display: flex; gap: 10px; }
 .game-page .btn { box-shadow: 0 4px 0 rgba(0, 0, 0, 0.45); }
 .game-page .btn:focus-visible { outline-color: var(--hi); }
@@ -329,3 +358,192 @@ dialog > .btn-small { width: 100%; }
 .confetti { position: fixed; inset: 0; z-index: 16; overflow: hidden; pointer-events: none; }
 .confetti span { position: absolute; top: -20px; width: 10px; height: 16px; border-radius: 2px; animation: confetti-fall linear forwards; }
 @keyframes confetti-fall { to { transform: translate(var(--drift), 110vh) rotate(720deg); } }
+
+/* ===================== v0.3 classroom edition ===================== */
+.menu-page {
+  color: #2a241b;
+  background-color: #b7b19a;
+  background-image:
+    linear-gradient(rgba(70,62,43,.28) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(70,62,43,.28) 2px, transparent 2px),
+    linear-gradient(135deg, rgba(255,255,255,.08), transparent 50%);
+  background-size: 58px 52px, 58px 52px, 100% 100%;
+}
+.menu {
+  position: relative;
+}
+.menu::before {
+  content: 'STD 9-A   •   CLASSROOM PEN FIGHT';
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 7px 16px;
+  color: #d9dfd2;
+  background: #19301f;
+  border: 5px solid #5a3920;
+  border-radius: 3px;
+  box-shadow: 0 8px 0 rgba(30,20,10,.2);
+  font: 700 .72rem/1 var(--font-body);
+  letter-spacing: .12em;
+}
+.hero { filter: drop-shadow(0 9px 5px rgba(35,20,8,.25)); }
+.title { color: #332619; text-shadow: 3px 4px 0 rgba(255,224,167,.65); }
+.title-desk { text-shadow: 4px 4px 0 #2b5e9d; }
+.title-duel { text-shadow: 4px 4px 0 #9d302c; }
+.subtitle { background: linear-gradient(transparent 38%, #e2c55d 38%, #e2c55d 88%, transparent 88%); }
+.menu-buttons .btn {
+  color: #332619;
+  background: #eadfc8;
+  border-color: #3b2a1b;
+  box-shadow: 0 5px 0 #3b2a1b;
+}
+.menu-buttons .btn-primary { color: #fff; background: #2f5f9f; }
+.menu-buttons .btn.is-soon { background: #d8ccb3; }
+.tag { color: #332619; background: #e2c55d; }
+
+.game-page {
+  color: #2c251b;
+  background: #b7b19a;
+}
+.game {
+  background:
+    linear-gradient(rgba(80,72,51,.26) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(80,72,51,.26) 2px, transparent 2px),
+    #b7b19a;
+  background-size: 58px 52px;
+}
+.hud {
+  color: #f5ead5;
+  background: linear-gradient(180deg, rgba(48,31,18,.92), rgba(70,43,22,.82));
+  border-bottom: 4px solid rgba(30,18,10,.5);
+}
+.hud-name { text-shadow: 1px 2px 0 rgba(0,0,0,.35); }
+.hud-p1 .hud-name { color: #86b9ff; }
+.hud-p2 .hud-name { color: #ff9d96; }
+.hud-score {
+  color: #332619;
+  background: #eadfc8;
+  border-color: #3b2a1b;
+  box-shadow: 0 4px 0 rgba(0,0,0,.3);
+}
+.hud-round-label { color: #d6c6a9; }
+.hud-round-num { color: #f5ead5; }
+.stage { background: transparent; }
+#desk {
+  border-radius: 0;
+  box-shadow: 0 10px 28px rgba(20,13,7,.42);
+}
+.controls {
+  color: #f5ead5;
+  background: rgba(48,31,18,.92);
+  border-top: 4px solid rgba(30,18,10,.48);
+}
+.turn {
+  color: #fff;
+  background: #2f5f9f;
+  border: 2px solid rgba(255,255,255,.18);
+}
+.turn[data-side='p2'] { background: #9d302c; }
+.power { background: rgba(255,255,255,.18); }
+.hint { color: #eadfc8; }
+.actions .btn {
+  color: #332619;
+  background: #eadfc8;
+  border-color: #2f2317;
+}
+
+/* Classroom-style dialogs */
+dialog {
+  color: #332619;
+  background: #eadfc8;
+  border-color: #3b2a1b;
+  box-shadow: 0 8px 0 #3b2a1b;
+}
+dialog::backdrop { background: rgba(24,22,15,.62); }
+.seg { border-color: #3b2a1b; background: #f4ead6; }
+.seg button { color: #332619; }
+.seg button[aria-pressed='true'] { background: #2f5f9f; }
+.overlay { background: rgba(35,28,18,.62); }
+.overlay .card { color: #332619; background: #eadfc8; border-color: #3b2a1b; box-shadow: 0 8px 0 #3b2a1b; }
+.overlay .card[data-side='p1'] h2 { color: #2f5f9f; }
+.overlay .card[data-side='p2'] h2 { color: #9d302c; }
+.ov-stats li { background: #f4ead6; border-color: #3b2a1b; }
+.banner { background: #17301f; border-color: #e2c55d; }
+
+@media (max-width: 700px) {
+  .menu::before { font-size: .58rem; top: 10px; }
+  .hud { padding-top: 7px; }
+  .hud-score { min-width: 40px; height: 40px; }
+}
+
+/* v0.4 layout fix: desktop uses the whole viewport; the playable desk is the visual focus. */
+@media (min-width: 701px) and (min-height: 521px) {
+  .hud { padding: 8px 18px 6px; }
+  .stage { padding: 10px 18px; }
+  .controls { padding: 8px 18px 14px; }
+  .hint { font-size: .9rem; }
+}
+
+/* v0.5: true full-viewport game layout.
+   The game shell is pinned to the viewport so no unused page area can appear
+   underneath it. The classroom stage expands between the HUD and controls. */
+html:has(.game-page),
+body.game-page {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body.game-page {
+  position: fixed;
+  inset: 0;
+}
+
+.game-page .game {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+.game-page .hud {
+  flex: none;
+  min-height: 0;
+  z-index: 3;
+}
+
+.game-page .stage {
+  min-height: 0;
+  height: auto;
+  flex: none;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 6px 12px;
+}
+
+.game-page #desk {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.game-page .controls {
+  flex: none;
+  min-height: 0;
+  z-index: 3;
+}
+
+/* On wide screens make the classroom/desk scene use the available height
+   instead of collapsing into a short strip. */
+@media (min-width: 900px) and (min-height: 650px) {
+  .game-page .stage { padding: 10px 22px; }
+  .game-page #desk { width: min(96vw, 1240px) !important; height: auto !important; }
+}
