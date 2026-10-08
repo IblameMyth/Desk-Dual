@@ -59,7 +59,10 @@ export function planShot(levelNumber, me, opp, size, playArea = { x: 0, y: 0, w:
 
   const targetExtra = 28 + rand() * 55;
   const desired = dist + targetExtra;
-  let power = speedForDistance(desired, penMaxSpeed) / penMaxSpeed;
+  // Convert target launch speed back through the same sub-linear flick curve
+  // used by PhysicsWorld.flick(). This keeps AI shot strength consistent with
+  // the same drag/release power model used by human players in Friends mode.
+  let power = Math.pow(speedForDistance(desired, penMaxSpeed) / penMaxSpeed, 1 / 1.12);
   power = clamp(power * (0.96 + rand() * 0.10), cfg.powerMin, cfg.powerMax);
 
   // Avoid suicidal full-power shots when the launch direction points toward an edge.

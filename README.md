@@ -30,3 +30,10 @@ Everything lives in `CONFIG` at the top of `js/physics.js`
 
 ### Physics update
 The current build uses a higher full-power launch speed, reduced air drag, more realistic desk friction/static friction, softer pen-to-pen impacts, and a Trimax-style procedural ballpoint model.
+
+### Shot speed & pen progression
+
+- Base shot speed is **50% faster** than the previous tuning.
+- Higher-level pens have progressively higher launch strength.
+- Level 1 is about **31% weaker than Level 10**, with smooth increases between levels.
+- The same strength values are used by AI and Friends mode, so pen power stays consistent across modes.

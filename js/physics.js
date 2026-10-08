@@ -27,7 +27,8 @@ export const CONFIG = {
   angularDamping: 0.985,
   maxPull: 175,
   minPull: 12,
-  maxSpeed: 12.6,
+  // Shot speed increased by 50% from the previous 12.6 reference.
+  maxSpeed: 18.9,
   spinFactor: 1 / 5200,
   maxSpin: 0.62,
   grabPadding: 18,
@@ -46,7 +47,15 @@ export class PhysicsWorld {
   constructor(width, height, playArea = null) {
     this.size = { w: width, h: height };
     this.playArea = playArea || { x: 0, y: 0, w: width, h: height };
-    this.engine = Engine.create({ gravity: { x: 0, y: 0, scale: 0 } });
+    this.engine = Engine.create({
+      gravity: { x: 0, y: 0, scale: 0 },
+      // More solver passes reduce residual overlap when two thin pens hit at
+      // an angle, especially during strong shots on mobile browsers.
+      positionIterations: 8,
+      velocityIterations: 6,
+      constraintIterations: 2,
+      enableSleeping: false,
+    });
     this.pens = new Map();
     this.walls = [];
     this.accumulator = 0;

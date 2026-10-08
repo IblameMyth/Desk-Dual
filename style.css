@@ -394,13 +394,16 @@ body.game-page { min-height: 100vh; min-height: 100dvh; height: 100%; margin: 0;
   height: 100%;
   min-height: 0;
   display: grid;
-  place-items: center;
-  padding: 4px 8px 6px;
+  place-items: stretch;
+  padding: 0;
+  overflow: hidden;
   touch-action: none;
 }
 #desk {
   display: block;
-  border-radius: 16px;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
   box-shadow:
     0 0 0 4px rgba(54, 31, 15, .95),
     0 0 0 7px rgba(126, 78, 35, .42),

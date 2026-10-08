@@ -19,3 +19,9 @@
 
 ### Mobile viewport black-flash fix
 The game canvas now keeps its internal bitmap resolution tied to the physics world instead of resizing the bitmap whenever a mobile browser changes its CSS viewport. This prevents the one-frame black canvas flash seen during play while preserving the existing classroom scaling and gameplay physics.
+
+
+## AI mode now follows Friends-mode gameplay
+- AI matches use the same landscape/portrait pen spawn lanes as two-player Friends mode.
+- AI shot planning now inverses the same 1.12 launch-power curve used by `PhysicsWorld.flick`, so its planned travel distance better matches actual gameplay.
+- AI remains the only mode-specific behavior; physics simulation, collisions, friction, 120 Hz fixed steps, and human drag/release controls are shared.

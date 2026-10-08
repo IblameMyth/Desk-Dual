@@ -34,7 +34,7 @@ function spawnFor(i, portrait, count) {
   // flick, normal physics is free to rotate them naturally.
   const portraitSpawns = [
     [.50,.18,0],
-    [.50,.82,Math.PI],
+    [.50,.72,Math.PI],
     [.25,.50,0],
     [.75,.50,Math.PI],
     [.50,.50,0]
@@ -214,7 +214,10 @@ export async function startFriendsGame() {
     const ch=stage.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
     if(cw<50||ch<50)return;
     const d=cw<ch?CONFIG.desk.portrait:CONFIG.desk.landscape;
-    const scale=Math.min(cw/d.w,ch/d.h), cssW=Math.floor(d.w*scale), cssH=Math.floor(d.h*scale);
+    // Match AI mode: fill the whole available stage with the 2D classroom scene.
+    // Keep the fixed physics-world dimensions and map pointer input through the
+    // canvas bounds, so visual scaling does not alter shot power or collisions.
+    const cssW=Math.floor(cw), cssH=Math.floor(ch);
     canvas.style.width=`${cssW}px`; canvas.style.height=`${cssH}px`;
     const dpr=Math.min(devicePixelRatio||1,settings.graphics==='low'?1:2);
     const first=!physics;

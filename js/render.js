@@ -213,8 +213,21 @@ export class DeskRenderer {
     const sourceH = imageReady ? img.naturalHeight : W;
     const sourceRatio = imageReady ? sourceH / sourceW : W / L;
     const portraitSource = imageReady && sourceH > sourceW * 1.25;
-    const drawW = imageReady ? (portraitSource ? L * (sourceW / sourceH) : L) : L;
-    const drawH = imageReady ? (portraitSource ? L : L * sourceRatio) : W;
+    // Keep the visible model inside the same length/width footprint as its
+    // Matter.js collision body. Some supplied photos are taller than the
+    // physics rectangle; drawing them at full length made two pens appear to
+    // cross even when their collision boxes had already separated.
+    let drawW = imageReady ? (portraitSource ? L * (sourceW / sourceH) : L) : L;
+    let drawH = imageReady ? (portraitSource ? L : L * sourceRatio) : W;
+    if (imageReady && portraitSource && drawW > W) {
+      const scale = W / drawW;
+      drawW *= scale;
+      drawH *= scale;
+    } else if (imageReady && !portraitSource && drawH > W) {
+      const scale = W / drawH;
+      drawW *= scale;
+      drawH *= scale;
+    }
 
     // No artificial pen contact shadow: the supplied pen model is rendered cleanly.
     ctx.rotate(angle);

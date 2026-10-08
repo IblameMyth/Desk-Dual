@@ -1,13 +1,15 @@
 // Data-driven pen collection and 10-level AI ladder.
 export const PENS = [
-  { id: 'pen1', level: 1, name: 'Ball Pen', asset: './assets/pens/pen1.png', value: 1, strength: 0.92 },
-  { id: 'pen2', level: 2, name: 'Pentonic', asset: './assets/pens/pen2.png', value: 2, strength: 0.96 },
-  { id: 'pen3', level: 3, name: 'Writometer', asset: './assets/pens/pen3.png', value: 3, strength: 1.00 },
-  { id: 'pen4', level: 4, name: 'V5', asset: './assets/pens/pen4.png', value: 4, strength: 1.04 },
-  { id: 'pen5', level: 5, name: 'V7', asset: './assets/pens/pen5.png', value: 5, strength: 1.08 },
-  { id: 'pen6', level: 6, name: 'Uni-ball', asset: './assets/pens/pen6.png', value: 6, strength: 1.12 },
-  { id: 'pen7', level: 7, name: 'Reynolds Trimax', asset: './assets/pens/pen7.png', value: 7, strength: 1.16 },
-  { id: 'pen8', level: 8, name: 'Fountain Pen', asset: './assets/pens/pen8.png', value: 8, strength: 1.20 },
+  // Higher-level pens are intentionally stronger. Level 1 is ~31% weaker
+  // than Level 10, with a smooth power increase between each level.
+  { id: 'pen1', level: 1, name: 'Ball Pen', asset: './assets/pens/pen1.png', value: 1, strength: 0.88 },
+  { id: 'pen2', level: 2, name: 'Pentonic', asset: './assets/pens/pen2.png', value: 2, strength: 0.92 },
+  { id: 'pen3', level: 3, name: 'Writometer', asset: './assets/pens/pen3.png', value: 3, strength: 0.97 },
+  { id: 'pen4', level: 4, name: 'V5', asset: './assets/pens/pen4.png', value: 4, strength: 1.01 },
+  { id: 'pen5', level: 5, name: 'V7', asset: './assets/pens/pen5.png', value: 5, strength: 1.06 },
+  { id: 'pen6', level: 6, name: 'Uni-ball', asset: './assets/pens/pen6.png', value: 6, strength: 1.10 },
+  { id: 'pen7', level: 7, name: 'Reynolds Trimax', asset: './assets/pens/pen7.png', value: 7, strength: 1.15 },
+  { id: 'pen8', level: 8, name: 'Fountain Pen', asset: './assets/pens/pen8.png', value: 8, strength: 1.19 },
   { id: 'pen9', level: 9, name: 'Reynolds Trimax Gold', asset: './assets/pens/pen9.png', value: 9, strength: 1.24 },
   { id: 'pen10', level: 10, name: 'Classic Gold', asset: './assets/pens/pen10.png', value: 10, strength: 1.28 },
 ];
@@ -25,7 +27,7 @@ export const AI_LEVELS = [
   { level: 10, name: 'Vedant', penId: 'pen10', errorDeg: 2.8, powerMin: .58, powerMax: .94, edgeAwareness: .82, think: [440, 720] },
 ];
 
-export const STARTER = { id: 'starter', name: 'Starter Pencil', asset: './assets/user-pencil.png', value: 0, strength: 0.88 };
+export const STARTER = { id: 'starter', name: 'Starter Pencil', asset: './assets/user-pencil.png', value: 0, strength: 0.84 };
 export const PEN_BY_ID = Object.fromEntries(PENS.map(p => [p.id, p]));
 export const AI_BY_LEVEL = Object.fromEntries(AI_LEVELS.map(l => [l.level, l]));
 

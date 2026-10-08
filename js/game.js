@@ -31,17 +31,16 @@ const players = [
 ];
 
 function spawnFor(index, portrait) {
-  // Start both pens perfectly parallel and comfortably separated.  This is
-  // intentionally identical to the smooth Friends-mode setup so the AI mode
-  // never starts with the long pen artwork visually crossing or jittering.
+  // Use the exact two-player spawn lanes from Friends mode. Only the opponent's
+  // decision-making differs in AI mode; starting positions and physics rules do not.
   if (portrait) {
     return index === 0
-      ? { fx: 0.5, fy: 0.73, angle: 0 }
-      : { fx: 0.5, fy: 0.27, angle: Math.PI };
+      ? { fx: 0.50, fy: 0.18, angle: 0 }
+      : { fx: 0.50, fy: 0.72, angle: Math.PI };
   }
   return index === 0
-    ? { fx: 0.30, fy: 0.50, angle: 0 }
-    : { fx: 0.70, fy: 0.50, angle: Math.PI };
+    ? { fx: 0.22, fy: 0.25, angle: 0 }
+    : { fx: 0.78, fy: 0.25, angle: Math.PI };
 }
 
 async function main() {
@@ -114,17 +113,12 @@ async function main() {
 
     const d = cw < ch ? CONFIG.desk.portrait : CONFIG.desk.landscape; // portrait screens get a portrait desk
 
-    // Desktop landscape: use a cover-style fit so the classroom scene fills
-    // the whole available stage instead of leaving large empty side bands.
-    // The physics world stays exactly the same (1400x800); only the rendered
-    // classroom canvas is allowed to extend slightly beyond the stage and is
-    // clipped by the stage. Portrait/mobile keeps the safer contain fit.
-    const landscapeCover = d === CONFIG.desk.landscape && cw > ch;
-    const scale = landscapeCover
-      ? Math.max(cw / d.w, ch / d.h)
-      : Math.min(cw / d.w, ch / d.h);
-    const cssW = Math.floor(d.w * scale);
-    const cssH = Math.floor(d.h * scale);
+    // Fill the entire available stage: no centered letterbox / empty side bands.
+    // Keep the same 2D procedural classroom renderer and physics-world dimensions;
+    // pointer coordinates are mapped through the canvas bounds below, so input
+    // continues to line up with the rendered scene on desktop and Android.
+    const cssW = Math.floor(cw);
+    const cssH = Math.floor(ch);
     canvas.style.width = `${cssW}px`;
     canvas.style.height = `${cssH}px`;
     const dpr = Math.min(window.devicePixelRatio || 1, settings.graphics === 'low' ? 1 : 2);
