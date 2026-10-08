@@ -8,8 +8,8 @@ const { Engine, Bodies, Body, Composite, Events } = window.Matter;
 export const CONFIG = {
   // The canvas is the whole classroom. `playArea` is the actual desk.
   desk: {
-    landscape: { w: 1400, h: 800, playArea: { x: 485, y: 90, w: 430, h: 620 } },
-    portrait: { w: 800, h: 1200, playArea: { x: 120, y: 105, w: 560, h: 990 } },
+    landscape: { w: 1400, h: 800, playArea: { x: 470, y: 75, w: 460, h: 650 } },
+    portrait: { w: 800, h: 1200, playArea: { x: 105, y: 90, w: 590, h: 1020 } },
   },
   pen: {
     length: 122,

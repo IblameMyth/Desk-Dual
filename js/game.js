@@ -39,8 +39,8 @@ function spawnFor(index, portrait) {
       : { fx: 0.50, fy: 0.72, angle: Math.PI };
   }
   return index === 0
-    ? { fx: 0.22, fy: 0.25, angle: 0 }
-    : { fx: 0.78, fy: 0.25, angle: Math.PI };
+    ? { fx: 0.50, fy: 0.18, angle: 0 }
+    : { fx: 0.50, fy: 0.72, angle: Math.PI };
 }
 
 async function main() {

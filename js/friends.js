@@ -40,10 +40,10 @@ function spawnFor(i, portrait, count) {
     [.50,.50,0]
   ];
   const landscapeSpawns = [
-    [.22,.25,0],
-    [.78,.25,Math.PI],
-    [.22,.75,0],
-    [.78,.75,Math.PI],
+    [.50,.18,0],
+    [.50,.72,Math.PI],
+    [.25,.50,0],
+    [.75,.50,Math.PI],
     [.50,.50,0]
   ];
   const list = portrait ? portraitSpawns : landscapeSpawns;
