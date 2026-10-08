@@ -476,7 +476,6 @@ dialog::backdrop { background: rgba(24,22,15,.62); }
   .hud { padding-top: 7px; }
   .hud-score { min-width: 40px; height: 40px; }
 }
-<<<<<<< HEAD
 
 /* v0.4 layout fix: desktop uses the whole viewport; the playable desk is the visual focus. */
 @media (min-width: 701px) and (min-height: 521px) {
@@ -548,5 +547,3 @@ body.game-page {
   .game-page .stage { padding: 10px 22px; }
   .game-page #desk { width: min(96vw, 1240px) !important; height: auto !important; }
 }
-=======
->>>>>>> f8ba19dcf5439849741a6a8ecfb048d3b2f87de3
