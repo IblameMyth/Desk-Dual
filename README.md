@@ -11,6 +11,7 @@ npm install
 npm run dev
 ```
 
+<<<<<<< HEAD
 Open http://localhost:3000
 
 To test on a phone, put it on the same Wi-Fi and open `http://<your-computer-LAN-IP>:3000`.
@@ -40,6 +41,9 @@ The current build uses a higher full-power launch speed, reduced air drag, more 
 
 
 ## Account sign-in (Google + mobile OTP)
+=======
+## 🚀 Deploy to Vercel
+>>>>>>> 2a06aea2685b0d70d2cbc1fb3052e33de569d623
 
 The classroom-themed **SIGN IN / ACCOUNT** page supports Google sign-in and phone-number SMS verification through Firebase Authentication. To activate it:
 
