@@ -1,10 +1,27 @@
-import { initializeApp } from "firebase/app";
+
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
+
 const firebaseConfig = {
-  apiKey: "AIzaSyDuqpSGUSgVXOEJaVY6I14wQ7k8uF5rjr0",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "desk-dual.firebaseapp.com",
   projectId: "desk-dual",
   storageBucket: "desk-dual.firebasestorage.app",
   messagingSenderId: "235869021159",
   appId: "1:235869021159:web:bad4613fd12cd538155342"
 };
-const app = initializeApp(firebaseConfig);
+
+// Prevent duplicate Firebase initialization
+export const app = getApps().length
+  ? getApp()
+  : initializeApp(firebaseConfig);
+
+// Firebase Authentication
+export const auth = getAuth(app);
+export const googleProvider = new GoogleAuthProvider();
+
+// Export configuration for other files
+export { firebaseConfig };
+export const isFirebaseConfigured = Boolean(firebaseConfig.apiKey);
+
+export default app;
