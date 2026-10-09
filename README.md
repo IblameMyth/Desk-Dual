@@ -75,38 +75,6 @@ Desk-Duel/
 └── vercel.json            # Vercel routing configuration
 ```
 
-## 💻 Run Locally
-
-### Requirements
-
-- Node.js 18 or newer
-- npm
-
-### Steps
-
-1. Clone this repository:
-
-   ```bash
-   git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
-   cd YOUR-REPOSITORY
-   ```
-
-2. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-3. Start the local server:
-
-   ```bash
-   npm run dev
-   ```
-
-4. Open [http://localhost:3000](http://localhost:3000).
-
-> **Note:** This project uses a simple static HTTP server. You do not need a database or Firebase to play the current no-sign-in version.
-
 ## 🚀 Deploy to Vercel
 
 1. Push the project to a GitHub repository.
