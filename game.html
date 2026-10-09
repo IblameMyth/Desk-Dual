@@ -15,7 +15,7 @@
   <div class="game">
     <header class="blackboard-score" aria-label="Pen Fight classroom blackboard scoreboard">
       <div class="chalk-class">STD 9-A<br><span>SUB : MATHS</span></div>
-      <div class="chalk-date">DATE : <span id="board-date">8/10</span><br><span>H.W.</span><br><small>CH. 6 · Q. 1-5</small></div>
+      <div class="chalk-date">DATE : <span id="board-date">--/--</span><br><span>H.W.</span><br><small>CH. 6 · Q. 1-5</small></div>
       <div class="chalk-thought">Thought for the Day<br><em>“Practice makes a man perfect”</em></div>
 
       <section class="chalk-scorebox">
@@ -65,5 +65,26 @@
     </div>
   </div>
 <script type="module" src="js/game.js"></script>
+
+<script>
+// Keep the classroom blackboard date synced with the user's real local date.
+(() => {
+  const el = document.getElementById('board-date');
+  if (!el) return;
+  const updateBoardDate = () => {
+    const now = new Date();
+    el.textContent = `${now.getDate()}/${now.getMonth() + 1}`;
+    el.dateTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  };
+  updateBoardDate();
+  // Recheck after midnight in case the game remains open overnight.
+  const scheduleNextDateRefresh = () => {
+    const now = new Date();
+    const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 1);
+    window.setTimeout(() => { updateBoardDate(); scheduleNextDateRefresh(); }, Math.max(1000, next - now));
+  };
+  scheduleNextDateRefresh();
+})();
+</script>
 </body>
 </html>
