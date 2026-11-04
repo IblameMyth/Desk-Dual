@@ -32,6 +32,6 @@ document.getElementById('add-player').addEventListener('click',()=>{ if(players.
 document.getElementById('start-friends').addEventListener('click',()=>{
   players=players.map((p,i)=>({name:(p.name||`PLAYER ${i+1}`).trim().replace(/\s+/g,' ').slice(0,16)||`PLAYER ${i+1}`,penId:PENS.some(x=>x.id===p.penId)?p.penId:PENS[i%PENS.length].id}));
   localStorage.setItem(KEY,JSON.stringify({players}));
-  location.href='game.html?mode=friends';
+  location.href='penfight.html?mode=friends';
 });
 render();

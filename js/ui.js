@@ -122,7 +122,7 @@ export function createHud() {
       p.textContent = message;
       const a = document.createElement('a');
       a.className = 'btn btn-small';
-      a.href = 'index.html';
+      a.href = 'penfight.html';
       a.textContent = 'BACK TO MENU';
       box.append(p, a);
     },

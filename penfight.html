@@ -10,92 +10,67 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/matter-js@0.20.0/build/matter.min.js"></script>
+  <style>
+    .app-view[hidden] { display: none !important; }
+    .levels-page { min-height: 100vh; min-height: 100dvh; background: linear-gradient(#f3f7ff,#e8eef9); padding: 28px 18px 40px; }
+    .levels-wrap { width: min(1050px,100%); margin: auto; }
+    .levels-head { display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:18px; }
+    .levels-title { margin:0; font:clamp(2.6rem,7vw,4.8rem)/.9 var(--font-display); letter-spacing:.02em; }
+    .levels-title span { color:var(--blue); text-shadow:3px 3px 0 var(--hi); }
+    .levels-sub { margin:8px 0 0; color:var(--ink-soft); }
+    .collection { background:#fff; border:3px solid var(--ink); border-radius:18px; padding:16px; box-shadow:0 6px 0 var(--ink); margin-bottom:24px; }
+    .collection-head { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .collection-head h2 { margin:0; font:1.6rem var(--font-display); }
+    .pen-strip { display:flex; gap:12px; overflow:auto; padding:14px 2px 5px; }
+    .owned-pen { min-width:145px; border:2px solid #ccd5e7; border-radius:14px; padding:8px; background:#f7f9fd; text-align:center; }
+    .owned-pen.equipped { border-color:var(--blue); box-shadow:0 0 0 3px #dce6ff; }
+    .owned-pen img { display:block; width:120px; height:38px; object-fit:contain; margin:5px auto; }
+    .owned-pen b { font-size:.88rem; }
+    .owned-pen small { display:block; color:var(--ink-soft); margin:3px 0 7px; }
+    .level-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    .level-card { display:grid; grid-template-columns:74px 1fr auto; align-items:center; gap:14px; background:#fff; border:3px solid var(--ink); border-radius:16px; padding:12px; box-shadow:0 5px 0 var(--ink); min-height:128px; }
+    .level-card.locked { opacity:.56; filter:saturate(.4); }
+    .level-no { font:2.5rem var(--font-display); text-align:center; }
+    .level-pen { width:74px; height:46px; object-fit:contain; transform:rotate(-2deg); }
+    .level-info h3 { margin:0; font:1.55rem var(--font-display); }
+    .level-info p { margin:4px 0; color:var(--ink-soft); font-size:.9rem; }
+    .level-card .btn { min-width:104px; padding:10px 12px; min-height:44px; font-size:1rem; }
+    .badge { display:inline-block; padding:3px 7px; border-radius:999px; background:var(--hi); font-size:.7rem; font-weight:800; margin-left:5px; }
+    .levels-actions { display:flex; gap:10px; margin-top:20px; flex-wrap:wrap; }
+    .muted { color:var(--ink-soft); }
+    @media(max-width:720px) { .level-grid{grid-template-columns:1fr}.levels-head{align-items:flex-start;flex-direction:column}.level-card{grid-template-columns:62px 1fr}.level-card .btn{grid-column:2}.level-pen{width:62px} }
+  </style>
 </head>
 <body class="menu-page">
-  <main class="menu">
-    <svg class="hero" viewBox="0 0 420 110" aria-hidden="true" focusable="false">
-      <defs>
-        <g id="pen-shape">
-          <rect x="-50" y="-11" width="104" height="22" fill="var(--pen)"/>
-          <rect x="-50" y="-11" width="104" height="9" fill="#fff" opacity=".18"/>
-          <path d="M54 -11 L86 -4 L86 4 L54 11 Z" fill="var(--pen-dark)"/>
-          <path d="M86 -4 L98 -1.5 L98 1.5 L86 4 Z" fill="#d5dae2"/>
-          <rect x="-80" y="-11" width="34" height="22" rx="11" fill="var(--pen-cap)"/>
-          <rect x="-50" y="-11" width="5" height="22" fill="#ffd34d"/>
-          <rect x="-74" y="-14" width="22" height="5" rx="2.5" fill="#ffd34d"/>
-        </g>
-      </defs>
-      <use href="#pen-shape" class="hero-pen hero-pen-blue" x="105" y="55"/>
-      <g transform="translate(420 0) scale(-1 1)">
-        <use href="#pen-shape" class="hero-pen hero-pen-red" x="105" y="55"/>
-      </g>
-    </svg>
+  <a class="rrc-home-link" href="index.html">← All Games </a>
+  <section class="app-view" data-view="menu">
+    <main class="menu">
+      
+      <svg class="hero" viewBox="0 0 420 110" aria-hidden="true" focusable="false">
+        <defs><g id="pen-shape"><rect x="-50" y="-11" width="104" height="22" fill="var(--pen)"/><rect x="-50" y="-11" width="104" height="9" fill="#fff" opacity=".18"/><path d="M54 -11 L86 -4 L86 4 L54 11 Z" fill="var(--pen-dark)"/><path d="M86 -4 L98 -1.5 L98 1.5 L86 4 Z" fill="#d5dae2"/><rect x="-80" y="-11" width="34" height="22" rx="11" fill="var(--pen-cap)"/><rect x="-50" y="-11" width="5" height="22" fill="#ffd34d"/><rect x="-74" y="-14" width="22" height="5" rx="2.5" fill="#ffd34d"/></g></defs>
+        <use href="#pen-shape" class="hero-pen hero-pen-blue" x="105" y="55"/><g transform="translate(420 0) scale(-1 1)"><use href="#pen-shape" class="hero-pen hero-pen-red" x="105" y="55"/></g>
+      </svg>
+      <h1 class="title"><span class="title-desk">DESK</span> <span class="title-duel">DUEL</span></h1>
+      <p class="subtitle">Flick. Fight. Win.</p>
+      <nav class="menu-buttons" aria-label="Main menu">
+        <a class="btn btn-primary" href="penfight.html?view=levels">PLAY VS AI</a>
+        <a class="btn" href="penfight.html?view=friends">PLAY WITH FRIENDS</a>
+        <button class="btn is-soon" type="button" data-soon="Online play" aria-label="Play online, coming soon">PLAY ONLINE <span class="tag">SOON</span> <span> <button class="btn btn-small" type="button" id="btn-how">HOW TO PLAY</span></button>
+      </nav>
+    </main>
+    <dialog id="name-dialog" aria-labelledby="name-title"><h2 id="name-title">What's your name?</h2><p class="name-dialog-note">This name will be written on the classroom scoreboard.</p><form id="name-form" method="dialog"><input id="player-name-input" name="playerName" maxlength="16" autocomplete="nickname" placeholder="Enter your name" required><button class="btn btn-primary" value="continue">START GAME</button></form></dialog>
+    <dialog id="ai-dialog" aria-labelledby="ai-title"><h2 id="ai-title">AI Levels</h2><div class="diff-list"><a class="btn" href="penfight.html?mode=ai&amp;level=1">EASY <span class="diff-note">wild aim, random power</span></a><a class="btn" href="penfight.html?mode=ai&amp;level=5">MEDIUM <span class="diff-note">decent aim, sensible power</span></a><a class="btn" href="penfight.html?mode=ai&amp;level=10">HARD <span class="diff-note">sharp aim, smart power</span></a></div><button class="btn btn-small" type="button" data-close>CANCEL</button></dialog>
+    <dialog id="settings-dialog" aria-labelledby="settings-title"><h2 id="settings-title">Settings</h2><div class="setting"><span class="setting-label" id="lbl-sound">Sound</span><div class="seg" role="group" aria-labelledby="lbl-sound" data-setting="sound"><button type="button" data-value="true">ON</button><button type="button" data-value="false">OFF</button></div></div><div class="setting"><span class="setting-label" id="lbl-vib">Vibration</span><div class="seg" role="group" aria-labelledby="lbl-vib" data-setting="vibration"><button type="button" data-value="true">ON</button><button type="button" data-value="false">OFF</button></div></div><div class="setting"><span class="setting-label" id="lbl-gfx">Graphics</span><div class="seg" role="group" aria-labelledby="lbl-gfx" data-setting="graphics"><button type="button" data-value="low">LOW</button><button type="button" data-value="high">HIGH</button></div></div><div class="setting"><span class="setting-label" id="lbl-guide">Aim guide</span><div class="seg" role="group" aria-labelledby="lbl-guide" data-setting="guide"><button type="button" data-value="true">ON</button><button type="button" data-value="false">OFF</button></div></div><div class="setting"><span class="setting-label" id="lbl-theme">Theme</span><div class="seg" role="group" aria-labelledby="lbl-theme" data-setting="theme"><button type="button" data-value="light">LIGHT</button><button type="button" data-value="dark">DARK</button></div></div><button class="btn btn-primary btn-small settings-done" type="button" data-close>DONE</button></dialog>
+    <dialog id="how-dialog" aria-labelledby="how-title"><h2 id="how-title">How to play</h2><div class="demo" aria-hidden="true"><span class="demo-aim"></span><span class="demo-pen"></span></div><ol><li>Place your finger or mouse on your pen.</li><li>Drag backwards to aim.</li><li>Release to flick.</li><li>Knock your opponent's pen off the desk.</li><li>Win 3 rounds to win the match.</li></ol><button class="btn btn-primary btn-small" type="button" data-close>GOT IT</button></dialog>
+  </section>
 
-    <h1 class="title"><span class="title-desk">DESK</span> <span class="title-duel">DUEL</span></h1>
-    <p class="subtitle">Flick. Fight. Win.</p>
+  <section class="app-view" data-view="levels" hidden><main class="levels-page"><div class="levels-wrap"><header class="levels-head"><div><h1 class="levels-title">AI <span>LEVELS</span></h1><p class="levels-sub">Beat each kid. Take their pen. Climb from school pens to the final prize.</p></div><a class="btn btn-small" href="penfight.html">HOME</a></header><section class="collection"><div class="collection-head"><h2>Your Pen Collection</h2><span id="progress-text" class="muted"></span></div><div id="collection" class="pen-strip"></div></section><section id="levels" class="level-grid"></section><div class="levels-actions"><button class="btn btn-small" id="reset" type="button">RESET PROGRESS</button></div></div></main></section>
 
-    <nav class="menu-buttons" aria-label="Main menu">
-      <a class="btn btn-primary" href="levels.html">PLAY VS AI</a>
-      <a class="btn" href="friends.html">PLAY WITH FRIENDS</a>
-      <button class="btn is-soon" type="button" data-soon="Online play" aria-label="Play online, coming soon">PLAY ONLINE <span class="tag">SOON</span></button>
-      <div class="menu-row">
-        <button class="btn btn-small" type="button" id="btn-how">HOW TO PLAY</button>
-        <button class="btn btn-small" type="button" id="btn-settings">SETTINGS</button>
-      </div>
-      <div class="menu-row menu-row-info">
-        <a class="btn btn-about" href="about.html">ABOUT</a>
-        <a class="btn btn-contact" href="contact.html">CONTACT</a>
-      </div>
-</nav>
-  </main>
+  <section class="app-view" data-view="friends" hidden><main class="friends-page"><div class="friends-wrap"><header class="friends-head"><div><p class="friends-kicker">LOCAL MULTIPLAYER</p><h1>PLAY WITH <span>FRIENDS</span></h1><p>Choose 2–5 players. Every player can use any pen from your full pen list.</p></div><a class="btn btn-small" href="penfight.html">HOME</a></header><section class="friends-card"><div class="friends-card-head"><div><h2>Players</h2><small>Win 3 rounds to win the match.</small></div><div class="count-pill"><b id="player-count">2</b> / 5</div></div><div id="player-list" class="player-list"></div><div class="friends-actions"><button class="btn" id="add-player" type="button">+ ADD PLAYER</button><button class="btn btn-primary" id="start-friends" type="button">START MATCH</button></div></section><section class="friends-help"><b>How it works</b><span>Take turns flicking your own pen. If your pen falls off the desk, you're out. The last pen standing wins the round. Win 3 rounds to take the match.</span></section></div></main></section>
 
+  <section class="app-view" data-view="game" hidden><div class="game"><header class="blackboard-score" aria-label="Pen Fight classroom blackboard scoreboard"><div class="chalk-class">STD 9-A<br><span>SUB : MATHS</span></div><div class="chalk-date">DATE : <span id="board-date">--/--</span><br><span>H.W.</span><br><small>CH. 6 · Q. 1-5</small></div><div class="chalk-thought">Thought for the Day<br><em>“Practice makes a man perfect”</em></div><section class="chalk-scorebox"><div class="chalk-title">✎ PEN FIGHT <small>BEST OF 5 · FIRST TO 3</small></div><div class="chalk-match"><div class="chalk-team chalk-team-you"><span class="chalk-name" id="name1">YOU</span><span class="chalk-score" id="score1">0</span></div><span class="chalk-vs">vs</span><div class="chalk-team chalk-team-ai"><span class="chalk-name" id="name2">AI</span><span class="chalk-score" id="score2">0</span></div></div><div class="chalk-round">ROUND <span id="round">1</span> · <span id="board-win-rule">FIRST TO 3</span></div></section><div class="chalk-doodles" aria-hidden="true">♡ &nbsp; □ □ □ □ □</div><div class="chalk-sign">Mentor : Rinku</div></header><main class="stage" id="stage"><canvas id="desk" aria-label="Desk with two pens. Press your pen, drag backwards and release to flick it." role="img"></canvas></main><footer class="controls"><div class="turn" id="turn" data-side="p1">PLAYER 1 TURN</div><div class="power" id="power" role="meter" aria-label="Shot power" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="power-fill"></div></div><p class="hint" id="hint" aria-live="off">Press the pen, drag backwards, then release.</p><div class="actions"><button class="btn btn-small" type="button" id="btn-restart">RESTART</button><a class="btn btn-small" href="penfight.html">HOME</a></div></footer></div><div class="banner" id="banner" aria-live="polite"></div><div class="confetti" id="confetti" aria-hidden="true"></div><div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="ov-title" hidden><div class="card"><p class="ov-kicker" id="ov-kicker"></p><h2 id="ov-title"></h2><p class="ov-score-label" id="ov-score-label">Score</p><p class="ov-score" id="ov-score"></p><ul class="ov-stats" id="ov-stats"></ul><div class="ov-actions" id="ov-actions"></div></div></div></section>
 
-  <dialog id="name-dialog" aria-labelledby="name-title">
-    <h2 id="name-title">What's your name?</h2>
-    <p class="name-dialog-note">This name will be written on the classroom scoreboard.</p>
-    <form id="name-form" method="dialog">
-      <input id="player-name-input" name="playerName" maxlength="16" autocomplete="nickname" placeholder="Enter your name" required>
-      <button class="btn btn-primary" value="continue">START GAME</button>
-    </form>
-  </dialog>
-
-  <dialog id="ai-dialog" aria-labelledby="ai-title">
-    <h2 id="ai-title">AI Levels</h2>
-    <div class="diff-list">
-      <a class="btn" href="game.html?mode=ai&amp;diff=easy">EASY <span class="diff-note">wild aim, random power</span></a>
-      <a class="btn" href="game.html?mode=ai&amp;diff=medium">MEDIUM <span class="diff-note">decent aim, sensible power</span></a>
-      <a class="btn" href="game.html?mode=ai&amp;diff=hard">HARD <span class="diff-note">sharp aim, smart power</span></a>
-    </div>
-    <button class="btn btn-small" type="button" data-close>CANCEL</button>
-  </dialog>
-
-  <dialog id="settings-dialog" aria-labelledby="settings-title">
-    <h2 id="settings-title">Settings</h2>
-    <div class="setting"><span class="setting-label" id="lbl-sound">Sound</span>
-      <div class="seg" role="group" aria-labelledby="lbl-sound" data-setting="sound"><button type="button" data-value="true">ON</button><button type="button" data-value="false">OFF</button></div></div>
-    <div class="setting"><span class="setting-label" id="lbl-vib">Vibration</span>
-      <div class="seg" role="group" aria-labelledby="lbl-vib" data-setting="vibration"><button type="button" data-value="true">ON</button><button type="button" data-value="false">OFF</button></div></div>
-    <div class="setting"><span class="setting-label" id="lbl-gfx">Graphics</span>
-      <div class="seg" role="group" aria-labelledby="lbl-gfx" data-setting="graphics"><button type="button" data-value="low">LOW</button><button type="button" data-value="high">HIGH</button></div></div>
-    <div class="setting"><span class="setting-label" id="lbl-guide">Aim guide</span>
-      <div class="seg" role="group" aria-labelledby="lbl-guide" data-setting="guide"><button type="button" data-value="true">ON</button><button type="button" data-value="false">OFF</button></div></div>
-    <div class="setting"><span class="setting-label" id="lbl-theme">Theme</span>
-      <div class="seg" role="group" aria-labelledby="lbl-theme" data-setting="theme"><button type="button" data-value="light">LIGHT</button><button type="button" data-value="dark">DARK</button></div></div>
-    <button class="btn btn-primary btn-small settings-done" type="button" data-close>DONE</button>
-  </dialog>
-
-  <dialog id="how-dialog" aria-labelledby="how-title">
-    <h2 id="how-title">How to play</h2>
-    <div class="demo" aria-hidden="true"><span class="demo-aim"></span><span class="demo-pen"></span></div>
-    <ol>
-      <li>Place your finger or mouse on your pen.</li>
-      <li>Drag backwards to aim.</li>
-      <li>Release to flick.</li>
-      <li>Knock your opponent's pen off the desk.</li>
-      <li>Win 3 rounds to win the match.</li>
-    </ol>
-    <button class="btn btn-primary btn-small" type="button" data-close>GOT IT</button>
-  </dialog>
-<script type="module" src="js/main.js"></script>
+  <script type="module" src="js/penfight.js"></script>
 </body>
 </html>

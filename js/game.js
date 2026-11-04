@@ -66,7 +66,7 @@ async function main() {
   let slideLevel = -1;
 
   const progress = loadProgress();
-  if (MODE === 'ai' && LEVEL > progress.unlockedLevel) { location.replace('levels.html'); return; }
+  if (MODE === 'ai' && LEVEL > progress.unlockedLevel) { location.replace('penfight.html?view=levels'); return; }
   const playerPen = progress.equipped === 'starter' ? STARTER : PEN_BY_ID[progress.equipped] || STARTER;
   const opponentPen = MODE === 'ai' ? PEN_BY_ID[AI_BY_LEVEL[LEVEL].penId] : STARTER;
   document.title = `Desk Duel - ${MODE === 'ai' ? `Level ${LEVEL} vs ${AI_BY_LEVEL[LEVEL].name}` : 'Local 2 player'}`;
@@ -273,14 +273,14 @@ async function main() {
     const next = Math.min(10, LEVEL + 1);
     const buttons = [];
     if (playerWon && LEVEL < 10) {
-      buttons.push({ label: `NEXT: LEVEL ${next}`, primary: true, onClick: () => (location.href = `game.html?mode=ai&level=${next}`) });
+      buttons.push({ label: `NEXT: LEVEL ${next}`, primary: true, onClick: () => (location.href = `penfight.html?mode=ai&level=${next}`) });
     } else if (playerWon && LEVEL === 10) {
       buttons.push({ label: 'PLAY AGAIN', primary: true, onClick: restartMatch });
     } else {
       buttons.push({ label: 'TRY AGAIN', primary: true, onClick: restartMatch });
     }
-    buttons.push({ label: 'PEN COLLECTION', onClick: () => (location.href = 'levels.html') });
-    buttons.push({ label: 'MAIN MENU', onClick: () => (location.href = 'index.html') });
+    buttons.push({ label: 'PEN COLLECTION', onClick: () => (location.href = 'penfight.html?view=levels') });
+    buttons.push({ label: 'MAIN MENU', onClick: () => (location.href = 'penfight.html') });
     ui.showOverlay({
       kicker: playerWon ? 'PEN CAPTURED' : 'MATCH COMPLETE',
       title: playerWon ? `🏆 ${players[winner].name} WINS` : `💥 ${players[winner].name} WINS`,

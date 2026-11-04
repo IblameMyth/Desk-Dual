@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#6e3e1e"><meta name="description" content="Play Raja Rani Chor Sipahi on Desk Dual.">
+  <title>Raja Rani Chor Sipahi - Desk Dual</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"><link rel="stylesheet" href="raja-rani.css">
+</head>
+<body class="menu-page rrc-page">
+   <main class="menu rrc-menu" id="main-menu">
+    <a class="rrc-home-link" href="index.html">← ALL GAMES</a>
+    <div class="classroom-label">STD 9-A • CLASSROOM SPECIAL</div>
+    <svg class="hero" viewBox="0 0 420 110" aria-hidden="true" focusable="false">
+      <defs><g id="rrc-pen-shape"><rect x="-50" y="-11" width="104" height="22" fill="var(--pen)"/><rect x="-50" y="-11" width="104" height="9" fill="#fff" opacity=".18"/><path d="M54 -11 L86 -4 L86 4 L54 11 Z" fill="var(--pen-dark)"/><path d="M86 -4 L98 -1.5 L98 1.5 L86 4 Z" fill="#d5dae2"/><rect x="-80" y="-11" width="34" height="22" rx="11" fill="var(--pen-cap)"/><rect x="-50" y="-11" width="5" height="22" fill="#ffd34d"/><rect x="-74" y="-14" width="22" height="5" rx="2.5" fill="#ffd34d"/></g></defs>
+      <use href="#rrc-pen-shape" class="hero-pen hero-pen-blue" x="105" y="55"/><g transform="translate(420 0) scale(-1 1)"><use href="#rrc-pen-shape" class="hero-pen hero-pen-red" x="105" y="55"/></g>
+    </svg>
+    <h1 class="title rrc-brand-title"><span class="title-desk">RAJA RANI</span><br><span class="title-duel">CHOR SIPAHI</span></h1>
+    <p class="subtitle">Think. Vote. Catch the Chor.</p>
+    <nav class="menu-buttons" aria-label="Raja Rani game menu">
+      <button class="btn btn-primary" id="open-ai" type="button">PLAY WITH AI</button>
+      <button class="btn" id="open-friends" type="button">PLAY WITH FRIENDS</button>
+      <button class="btn is-soon" type="button" data-soon="Online play" aria-label="Play online, coming soon">PLAY ONLINE <span class="tag">SOON</span></button>
+      <button class="btn btn-small" id="open-how" type="button">HOW TO PLAY</button>
+        
+  </main>
+  </main>
+
+  <main class="rrc-play hidden" id="play-area">
+    <header class="rrc-play-head"><a href="raja-rani.html" class="rrc-home-link">← HOME</a><button class="rrc-menu-return" id="back-menu" type="button">MAIN MENU</button><div class="classroom-label">STD 9-A • RAJA RANI CHOR SIPAHI</div></header>
+    <section class="rrc-panel hidden" id="ai-panel">
+      <h2>Play with AI</h2><p class="rrc-muted">Three Indian classmates will play against you. All four players vote every round.</p>
+      <label class="rrc-field">Your name<input id="human-name" maxlength="18" placeholder="Enter your name"></label><button class="btn btn-primary rrc-start" id="start-ai" type="button" disabled>START GAME</button><p class="rrc-error" id="ai-error" aria-live="polite"></p>
+    </section>
+    <section class="rrc-panel hidden" id="friends-panel">
+      <h2>Who's playing?</h2><p class="rrc-muted">Enter four names. Each player privately sees their chit and votes when the device is passed to them.</p>
+      <div class="rrc-name-fields"><label class="rrc-field">Player 1<input maxlength="18" value="Aarav" placeholder="Player 1"></label><label class="rrc-field">Player 2<input maxlength="18" value="Ananya" placeholder="Player 2"></label><label class="rrc-field">Player 3<input maxlength="18" value="Kabir" placeholder="Player 3"></label><label class="rrc-field">Player 4<input maxlength="18" value="Meera" placeholder="Player 4"></label></div>
+      <button class="btn btn-primary rrc-start" id="start-friends" type="button">START GAME</button><p class="rrc-error" id="friends-error" aria-live="polite"></p>
+    </section>
+    <section class="rrc-panel hidden" id="round-panel">
+      <div class="rrc-round-top"><span class="rrc-round-pill" id="round-label">ROUND 1 / 5</span><span class="rrc-round-pill" id="mode-label">EASY AI</span></div>
+      <h2 id="phase-title">Secret chit</h2><p class="rrc-muted" id="phase-description">Only you should look at the screen.</p>
+      <div id="private-area" class="private-area"></div><div id="vote-area" class="hidden"></div><div id="result-area" class="hidden"></div><div class="rrc-score-strip" id="score-strip"></div>
+    </section>
+    <section class="rrc-panel hidden" id="end-panel"><div class="rrc-trophy">🏆</div><h2>Classroom scoreboard</h2><p class="rrc-muted">The top scorer takes the classroom crown!</p><div id="final-scores"></div><button class="btn btn-primary rrc-start" id="play-again" type="button">PLAY AGAIN</button></section>
+  </main>
+
+  <dialog id="how-dialog"><h2>How to play</h2><ol><li>Four players receive four secret chits: Raja, Rani, Sipahi (Mantri), and Chor.</li><li>Each player checks their own chit privately. Never show your chit to anyone.</li><li>After the reveal, every player votes for who they think is the Chor.</li><li>The player with the most votes is caught. Ties are decided randomly between tied players.</li><li>Raja earns 1,500 and Rani earns 1,200 every round. If the Chor is caught, Sipahi gets 800. If the Chor escapes, Chor gets 800.</li></ol><form method="dialog"><button class="btn btn-primary btn-small" id="close-how" data-close type="submit">GOT IT</button></form></dialog>
+  <script type="module" src="js/raja-rani.js"></script>
+</body></html>

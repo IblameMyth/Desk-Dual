@@ -31,7 +31,7 @@ function renderLevels() {
     const info=document.createElement('div'); info.className='level-info';
     const h=document.createElement('h3'); h.textContent=ai.name; if(beaten){const badge=document.createElement('span');badge.className='badge';badge.textContent='WON';h.appendChild(badge)} info.appendChild(h);
     const p=document.createElement('p'); p.textContent=`Opponent pen: ${pen.name}`; info.appendChild(p); card.appendChild(info);
-    const btn=document.createElement('a'); btn.className=`btn btn-small${unlocked?' btn-primary':''}`; btn.textContent=unlocked?(beaten?'PLAY AGAIN':'PLAY'):'LOCKED'; btn.href=unlocked?`game.html?mode=ai&level=${ai.level}`:'#'; if(!unlocked)btn.addEventListener('click',e=>e.preventDefault()); card.appendChild(btn);
+    const btn=document.createElement('a'); btn.className=`btn btn-small${unlocked?' btn-primary':''}`; btn.textContent=unlocked?(beaten?'PLAY AGAIN':'PLAY'):'LOCKED'; btn.href=unlocked?`penfight.html?mode=ai&level=${ai.level}`:'#'; if(!unlocked)btn.addEventListener('click',e=>e.preventDefault()); card.appendChild(btn);
     return card;
   }));
 }

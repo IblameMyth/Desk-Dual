@@ -53,7 +53,7 @@ function spawnFor(i, portrait, count) {
 
 export async function startFriendsGame() {
   const players = getSetup();
-  if (!players) { location.replace('friends.html'); return; }
+  if (!players) { location.replace('penfight.html?view=friends'); return; }
   if (!window.Matter) {
     ui.createHud().showFatal('The physics engine could not load. Check your internet connection and refresh the page.');
     return;
@@ -205,8 +205,8 @@ export async function startFriendsGame() {
       stats:[['rounds',String(round)],['winner',winner.name],['pen',PEN_BY_ID[winner.penId]?.name || 'Pen'],['collisions',String(stats.collisions)]],
       buttons:[
         {label:'PLAY AGAIN',primary:true,onClick:startMatch},
-        {label:'CHANGE PLAYERS',onClick:()=>location.href='friends.html'},
-        {label:'MENU',onClick:()=>location.href='index.html'},
+        {label:'CHANGE PLAYERS',onClick:()=>location.href='penfight.html?view=friends'},
+        {label:'MENU',onClick:()=>location.href='penfight.html'},
       ]
     }), WIN_DELAY);
   }
