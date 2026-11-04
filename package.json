@@ -1,8 +1,8 @@
 {
-  "name": "desk-duel",
+  "name": "desk-dual",
   "version": "0.1.0",
   "private": true,
-  "description": "Desk Duel - a browser pen-fight game. Flick. Fight. Win.",
+  "description": "Desk Dual - a classroom collection of mini games.",
   "scripts": {
     "dev": "http-server . -p 3000 -c-1",
     "start": "npm run dev"

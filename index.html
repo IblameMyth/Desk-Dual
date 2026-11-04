@@ -1,101 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#6e3e1e">
-  <meta name="description" content="Desk Duel: flick your pen and knock your opponent's pen off the desk.">
-  <title>Desk Duel - Flick. Fight. Win.</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#6e3e1e"><meta name="description" content="Desk Dual — choose a classroom game and play.">
+<title>Desk Dual — Classroom Games</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css">
 </head>
-<body class="menu-page">
-  <main class="menu">
-    <svg class="hero" viewBox="0 0 420 110" aria-hidden="true" focusable="false">
-      <defs>
-        <g id="pen-shape">
-          <rect x="-50" y="-11" width="104" height="22" fill="var(--pen)"/>
-          <rect x="-50" y="-11" width="104" height="9" fill="#fff" opacity=".18"/>
-          <path d="M54 -11 L86 -4 L86 4 L54 11 Z" fill="var(--pen-dark)"/>
-          <path d="M86 -4 L98 -1.5 L98 1.5 L86 4 Z" fill="#d5dae2"/>
-          <rect x="-80" y="-11" width="34" height="22" rx="11" fill="var(--pen-cap)"/>
-          <rect x="-50" y="-11" width="5" height="22" fill="#ffd34d"/>
-          <rect x="-74" y="-14" width="22" height="5" rx="2.5" fill="#ffd34d"/>
-        </g>
-      </defs>
-      <use href="#pen-shape" class="hero-pen hero-pen-blue" x="105" y="55"/>
-      <g transform="translate(420 0) scale(-1 1)">
-        <use href="#pen-shape" class="hero-pen hero-pen-red" x="105" y="55"/>
-      </g>
-    </svg>
+<body class="menu-page deskdual-home"><main class="home-shell">
+<header class="home-header"><div class="classroom-label">STD 9-A&nbsp; • &nbsp;THE CLASSROOM GAME ZONE</div><p class="home-eyebrow">THE BELL HAS RUNG!</p><h1 class="home-title"><span>DESK</span> <b>DUAL</b></h1><p class="home-subtitle">Pick a game. Challenge your benchmate. Let the fun begin!</p></header>
+<section class="game-grid" aria-label="Choose a game">
+<a class="game-card playable" href="penfight.html" aria-label="Open Pen Fight menu"><div class="game-card-top"><span class="game-icon">🖊️</span><span class="game-status available">PLAY NOW</span></div><h2>Pen Fight</h2><p>Flick your pen. Knock theirs off the desk.</p><span class="card-action">PLAY GAME <span aria-hidden="true">→</span></span></a>
+<button class="game-card coming" type="button" data-soon="Raja Rani Chor Sipahi"><div class="game-card-top"><span class="game-icon">👑</span><span class="game-status">COMING SOON</span></div><h2>Raja Rani Chor Sipahi</h2><p>Guess the roles and claim the crown.</p><span class="card-action">COMING SOON</span></button>
+<button class="game-card coming" type="button" data-soon="Hand Cricket"><div class="game-card-top"><span class="game-icon">🏏</span><span class="game-status">COMING SOON</span></div><h2>Hand Cricket</h2><p>Odd or even? Make every run count.</p><span class="card-action">COMING SOON</span></button>
+<button class="game-card coming" type="button" data-soon="Kaun Hai Chor"><div class="game-card-top"><span class="game-icon">🕵️</span><span class="game-status">COMING SOON</span></div><h2>Kaun Hai Chor</h2><p>Read the clues. Find the classroom thief.</p><span class="card-action">COMING SOON</span></button>
+<button class="game-card coming" type="button" data-soon="Paper Football"><div class="game-card-top"><span class="game-icon">⚽</span><span class="game-status">COMING SOON</span></div><h2>Paper Football</h2><p>Fold, flick, and score a desk-side goal.</p><span class="card-action">COMING SOON</span></button>
+<button class="game-card coming" type="button" data-soon="Thumb Fight"><div class="game-card-top"><span class="game-icon">👍</span><span class="game-status">COMING SOON</span></div><h2>Thumb Fight</h2><p>Lock thumbs and battle for the win.</p><span class="card-action">COMING SOON</span></button>
+<button class="game-card coming" type="button" data-soon="Chop Stick"><div class="game-card-top"><span class="game-icon">🥢</span><span class="game-status">COMING SOON</span></div><h2>Chop Stick</h2><p>Count, split, and outsmart your opponent.</p><span class="card-action">COMING SOON</span></button>
+<button class="game-card coming" type="button" data-soon="Tippy Tippy Top Tap"><div class="game-card-top"><span class="game-icon">🎨</span><span class="game-status">COMING SOON</span></div><h2>Tippy Tippy Top Tap</h2><p>A classic colour-spotting classroom game.</p><span class="card-action">COMING SOON</span></button>
+</section>
+<footer class="home-footer"><span>✎ &nbsp; MADE FOR THE BACKBENCHERS</span><div><button class="footer-link" type="button" id="btn-settings">SETTINGS</button><a class="footer-link" href="about.html">ABOUT</a></div></footer>
+</main>
 
-    <h1 class="title"><span class="title-desk">DESK</span> <span class="title-duel">DUEL</span></h1>
-    <p class="subtitle">Flick. Fight. Win.</p>
+<dialog id="settings-dialog" aria-labelledby="settings-title"><h2 id="settings-title">Settings</h2>
+<div class="setting"><span class="setting-label" id="lbl-sound">Sound</span><div class="seg" role="group" aria-labelledby="lbl-sound" data-setting="sound"><button type="button" data-value="true">ON</button><button type="button" data-value="false">OFF</button></div></div>
+<div class="setting"><span class="setting-label" id="lbl-vib">Vibration</span><div class="seg" role="group" aria-labelledby="lbl-vib" data-setting="vibration"><button type="button" data-value="true">ON</button><button type="button" data-value="false">OFF</button></div></div>
+<div class="setting"><span class="setting-label" id="lbl-gfx">Graphics</span><div class="seg" role="group" aria-labelledby="lbl-gfx" data-setting="graphics"><button type="button" data-value="low">LOW</button><button type="button" data-value="high">HIGH</button></div></div>
+<div class="setting"><span class="setting-label" id="lbl-guide">Aim guide</span><div class="seg" role="group" aria-labelledby="lbl-guide" data-setting="guide"><button type="button" data-value="true">ON</button><button type="button" data-value="false">OFF</button></div></div>
+<div class="setting"><span class="setting-label" id="lbl-theme">Theme</span><div class="seg" role="group" aria-labelledby="lbl-theme" data-setting="theme"><button type="button" data-value="light">LIGHT</button><button type="button" data-value="dark">DARK</button></div></div><button class="btn btn-primary btn-small settings-done" type="button" data-close>DONE</button></dialog>
 
-    <nav class="menu-buttons" aria-label="Main menu">
-      <a class="btn btn-primary" href="levels.html">PLAY VS AI</a>
-      <a class="btn" href="friends.html">PLAY WITH FRIENDS</a>
-      <button class="btn is-soon" type="button" data-soon="Online play" aria-label="Play online, coming soon">PLAY ONLINE <span class="tag">SOON</span></button>
-      <div class="menu-row">
-        <button class="btn btn-small" type="button" id="btn-how">HOW TO PLAY</button>
-        <button class="btn btn-small" type="button" id="btn-settings">SETTINGS</button>
-      </div>
-      <div class="menu-row menu-row-info">
-        <a class="btn btn-about" href="about.html">ABOUT</a>
-        <a class="btn btn-contact" href="contact.html">CONTACT</a>
-      </div>
-</nav>
-  </main>
-
-
-  <dialog id="name-dialog" aria-labelledby="name-title">
-    <h2 id="name-title">What's your name?</h2>
-    <p class="name-dialog-note">This name will be written on the classroom scoreboard.</p>
-    <form id="name-form" method="dialog">
-      <input id="player-name-input" name="playerName" maxlength="16" autocomplete="nickname" placeholder="Enter your name" required>
-      <button class="btn btn-primary" value="continue">START GAME</button>
-    </form>
-  </dialog>
-
-  <dialog id="ai-dialog" aria-labelledby="ai-title">
-    <h2 id="ai-title">AI Levels</h2>
-    <div class="diff-list">
-      <a class="btn" href="game.html?mode=ai&amp;diff=easy">EASY <span class="diff-note">wild aim, random power</span></a>
-      <a class="btn" href="game.html?mode=ai&amp;diff=medium">MEDIUM <span class="diff-note">decent aim, sensible power</span></a>
-      <a class="btn" href="game.html?mode=ai&amp;diff=hard">HARD <span class="diff-note">sharp aim, smart power</span></a>
-    </div>
-    <button class="btn btn-small" type="button" data-close>CANCEL</button>
-  </dialog>
-
-  <dialog id="settings-dialog" aria-labelledby="settings-title">
-    <h2 id="settings-title">Settings</h2>
-    <div class="setting"><span class="setting-label" id="lbl-sound">Sound</span>
-      <div class="seg" role="group" aria-labelledby="lbl-sound" data-setting="sound"><button type="button" data-value="true">ON</button><button type="button" data-value="false">OFF</button></div></div>
-    <div class="setting"><span class="setting-label" id="lbl-vib">Vibration</span>
-      <div class="seg" role="group" aria-labelledby="lbl-vib" data-setting="vibration"><button type="button" data-value="true">ON</button><button type="button" data-value="false">OFF</button></div></div>
-    <div class="setting"><span class="setting-label" id="lbl-gfx">Graphics</span>
-      <div class="seg" role="group" aria-labelledby="lbl-gfx" data-setting="graphics"><button type="button" data-value="low">LOW</button><button type="button" data-value="high">HIGH</button></div></div>
-    <div class="setting"><span class="setting-label" id="lbl-guide">Aim guide</span>
-      <div class="seg" role="group" aria-labelledby="lbl-guide" data-setting="guide"><button type="button" data-value="true">ON</button><button type="button" data-value="false">OFF</button></div></div>
-    <div class="setting"><span class="setting-label" id="lbl-theme">Theme</span>
-      <div class="seg" role="group" aria-labelledby="lbl-theme" data-setting="theme"><button type="button" data-value="light">LIGHT</button><button type="button" data-value="dark">DARK</button></div></div>
-    <button class="btn btn-primary btn-small settings-done" type="button" data-close>DONE</button>
-  </dialog>
-
-  <dialog id="how-dialog" aria-labelledby="how-title">
-    <h2 id="how-title">How to play</h2>
-    <div class="demo" aria-hidden="true"><span class="demo-aim"></span><span class="demo-pen"></span></div>
-    <ol>
-      <li>Place your finger or mouse on your pen.</li>
-      <li>Drag backwards to aim.</li>
-      <li>Release to flick.</li>
-      <li>Knock your opponent's pen off the desk.</li>
-      <li>Win 3 rounds to win the match.</li>
-    </ol>
-    <button class="btn btn-primary btn-small" type="button" data-close>GOT IT</button>
-  </dialog>
-<script type="module" src="js/main.js"></script>
-</body>
-</html>
+<script type="module" src="js/main.js"></script></body></html>
