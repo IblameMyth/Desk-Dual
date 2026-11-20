@@ -15,11 +15,10 @@
 <a class="khc-home" href="index.html">← ALL GAMES</a><div class="classroom-label">STD 9-A • CLASSROOM SPECIAL</div>
 <div style="font-size:4.2rem;margin-top:8px" aria-hidden="true">🕵️‍♂️</div>
 <h1 class="khc-title">BEHRUPIYE<br>KO PAKDO</h1><p class="khc-subtitle">Vote for a category, share clues, and catch the Behrupiya!</p>
-<nav class="menu-buttons" aria-label="Behrupiye Ko Pakdo game menu"><button class="btn btn-primary" id="open-ai">PLAY WITH AI</button><button class="btn" id="open-friends">PLAY WITH FRIENDS</button><button class="btn is-soon" type="button" data-soon="Online play" aria-label="Play online, coming soon">PLAY ONLINE <span class="tag">SOON</span></button><button class="btn btn-small" id="open-how">HOW TO PLAY</button></nav>
+<nav class="menu-buttons" aria-label="Behrupiye Ko Pakdo game menu"><button class="btn btn-primary" id="open-friends">PLAY WITH FRIENDS</button><button class="btn is-soon" type="button" data-soon="Online play" aria-label="Play online, coming soon">PLAY ONLINE <span class="tag">SOON</span></button><button class="btn btn-small" id="open-how">HOW TO PLAY</button></nav>
 </main>
 <main class="khc-play hidden" id="play-area">
 <header class="khc-head"><a href="behrupiye-ko-pakdo.html" class="khc-home">← Main Menu </a><button class="rrc-menu-return" id="back-menu">All Games</button><div class="classroom-label">STD 9-A • BEHRUPIYE KO PAKDO</div></header>
-<section class="khc-panel hidden" id="setup-ai"><h2>Play with AI</h2><p class="khc-muted">You and three AI classmates. Everyone gets the same category, but the Behrupiya gets a different word.</p><label class="khc-field">Your name<input id="ai-name" maxlength="18" placeholder="Enter your name"></label><button class="btn btn-primary khc-start" id="start-ai" disabled>START GAME</button><p class="khc-error" id="ai-error"></p></section>
 <section class="khc-panel hidden" id="setup-friends"><h2>Who's in the classroom?</h2><p class="khc-muted">Add 3–15 players. Pass the device so everyone can privately see their word and role.</p><label class="khc-field">Number of players<select id="player-count"><option>3</option><option selected>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option></select></label><div class="khc-names" id="name-fields"></div><button class="btn btn-primary khc-start" id="start-friends">START GAME</button><p class="khc-error" id="friends-error"></p></section>
 <section class="khc-panel hidden" id="category-panel"><div class="khc-step"><span class="khc-pill" id="category-vote-progress">CATEGORY VOTE</span><span class="khc-pill" id="category-vote-mode">CLASS VOTE</span></div><h2 id="category-vote-title">Choose today's category</h2><p class="khc-muted" id="category-vote-description">Everyone votes once. The category with the most votes is selected.</p><div id="category-vote-area"></div></section>
 <section class="khc-panel hidden" id="round-panel"><div class="khc-step"><span class="khc-pill" id="round-label">ROUND 1</span><span class="khc-pill" id="mode-label">FRIENDS</span></div><h2 id="phase-title">Secret roles</h2><p class="khc-muted" id="phase-description">Only the named player should look at the screen.</p><div id="game-area"></div></section>
@@ -28,14 +27,11 @@
 <dialog id="how-dialog"><h2>How to play</h2><ol><li>At the start, everyone votes for a category. The winning category is used for the round. Classmates receive one word; the Behrupiya receives a different word from that category.</li><li>Every active player gives a clue one by one. After everyone has spoken, the class votes.</li><li>Discuss the clues and decide who sounds suspicious.</li><li>If the Behrupiya is not voted out, start another full clue round and vote again.</li><li>If a classmate is wrongly voted out, they leave the round and the remaining players continue. The Behrupiya wins by surviving until only two players remain.</li></ol><h3>Classroom word bank</h3><ul><li>Movies & TV (Indian): 100 words</li><li>Video Games: 50 words</li><li>Music (Indian Artists 2000–2020): 100 words</li><li>Sports (World): 50 words</li><li>Jobs (India): 50 words</li><li>Places (Famous India): 100 words</li><li>Food (Indian): 50 words</li><li>Household Items (India): 50 words</li></ul><p><b>Category voting:</b> Everyone votes once before secret words are dealt. Most votes wins; if categories tie, the category receiving the latest vote wins.</p><p><b>Tip:</b> The Behrupiya must give believable clues and survive until only two players remain.</p><form method="dialog"><button class="btn btn-primary btn-small">GOT IT</button></form></dialog>
 
 <script src="js/categories.js"></script>
-<script src="js/clues.js"></script>
 <script>
 (()=>{
 'use strict';
-const $=id=>document.getElementById(id), panels=['setup-ai','setup-friends','category-panel','round-panel','end-panel'];
+const $=id=>document.getElementById(id), panels=['setup-friends','category-panel','round-panel','end-panel'];
 const decks=window.BEHRUPIYE_CATEGORIES;
-const clueLibrary=window.BEHRUPIYE_CLUES;
-const aiNames=['Aarav','Ananya','Kabir','Meera','Vihaan','Ishita','Arjun','Diya','Reyansh','Myra','Advait','Saanvi'];
 const sound=()=>window.ClassroomSounds;
 document.addEventListener('pointerdown',()=>sound()?.unlock(),{once:true});
 document.addEventListener('click',event=>{if(event.target.closest('button,a'))sound()?.tap()});
@@ -56,10 +52,9 @@ function nextCategoryVote(){
  if(idx>=total){selectWinningCategory();return}
  const p=state.players[idx],cats=Object.keys(decks);
  $('category-vote-progress').textContent=`CATEGORY VOTE ${idx+1}/${total}`;
- $('category-vote-mode').textContent=state.mode==='ai'?'AI CLASS':'FRIENDS';
- $('category-vote-title').textContent=state.mode==='ai'&&!p.human?`${p.name} is voting…`:`${p.name}, choose a category`;
- $('category-vote-description').textContent=state.mode==='friends'?`Pass the device to ${p.name}. Everyone gets one private vote.`:(p.human?'Pick the category for this game. The AI classmates will vote too.':'The AI classmate is casting a vote.');
- if(state.mode==='ai'&&!p.human){const pick=cats[Math.floor(Math.random()*cats.length)];state.categoryVotes.push({category:pick,voter:idx});state.categoryCursor++;$('category-vote-area').innerHTML=`<div class="khc-card"><h3>🗳️ ${esc(p.name)} has voted</h3><p>Category vote ${idx+1} of ${total}</p></div><button class="btn btn-primary khc-start" id="next-category">CONTINUE</button>`;$('next-category').onclick=nextCategoryVote;return}
+ $('category-vote-mode').textContent='FRIENDS';
+ $('category-vote-title').textContent=`${p.name}, choose a category`;
+ $('category-vote-description').textContent=`Pass the device to ${p.name}. Everyone gets one private vote.`;
  $('category-vote-area').innerHTML=`<div class="khc-player-grid">${cats.map((c,i)=>`<button class="khc-actions" style="display:block;width:100%;margin:0;padding:13px 8px" data-category-vote="${i}"><b>${esc(c)}</b><small style="display:block">${Object.keys(decks).includes(c)?decks[c].length:0} words</small></button>`).join('')}</div>`;
  document.querySelectorAll('[data-category-vote]').forEach(b=>b.onclick=()=>{state.categoryVotes.push({category:cats[+b.dataset.categoryVote],voter:idx});state.categoryCursor++;nextCategoryVote()});
 }
@@ -79,41 +74,28 @@ function selectWinningCategory(){
 function showRole(){
  let i=state.roleCursor;
  if(i>=state.players.length){
-  if(state.mode==='ai'){beginClueRound();return}
   state.wordsRevealed=true;
   state.voteCursor=0;
   nextFriendVote();
   return;
  }
- if(state.mode==='ai' && i>0){beginClueRound();return}
  let p=state.players[i];
  $('phase-title').textContent='Private word reveal';
  $('phase-description').textContent=`Pass the device to ${p.name}. Only ${p.name} should look.`;
- $('round-label').textContent='SECRET WORDS';$('mode-label').textContent=state.mode==='ai'?'AI CLASS':'FRIENDS MODE';
+ $('round-label').textContent='SECRET WORDS';$('mode-label').textContent='FRIENDS MODE';
  $('game-area').innerHTML=`<div class="khc-secret"><div class="emoji">🔐</div><h3>${esc(p.name)}</h3><p>Tap to reveal your secret.</p><button class="btn btn-primary khc-start" id="reveal">REVEAL MY WORD</button></div>`;
  $('reveal').onclick=()=>{sound()?.reveal();$('game-area').innerHTML=`<div class="khc-secret"><div class="emoji">${p.chor?'🕵️':'📚'}</div><h3>${p.chor?'YOU ARE THE BEHRUPIYA':'YOU ARE A CLASSMATE'}</h3><p>Category: <b>${esc(state.category)}</b><br>Your word: <b>${esc(p.word)}</b><br>${p.chor?'Your word is different. Blend in!':'All other classmates have the same word.'}</p><button class="btn btn-primary khc-start" id="hide-word">HIDE & PASS DEVICE</button></div>`;$('hide-word').onclick=()=>{sound()?.chalk();state.roleCursor++;showRole()}}
 }
-function setPhase(title,desc){$('phase-title').textContent=title;$('phase-description').textContent=desc;$('round-label').textContent='CLUE ROUND '+state.round;$('mode-label').textContent=state.mode==='ai'?'AI CLASS':'FRIENDS'}
+function setPhase(title,desc){$('phase-title').textContent=title;$('phase-description').textContent=desc;$('round-label').textContent='CLUE ROUND '+state.round;$('mode-label').textContent='FRIENDS'}
 function beginClueRound(){
  state.clueOrder=shuffle(alive());state.clueCursor=0;state.votes=[];
  state.players.forEach(p=>p.currentClue='');
  setPhase('Clue round '+state.round,'Every active player gives one clue, one at a time. All clues become public before voting.');
  nextClue();
 }
-function botClue(p){
- const options=clueLibrary.getClues(state.category,p.word);
- return options[Math.floor(Math.random()*options.length)];
-}
 function nextClue(){
  if(state.clueCursor>=state.clueOrder.length){showClueBoard();return}
  let idx=state.clueOrder[state.clueCursor],p=state.players[idx];
- if(state.mode==='ai'&&!p.human){
-  let clue=botClue(p);p.currentClue=clue;p.clues.push(clue);sound()?.chalk();
-  $('phase-title').textContent=p.name+"'s clue";
-  $('phase-description').textContent='The AI classmate has given a clue.';
-  $('game-area').innerHTML=`<div class="khc-card"><h3>🗣️ ${esc(p.name)}</h3><p style="font-size:1.3rem"><b>“${esc(clue)}”</b></p><p>Clue ${state.clueCursor+1} of ${state.clueOrder.length}</p></div><button class="btn btn-primary khc-start" id="next-clue">NEXT CLUE</button>`;
-  $('next-clue').onclick=()=>{state.clueCursor++;nextClue()};return;
- }
  $('phase-title').textContent=p.name+"'s clue";
  $('phase-description').textContent=state.mode==='friends'?`Pass the device to ${p.name}. Enter one clue, then pass it on.`:'Give one clue that fits your word without saying the word itself.';
  $('game-area').innerHTML=`<div class="khc-progress">CLUE ${state.clueCursor+1} OF ${state.clueOrder.length}</div><div class="khc-secret"><div class="emoji">✏️</div><h3>${esc(p.name)}</h3><p>${state.mode==='friends'?'Only this player should look at the screen.':'Your turn to give a clue.'}</p></div><label class="khc-field">Your clue<input id="clue-input" maxlength="32" placeholder="Enter a short clue" autocomplete="off"></label><p class="khc-error" id="clue-error"></p><button class="btn btn-primary khc-start" id="submit-clue">SUBMIT CLUE</button>`;
@@ -123,12 +105,7 @@ function clueBoard(){return `<div class="khc-card"><h3>Clues this round</h3><p>L
 function showClueBoard(){
  setPhase('All clues are in!','Everyone has given one clue. Discuss what you heard, then vote.');
  $('game-area').innerHTML=clueBoard()+`<button class="btn btn-primary khc-start" id="start-vote">START VOTING</button>`;
- $('start-vote').onclick=()=>{if(state.mode==='ai'){if(!state.players[0].alive){botsVote();resolveVotes()}else humanVote()}else{state.voteCursor=0;nextFriendVote()}};
-}
-function humanVote(){
- $('phase-title').textContent='Cast your vote';$('phase-description').textContent='Choose the classmate whose clue seems least consistent with the others.';
- $('game-area').innerHTML=clueBoard()+`<div class="khc-card"><h3>Who is the Behrupiya?</h3><p>Your vote is private.</p></div><div class="khc-actions">${alive().filter(i=>i!==0).map(i=>`<button data-human-vote="${i}">${esc(state.players[i].name)}</button>`).join('')}</div>`;
- document.querySelectorAll('[data-human-vote]').forEach(b=>b.onclick=()=>{sound()?.vote();state.votes.push({voter:0,target:+b.dataset.humanVote});botsVote();resolveVotes()});
+ $('start-vote').onclick=()=>{state.voteCursor=0;nextFriendVote()};
 }
 function nextFriendVote(){
  let voters=alive();if(state.voteCursor>=voters.length){resolveVotes();return}
@@ -140,41 +117,6 @@ function nextFriendVote(){
   :'';
  $('game-area').innerHTML=discussion+`<div class="khc-progress">VOTE ${state.voteCursor+1} OF ${voters.length}</div><div class="khc-card"><h3>${esc(v.name)}'s vote</h3><p>Pick who you think has the different word.</p></div><div class="khc-actions">${alive().filter(i=>i!==vi).map(i=>`<button data-friend-vote="${i}">${esc(state.players[i].name)}</button>`).join('')}</div>`;
  document.querySelectorAll('[data-friend-vote]').forEach(b=>b.onclick=()=>{sound()?.vote();state.votes.push({voter:vi,target:+b.dataset.friendVote});state.voteCursor++;nextFriendVote()});
-}
-function fit(clue,word){
- let s=(clue||'').toLowerCase().replace(/[^a-z0-9 ]/g,' ').trim();
- if(!s)return 0;
- const tokens=clueLibrary.getKeywords(word,state.category);
- let score=0;const clueTokens=s.split(/\s+/);
- for(const t of tokens){if(!t)continue;if(clueTokens.includes(t))score+=1;else if(t.length>4&&s.includes(t))score+=.55}
- // Category-level clues are deliberately weak evidence; AI should be fallible.
- const broad=clueLibrary.getCategoryKeywords(state.category);for(const t of broad)if(clueTokens.includes(t))score+=.12;
- const generic=['nice','good','thing','common','maybe','stuff','interesting','something','object','item','useful'];
- if(generic.includes(s))score*=.35;
- return Math.max(0,Math.min(1,score/Math.max(2,Math.sqrt(tokens.length))));
-}
-function botsVote(){
- for(const vi of alive().filter(i=>i!==0)){
-  const voter=state.players[vi],choices=alive().filter(i=>i!==vi);
-  if(!choices.length)continue;
-  // Innocent bots compare every clue with their own word. The Behrupiya
-  // does not know the classmates' word, so its vote is deliberately less certain.
-  const ranked=choices.map(i=>{
-   const affinity=fit(state.players[i].currentClue,voter.word);
-   const relative=choices.filter(j=>j!==i).map(j=>fit(state.players[j].currentClue,voter.word));
-   const average=relative.length?relative.reduce((a,b)=>a+b,0)/relative.length:affinity;
-   let suspicion=voter.chor
-    ? (1-affinity)*.25 + Math.random()*.75
-    : (1-affinity)*.72 + Math.max(0,average-affinity)*.28;
-   // Small human-like uncertainty prevents perfect, repetitive AI votes.
-   suspicion += (Math.random()-.5)*.85;
-   return {i,score:suspicion};
-  }).sort((a,b)=>b.score-a.score);
-  const gap=ranked.length>1?ranked[0].score-ranked[1].score:1;
-  const certainty=Math.max(.38,Math.min(.76,.48+gap*.22));
-  const target=Math.random()<certainty?ranked[0].i:ranked[Math.floor(Math.random()*ranked.length)].i;
-  state.votes.push({voter:vi,target});
- }
 }
 function resolveVotes(){
  let counts=state.players.map(()=>0);state.votes.forEach(v=>counts[v.target]++);
@@ -193,13 +135,9 @@ function continueRound(message,counts){
  $('next-round').onclick=()=>{
   state.round++;
   state.votes=[];
-  if(state.mode==='friends'){
    show('round-panel');
    state.voteCursor=0;
    nextFriendVote();
-  }else{
-   beginClueRound();
-  }
  };
 }
 function finish(caught,counts){
@@ -209,16 +147,13 @@ function finish(caught,counts){
  $('game-area').innerHTML=`<div class="khc-result"><div style="font-size:2.5rem">${caught?'🎉':'😈'}</div><h3>${caught?'The class caught the Behrupiya!':'The Behrupiya survived!'}</h3><p>${esc(chor.name)} was the Behrupiya.</p><p>Category: <b>${esc(state.category)}</b></p><p>Classmates' word: <b>${esc(state.common)}</b> · Behrupiya's word: <b>${esc(state.odd)}</b></p></div><h3 style="font-family:var(--font-display);margin:18px 0 8px">Classroom reveal</h3><div class="khc-player-grid">${rows}</div><button class="btn btn-primary khc-start" id="finish-round">VIEW VERDICT</button>`;
  $('finish-round').onclick=()=>{show('end-panel');$('final-result').innerHTML=`<div class="khc-result"><h3>${caught?'🏆 Classmates win!':'🕵️ Behrupiya wins!'}</h3><p>Behrupiya: <b>${esc(chor.name)}</b></p><p>Category: ${esc(state.category)}</p><p>Classmates' word: <b>${esc(state.common)}</b></p><p>Behrupiya's word: <b>${esc(state.odd)}</b></p></div>`};
 }
-$('open-ai').onclick=()=>show('setup-ai');
 $('open-friends').onclick=()=>{buildNames();show('setup-friends')};
 $('back-menu').onclick=()=>location.href='index.html';
 $('open-how').onclick=()=>$('how-dialog').showModal();
 $('player-count').onchange=buildNames;
-$('ai-name').oninput=()=>$('start-ai').disabled=!$('ai-name').value.trim();
-$('start-ai').onclick=()=>{let name=$('ai-name').value.trim();if(!name){$('ai-error').textContent='Enter your name first.';return}let bots=shuffle(aiNames.filter(n=>n.toLowerCase()!==name.toLowerCase())).slice(0,3);start('ai',[makePlayer(name,true),...bots.map(n=>makePlayer(n,false))])};
 $('start-friends').onclick=()=>{let names=[...$('name-fields').querySelectorAll('input')].map(i=>i.value.trim());if(names.some(n=>!n)){$('friends-error').textContent='Please fill every player name.';return}if(new Set(names.map(n=>n.toLowerCase())).size!==names.length){$('friends-error').textContent='Every player needs a different name.';return}start('friends',names.map(n=>makePlayer(n,true)))};
 $('play-again').onclick=()=>{const mode=state.mode,players=state.players.map(p=>makePlayer(p.name,p.human));start(mode,players)};
-$('exit-game').onclick=()=>{show('setup-ai');$('play-area').classList.add('hidden');$('main-menu').classList.remove('hidden')};
+$('exit-game').onclick=()=>{show('setup-friends');$('play-area').classList.add('hidden');$('main-menu').classList.remove('hidden')};
 })();
 </script>
 </body></html>
