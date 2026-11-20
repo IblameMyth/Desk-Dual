@@ -1,0 +1,365 @@
+.app-view[hidden] { display: none !important; }
+.levels-page,
+.friends-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  color: #302216;
+  background-color: #c9bea3;
+  background-image:
+    radial-gradient(rgba(72,49,27,.10) .8px, transparent .8px),
+    linear-gradient(90deg, transparent 0 47px, rgba(171,65,55,.24) 48px, transparent 50px),
+    repeating-linear-gradient(0deg, rgba(70,92,111,.16) 0 1px, transparent 1px 34px);
+  background-size: 7px 7px, 100% 100%, 100% 34px;
+  background-attachment: fixed;
+  padding: 28px 18px 40px;
+}
+
+.levels-wrap,
+.friends-wrap {
+  width: min(920px, 100%);
+  margin: auto;
+}
+
+.setup-topnav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.setup-topnav .btn {
+  min-height: 44px;
+  color: #21180f;
+  background: #eee2c9;
+  border: 3px solid #3c2a1b;
+  border-radius: 4px;
+  box-shadow: 0 5px 0 #3c2a1b;
+  font-family: var(--font-display);
+}
+
+.levels-wrap::before,
+.friends-wrap::before {
+  content: 'STD 9-A • CLASSROOM PEN FIGHT';
+  display: block;
+  width: fit-content;
+  margin: 0 auto 14px;
+  padding: 9px 16px;
+  color: #f5e6c2;
+  background: #1b3d31;
+  border: 5px solid #b38a52;
+  border-radius: 4px;
+  box-shadow: 0 5px 0 #563a25;
+  font: 900 .78rem var(--font-body);
+  letter-spacing: .09em;
+  text-align: center;
+}
+
+.levels-head,
+.friends-head {
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.levels-head {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  padding: 10px 0;
+}
+
+.levels-head > div {
+  grid-column: 1 / -1;
+  text-align: center;
+}
+
+.levels-head .btn,
+.friends-head .btn {
+  min-height: 44px;
+  color: #21180f;
+  background: #eee2c9;
+  border: 3px solid #3c2a1b;
+  border-radius: 4px;
+  box-shadow: 0 5px 0 #3c2a1b;
+}
+
+.levels-head .btn {
+  grid-column: 2;
+  justify-self: end;
+}
+
+.levels-title,
+.friends-head h1 {
+  color: #302216;
+  font-family: var(--font-display);
+  text-shadow: none;
+  text-align: center;
+}
+
+.levels-title span,
+.friends-head h1 span {
+  color: #32609a;
+  text-shadow: none;
+}
+
+.levels-sub,
+.friends-head p:last-child,
+.friends-kicker {
+  color: #725a3d;
+  text-align: center;
+}
+
+.collection,
+.friends-card,
+.level-card {
+  background-color: #fffaf0;
+  background-image: repeating-linear-gradient(0deg, transparent 0 30px, rgba(91,127,151,.12) 31px 32px);
+  border: 3px solid #68472c;
+  border-radius: 5px;
+  box-shadow: 5px 7px 0 #68472c, inset 0 0 0 5px rgba(190,157,102,.18);
+}
+
+.collection {
+  margin-bottom: 24px;
+  padding: 18px;
+}
+
+.collection-head h2,
+.friends-card-head h2,
+.level-info h3,
+.friends-kicker {
+  color: #284638;
+  font-family: var(--font-display);
+}
+
+.owned-pen,
+.player-row,
+.friends-help {
+  background: #fffdf7;
+  border: 2px solid #c4a878;
+  border-radius: 5px;
+  box-shadow: 2px 3px 0 rgba(92,66,38,.10);
+}
+
+.owned-pen.equipped {
+  border-color: #32609a;
+  box-shadow: 0 0 0 3px #dce6ff;
+}
+
+.level-card {
+  min-height: 128px;
+  box-shadow: 5px 7px 0 #68472c, inset 0 0 0 4px rgba(190,157,102,.12);
+}
+
+.level-card.locked {
+  filter: saturate(.45);
+  opacity: .56;
+}
+
+.level-card .btn,
+.friends-actions .btn,
+.remove-player {
+  color: #21180f;
+  background: #eee2c9;
+  border: 3px solid #3c2a1b;
+  border-radius: 4px;
+  box-shadow: 0 5px 0 #3c2a1b;
+  font-family: var(--font-display);
+}
+
+.level-card .btn-primary,
+.friends-actions .btn-primary {
+  color: #fff;
+  background: #32609a;
+  border-color: #193b65;
+  box-shadow: 0 5px 0 #193b65;
+}
+
+.friends-card {
+  padding: 20px;
+}
+
+.friends-card-head {
+  margin-bottom: 14px;
+}
+
+.count-pill {
+  color: #493316;
+  background: #f2cf53;
+  border: 2px solid #68472c;
+  border-radius: 4px;
+}
+
+.player-row {
+  background: #fffdf7;
+  border: 2px solid #c4a878;
+  border-radius: 5px;
+  box-shadow: none;
+}
+
+.player-badge {
+  background: #284638;
+  border: 2px solid #68472c;
+  border-radius: 50%;
+  color: #f5e6c2;
+}
+
+.player-fields input,
+.player-fields select {
+  min-height: 48px;
+  color: #382819;
+  background: #fffaf0;
+  border: 2px solid #b49a70;
+  border-radius: 3px;
+  font: 700 1rem var(--font-body);
+  font-size: 16px;
+}
+
+.friends-help {
+  background: #fff9eb;
+  border: 2px solid #c4a878;
+  color: #725a3d;
+}
+
+.friends-help b {
+  color: #284638;
+}
+
+.levels-head,
+.friends-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.levels-head > div,
+.friends-head > div {
+  flex: 1;
+}
+
+.collection-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.pen-strip {
+  display: flex;
+  gap: 12px;
+  overflow: auto;
+  padding: 14px 2px 5px;
+}
+
+.owned-pen {
+  min-width: 145px;
+  padding: 8px;
+  text-align: center;
+}
+
+.owned-pen img {
+  display: block;
+  width: 120px;
+  height: 38px;
+  object-fit: contain;
+  margin: 5px auto;
+}
+
+.level-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.level-card {
+  display: grid;
+  grid-template-columns: 74px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  min-height: 128px;
+}
+
+.level-no {
+  font: 2.5rem var(--font-display);
+  text-align: center;
+}
+
+.level-pen {
+  width: 74px;
+  height: 46px;
+  object-fit: contain;
+  transform: rotate(-2deg);
+}
+
+.level-info h3 {
+  margin: 0;
+  font: 1.55rem var(--font-display);
+}
+
+.level-info p {
+  margin: 4px 0;
+  color: #725a3d;
+  font-size: .9rem;
+}
+
+.level-card .btn {
+  min-width: 104px;
+  min-height: 44px;
+  padding: 10px 12px;
+  font-size: 1rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 7px;
+  background: var(--hi);
+  border-radius: 999px;
+  font-size: .7rem;
+  font-weight: 800;
+  margin-left: 5px;
+}
+
+.levels-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.muted { color: #725a3d; }
+
+@media (max-width: 720px) {
+  .levels-page,
+  .friends-page {
+    padding: 20px 10px 28px;
+  }
+
+  .level-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .levels-head,
+  .friends-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .level-card {
+    grid-template-columns: 62px 1fr;
+  }
+
+  .level-card .btn {
+    grid-column: 2;
+  }
+
+  .level-pen {
+    width: 62px;
+  }
+
+  .friends-card,
+  .collection {
+    padding: 14px 12px;
+  }
+}

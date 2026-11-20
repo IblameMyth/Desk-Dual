@@ -181,6 +181,8 @@ async function main() {
 
   function startRound() {
     clearTimeout(endTimer);
+    audio.unlock();
+    audio.bell();
     ui.hideOverlay();
     const portrait = physics.size.h > physics.size.w;
     players.forEach((p, i) => physics.resetPen(p.id, spawnFor(i, portrait)));
@@ -210,6 +212,7 @@ async function main() {
     moveStart = performance.now();
     fallAt = 0;
     stats.strongest = Math.max(stats.strongest, power);
+    audio.chalk();
     audio.flick(power);
     vibrate(12);
     dirty = true;

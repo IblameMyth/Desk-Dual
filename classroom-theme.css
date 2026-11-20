@@ -1,0 +1,204 @@
+/* Shared Behrupiye-style classroom frame for Pen Fight and Raja Rani. */
+.menu-page,
+.rrc-page {
+  --ink: #302216;
+  min-height: 100vh;
+  min-height: 100dvh;
+  color: #21180f;
+  background-color: #c9bea3;
+  background-image:
+    radial-gradient(rgba(72, 49, 27, .10) .8px, transparent .8px),
+    linear-gradient(90deg, transparent 0 47px, rgba(171, 65, 55, .24) 48px, transparent 50px),
+    repeating-linear-gradient(0deg, rgba(70, 92, 111, .16) 0 1px, transparent 1px 34px);
+  background-size: 7px 7px, 100% 100%, 100% 34px;
+  background-attachment: fixed;
+}
+
+.menu-page .menu,
+.rrc-page .rrc-menu {
+  position: relative;
+  width: min(680px, calc(100% - 26px));
+  min-height: 78vh;
+  min-height: 78dvh;
+  margin: 4vh auto;
+  padding: 24px 20px;
+  gap: 5px;
+  justify-content: center;
+  color: #21180f;
+  background: linear-gradient(135deg, rgba(28, 57, 45, .96), rgba(18, 42, 35, .97));
+  border: 10px ridge #79512f;
+  border-radius: 5px;
+  box-shadow:
+    inset 0 0 0 4px #d2b77c,
+    inset 0 0 50px rgba(0, 0, 0, .25);
+  overflow: hidden;
+}
+
+.menu-page .menu::before,
+.rrc-page .rrc-menu::before {
+  display: none;
+}
+
+.menu-page:not(.rrc-page) .menu::before {
+  display: none;
+}
+
+.menu-page .menu .rrc-home-link,
+.rrc-page .rrc-menu .rrc-home-link {
+  display: block;
+  position: absolute;
+  z-index: 5;
+  top: 20px;
+  left: 50%;
+  order: initial;
+  margin: 0;
+  transform: translateX(-50%);
+  color: #f6edda;
+  font: 900 .78rem var(--font-body);
+  letter-spacing: .06em;
+  text-decoration: none;
+}
+
+.menu-page .menu .classroom-label,
+.rrc-page .rrc-menu .classroom-label {
+  display: inline-block;
+  order: -2;
+  margin: 0 auto;
+  padding: 9px 16px;
+  color: #f5e6c2;
+  background: #1b3d31;
+  border: 5px solid #b38a52;
+  border-radius: 4px;
+  box-shadow: 0 5px 0 #563a25;
+  font: 900 .78rem var(--font-body);
+  letter-spacing: .09em;
+}
+
+.menu-page .menu .hero,
+.rrc-page .rrc-menu .hero {
+  order: -1;
+  width: min(420px, 84vw);
+  height: auto;
+  margin: 8px auto 0;
+  filter: none;
+  overflow: visible;
+}
+
+.menu-page .menu .title,
+.rrc-page .rrc-menu .rrc-brand-title {
+  margin: 12px 0 0;
+  color: #f4e5bf;
+  font-family: 'Lilita One', cursive;
+  line-height: .92;
+  text-align: center;
+  letter-spacing: .015em;
+  text-shadow: 3px 3px 0 #9b4b35, 6px 6px 0 #142d20;
+  transform: rotate(-1deg);
+}
+
+.menu-page .menu .title-desk,
+.rrc-page .rrc-menu .title-desk {
+  color: #f4e5bf;
+  text-shadow: 4px 4px 0 #32609a;
+}
+
+.menu-page .menu .title-duel,
+.rrc-page .rrc-menu .title-duel {
+  color: #f4e5bf;
+  text-shadow: 4px 4px 0 #a83232;
+}
+
+.menu-page .menu .subtitle,
+.rrc-page .rrc-menu .subtitle {
+  margin: 12px 0 17px;
+  color: #e8cf91;
+  background: none;
+  text-shadow: none;
+  text-align: center;
+}
+
+.menu-page .menu .menu-buttons,
+.rrc-page .rrc-menu .menu-buttons {
+  width: min(100%, 425px);
+  gap: 13px;
+}
+
+.menu-page .menu .menu-buttons .btn,
+.rrc-page .rrc-menu .menu-buttons .btn {
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 22px;
+  color: #21180f;
+  background: #eee2c9;
+  border: 3px solid #3c2a1b;
+  border-radius: 4px;
+  box-shadow: 0 6px 0 #3c2a1b;
+  font-family: var(--font-display);
+  letter-spacing: .03em;
+}
+
+.menu-page .menu .menu-buttons .btn-primary,
+.rrc-page .rrc-menu .menu-buttons .btn-primary {
+  color: #fff;
+  background: #32609a;
+}
+
+.menu-page .menu .menu-buttons .btn.is-soon,
+.rrc-page .rrc-menu .menu-buttons .btn.is-soon {
+  color: #21180f;
+  background: #ded1b5;
+  border-style: dashed;
+  box-shadow: 0 6px 0 #3c2a1b;
+}
+
+.menu-page .menu .menu-buttons .btn-small,
+.rrc-page .rrc-menu .menu-buttons .btn-small {
+  min-height: 52px;
+  font-size: 1rem;
+}
+
+.menu-page .menu .tag,
+.rrc-page .rrc-menu .tag {
+  color: #493316;
+  background: #f2cf53;
+}
+
+.menu-page:not(.rrc-page) .menu .rrc-home-link {
+  position: static;
+  order: -4;
+  margin: 0 auto 8px;
+  transform: none;
+}
+
+.menu-page:not(.rrc-page) .menu .classroom-label {
+  order: -3;
+  margin: 0 auto 8px;
+}
+
+.menu-page:not(.rrc-page) .menu .hero {
+  order: -2;
+  margin: 4px auto 0;
+}
+
+.menu-page:not(.rrc-page) .menu .title {
+  order: -1;
+}
+
+@media (max-width: 540px) {
+  .menu-page .menu,
+  .rrc-page .rrc-menu {
+    width: calc(100% - 26px);
+    min-height: 78vh;
+    padding: 18px;
+  }
+
+  .menu-page .menu .menu-buttons,
+  .rrc-page .rrc-menu .menu-buttons {
+    width: min(100%, 340px);
+  }
+
+  .menu-page .menu .hero,
+  .rrc-page .rrc-menu .hero {
+    width: min(360px, 82vw);
+  }
+}

@@ -1,0 +1,58 @@
+.hc-page{--ink:#302216;min-height:100vh;min-height:100dvh;color:#21180f;background-color:#c9bea3;background-image:radial-gradient(rgba(72,49,27,.10) .8px,transparent .8px),linear-gradient(90deg,transparent 0 47px,rgba(171,65,55,.24) 48px,transparent 50px),repeating-linear-gradient(0deg,rgba(70,92,111,.16) 0 1px,transparent 1px 34px);background-size:7px 7px,100% 100%,100% 34px;background-attachment:fixed;overflow-x:hidden;-webkit-text-size-adjust:100%}
+.hc-menu{position:relative;width:min(680px,calc(100% - 26px));min-height:78vh;min-height:78dvh;margin:4vh auto;padding:24px 20px;gap:5px;background:linear-gradient(135deg,rgba(28,57,45,.96),rgba(18,42,35,.97));border:10px ridge #79512f;border-radius:5px;box-shadow:inset 0 0 0 4px #d2b77c,inset 0 0 50px rgba(0,0,0,.25)}
+.hc-menu::before{display:none}
+.hc-home{display:block;margin:0 auto 9px;color:#f6edda;text-decoration:none;font:900 .78rem var(--font-body);letter-spacing:.06em}
+.hc-menu .classroom-label,.hc-play-head .classroom-label{display:inline-block;margin:0 auto;padding:9px 16px;color:#f5e6c2;background:#1b3d31;border:5px solid #b38a52;border-radius:4px;box-shadow:0 5px 0 #563a25;font:900 .78rem var(--font-body);letter-spacing:.09em}
+.hc-logo{width:min(170px,42vw);height:auto;margin:4px auto 0;filter:drop-shadow(0 7px 3px rgba(20,14,8,.28))}
+.hc-title{margin:2px 0 0;color:#f4e5bf;font:clamp(3.2rem,11vw,5.6rem)/.82 var(--font-display);text-align:center;letter-spacing:.02em;text-shadow:4px 4px 0 #32609a,7px 7px 0 #a83232;transform:rotate(-1deg)}
+.hc-subtitle{margin:14px 0 17px;color:#e8cf91;text-align:center}
+.hc-menu-buttons{width:min(100%,425px);gap:13px}
+.hc-menu-buttons .btn{width:100%;color:#21180f;background:#eee2c9;border:3px solid #3c2a1b;border-radius:4px;box-shadow:0 6px 0 #3c2a1b}
+.hc-menu-buttons .btn-primary{color:#fff;background:#32609a}
+.hc-menu-buttons .btn.is-soon{color:#21180f;background:#eadfc8;border-style:dashed;box-shadow:0 6px 0 #3c2a1b;cursor:not-allowed}
+.hc-menu-buttons .tag{color:#493316;background:#f2cf53;border-radius:3px;padding:3px 7px;font:900 .65rem var(--font-body)}
+.hc-play{width:min(760px,100%);margin:0 auto;padding:20px 14px 40px}
+.hc-play-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.hc-play-head .hc-home{margin:0}.hc-menu-return{padding:8px 12px;color:#21180f;background:#eee2c9;border:2px solid #3c2a1b;border-radius:8px;font:900 .75rem var(--font-body);cursor:pointer}
+.hc-panel{margin:18px 0;padding:clamp(18px,4vw,28px);background-color:#f6edda;background-image:repeating-linear-gradient(0deg,transparent 0 30px,rgba(91,127,151,.12) 31px 32px);border:3px solid #68472c;border-radius:5px;box-shadow:5px 7px 0 #68472c,inset 0 0 0 5px rgba(190,157,102,.18)}
+.hc-panel h2{margin:2px 0 6px;color:#284638;font:1.8rem var(--font-display);text-align:center}
+.hc-muted{margin:5px auto 20px;color:#725a3d;line-height:1.5;text-align:center}
+.hc-field{display:flex;flex-direction:column;gap:7px;margin:12px 0;color:#62482e;font:900 .85rem var(--font-body)}
+.hc-field input,.hc-field select{width:100%;min-width:0;padding:13px 14px;color:#382819;background:#fffaf0;border:2px solid #b49a70;border-radius:3px;font:700 1rem var(--font-body);font-size:16px}
+.hc-name-fields{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}.hc-start{width:100%;margin-top:10px}.hc-error{min-height:18px;color:#a13a30;text-align:center;font-weight:800}
+.hc-scoreboard{display:grid;grid-template-columns:1fr 112px 1fr;align-items:center;gap:8px;margin-bottom:18px;padding:10px;background:#173c2f;border:5px solid #4a2b19;box-shadow:inset 0 0 0 2px rgba(244,229,191,.12);color:#f4e5bf;text-align:center}
+.hc-scoreboard>div{min-width:0;text-align:center}.hc-scoreboard span{display:block;overflow:hidden;font-size:.72rem;text-overflow:ellipsis;white-space:nowrap}.hc-scoreboard strong{display:block;font:2.2rem var(--font-display);line-height:1}.hc-scoreboard small{color:#d1d0b2;font-size:.68rem;font-weight:900}
+.hc-wicket{position:relative;width:42px;height:38px;margin:3px auto;border-right:5px solid #f4e5bf;border-left:5px solid #f4e5bf}.hc-wicket::before,.hc-wicket::after,.hc-wicket span{content:"";position:absolute;left:50%;width:46px;height:4px;background:#f4e5bf;transform:translateX(-50%)}.hc-wicket::before{top:2px}.hc-wicket span{top:9px}.hc-wicket::after{top:16px}
+.hc-choice-stage{display:grid;place-items:center;min-height:170px}.hc-number-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:min(360px,100%)}
+.hc-number-grid button{aspect-ratio:1.15;min-height:72px;color:#21180f;background:#fff8e8;border:3px solid #927a56;border-radius:8px;box-shadow:0 5px 0 #927a56;font:2rem var(--font-display);cursor:pointer;touch-action:manipulation}.hc-number-grid button:active{transform:translateY(4px);box-shadow:0 1px 0 #927a56}
+.hc-hand-stage{display:grid;grid-template-columns:minmax(90px,1fr) 54px minmax(90px,1fr);align-items:center;gap:12px;width:min(520px,100%);margin:0 auto}
+.hc-hand{display:grid;place-items:center;min-height:150px;color:#21180f;background:#fff9eb;border:3px solid #927a56;border-radius:12px;box-shadow:0 6px 0 #927a56;text-align:center}
+.hc-hand svg{width:min(112px,24vw);height:auto;filter:drop-shadow(0 5px 2px rgba(66,43,24,.20))}
+.hc-hand strong{display:block;font:2rem var(--font-display);line-height:1}
+.hc-hand small{display:block;margin-top:4px;color:#725a3d;font:900 .72rem var(--font-body)}
+.hc-hand.batter{border-color:#32609a;box-shadow:0 6px 0 #193b65}
+.hc-hand.bowler{border-color:#a83232;box-shadow:0 6px 0 #6e2121}
+.hc-versus{width:54px;height:54px;display:grid;place-items:center;margin:auto;color:#f4e5bf;background:#173c2f;border:4px solid #4a2b19;border-radius:50%;font:1.05rem var(--font-display)}
+.hc-run-burst{position:relative;overflow:hidden}
+.hc-run-burst::after{content:"";position:absolute;inset:-20%;border:5px solid rgba(255,209,75,.72);border-radius:50%;animation:hcRunBurst .75s ease-out}
+@keyframes hcRunBurst{from{transform:scale(.35);opacity:1}to{transform:scale(1.35);opacity:0}}
+.hc-ball-result{margin:12px auto;padding:16px;color:#284638;background:#fff9eb;border:2px solid #c4a878;border-radius:5px;text-align:center;box-shadow:2px 3px 0 rgba(92,66,38,.12)}.hc-ball-result strong{display:block;margin-bottom:5px;font:1.45rem var(--font-display)}
+.hc-trophy{text-align:center;font-size:3.2rem}.hc-final-score{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}.hc-final-score div{padding:12px 8px;background:#fff9eb;border:2px solid #c4a878;border-radius:5px;text-align:center}.hc-final-score strong{display:block;font:2rem var(--font-display)}
+.hidden{display:none!important}
+.hc-toss-card h2{margin-bottom:8px}
+.hc-coin-wrap{display:grid;place-items:center;min-height:190px;margin:4px 0}
+.hc-coin{position:relative;width:150px;height:150px;border:9px solid #d8a928;border-radius:50%;background:radial-gradient(circle at 38% 32%,#ffe38a 0 8%,#eebf43 34%,#bf7816 72%,#835018 100%);box-shadow:0 9px 0 #5f3d16,0 14px 20px rgba(54,36,16,.28),inset 0 0 0 7px #f7d264,inset 0 0 18px rgba(85,46,13,.35);transform-style:preserve-3d}
+.hc-coin::before{content:"";position:absolute;inset:26px;border:5px solid #7e4d17;border-radius:50%;box-shadow:inset 0 0 0 3px #f6d16e}
+.hc-coin-face{position:absolute;inset:0;display:grid;place-items:center;color:#7d4a14;font:900 1.35rem var(--font-display);text-shadow:0 2px #ffe8a0}
+.hc-coin.flip{animation:hcCoinFlip 1.15s cubic-bezier(.2,.75,.25,1)}
+@keyframes hcCoinFlip{0%{transform:rotateY(0) translateY(0)}45%{transform:rotateY(540deg) translateY(-46px)}100%{transform:rotateY(1080deg) translateY(0)}}
+.hc-toss-options button.selected{color:#fff;background:#32609a;border-color:#193b65}
+@media(max-width:540px){.hc-hand-stage{grid-template-columns:minmax(70px,1fr) 40px minmax(70px,1fr);gap:6px}.hc-hand{min-height:120px}.hc-hand svg{width:82px}.hc-versus{width:40px;height:40px}}
+.hc-number-grid button.selected,.hc-toss-options button.selected{color:#fff;background:#32609a;border-color:#193b65;box-shadow:0 5px 0 #193b65}
+.hc-toss-card{max-width:460px;margin:0 auto;text-align:center}
+.hc-toss-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.hc-toss-options button,.hc-choice-actions button{min-height:58px;padding:10px;color:#21180f;background:#eee2c8;border:2px solid #927a56;border-radius:8px;font:1.05rem var(--font-display);cursor:pointer}
+.hc-toss-options button.selected{color:#fff;background:#32609a;border-color:#193b65}
+.hc-choice-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+dialog{width:min(92vw,480px);max-height:88dvh;overflow-y:auto;box-sizing:border-box;color:#302216;background:#f6edda;border:3px solid #68472c;border-radius:8px;box-shadow:5px 7px 0 #68472c}dialog::backdrop{background:rgba(16,36,25,.62)}dialog h2{margin:0 0 12px;font:1.8rem var(--font-display)}dialog ol{line-height:1.55}
+@media(max-width:540px){.hc-menu{width:calc(100% - 26px);min-height:78dvh;padding:18px}.hc-title{font-size:clamp(2.8rem,16vw,4rem)}.hc-logo{width:132px}.hc-menu-buttons{width:min(100%,340px)}.hc-name-fields{grid-template-columns:1fr}.hc-play{padding:14px 10px 28px}.hc-play-head{display:grid;grid-template-columns:1fr 1fr}.hc-play-head .classroom-label{grid-column:1/-1}.hc-menu-return{justify-self:end}.hc-panel{margin:10px 0;padding:16px 12px}.hc-scoreboard{grid-template-columns:1fr 78px 1fr}.hc-wicket{width:34px}.hc-wicket::before,.hc-wicket::after,.hc-wicket span{width:38px}.hc-number-grid{gap:8px}.hc-number-grid button{min-height:64px}}

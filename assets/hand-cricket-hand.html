@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hand Cricket Hand Poses</title>
+  <style>
+    body{margin:0;display:grid;place-items:center;min-height:100vh;background:#c9bea3;font-family:system-ui,sans-serif}
+    .hc-hand-wrap{display:inline-flex;flex-direction:column;align-items:center;gap:12px;background:#234633;border:5px solid #9e6234;border-radius:18px;padding:18px 24px;color:#f5f5ef}
+    .hc-hand-svg{width:140px;height:150px;overflow:visible}
+    .hc-part{fill:#fce4be;stroke:#352316;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+    .hc-crease{fill:none;stroke:#c79a63;stroke-width:2.5;stroke-linecap:round}
+    .hc-controls{display:flex;gap:6px}
+    .hc-controls button{width:34px;height:34px;border-radius:8px;border:2px solid #f5f5ef;background:#193526;color:#f5f5ef;font-weight:700;cursor:pointer}
+  </style>
+</head>
+<body>
+  <div class="hc-hand-wrap">
+  <svg id="hcHand" class="hc-hand-svg" viewBox="0 0 140 150" role="img" aria-label="Hand cricket gesture">
+    <rect id="f-index" x="38" y="18" width="14" height="54" rx="7" fill="#fce4be" stroke="#352316" stroke-width="4"/>
+    <rect id="f-middle" x="54" y="10" width="14" height="62" rx="7" fill="#fce4be" stroke="#352316" stroke-width="4"/>
+    <rect id="f-ring" x="70" y="16" width="14" height="56" rx="7" fill="#fce4be" stroke="#352316" stroke-width="4"/>
+    <rect id="f-pinky" x="86" y="28" width="13" height="44" rx="6.5" fill="#fce4be" stroke="#352316" stroke-width="4"/>
+    <path id="f-thumb-open" d="M36 78 L16 62 C11 58,6 64,11 70 L32 96 Z" fill="#fce4be" stroke="#352316" stroke-width="4"/>
+    <path d="M34 64 C34 56,100 56,100 66 L97 108 C95 122,84 130,68 130 L54 130 C40 130,32 120,32 106 Z" fill="#fce4be" stroke="#352316" stroke-width="4"/>
+    <rect id="k-index" x="37" y="56" width="15" height="18" rx="7" fill="#fce4be" stroke="#352316" stroke-width="4"/>
+    <rect id="k-middle" x="53" y="55" width="15" height="19" rx="7" fill="#fce4be" stroke="#352316" stroke-width="4"/>
+    <rect id="k-ring" x="69" y="56" width="15" height="18" rx="7" fill="#fce4be" stroke="#352316" stroke-width="4"/>
+    <rect id="k-pinky" x="85" y="58" width="14" height="16" rx="7" fill="#fce4be" stroke="#352316" stroke-width="4"/>
+    <path id="f-thumb-tucked" d="M32 76 C44 72,66 74,72 82 C76 87,70 94,62 92 L33 88 Z" fill="#fce4be" stroke="#352316" stroke-width="4"/>
+    <path d="M46 102 Q66 108 84 100" fill="none" stroke="#c79a63" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M52 114 Q68 118 80 112" fill="none" stroke="#c79a63" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+  <div class="hc-controls" id="hcButtons"><button data-run="1">1</button><button data-run="2">2</button><button data-run="3">3</button><button data-run="4" class="active">4</button><button data-run="5">5</button><button data-run="6">6</button></div>
+  </div>
+  <script>
+    function setHandRun(run){const show=(id,visible)=>{document.getElementById(id).style.display=visible?'inline':'none'};const poses={1:{index:1,middle:0,ring:0,pinky:0,thumbOpen:0},2:{index:1,middle:1,ring:0,pinky:0,thumbOpen:0},3:{index:1,middle:1,ring:1,pinky:0,thumbOpen:0},4:{index:1,middle:1,ring:1,pinky:1,thumbOpen:0},5:{index:1,middle:1,ring:1,pinky:1,thumbOpen:1},6:{index:0,middle:0,ring:0,pinky:0,thumbOpen:1}};const p=poses[run]||poses[4];show('f-index',p.index);show('k-index',!p.index);show('f-middle',p.middle);show('k-middle',!p.middle);show('f-ring',p.ring);show('k-ring',!p.ring);show('f-pinky',p.pinky);show('k-pinky',!p.pinky);show('f-thumb-open',p.thumbOpen);show('f-thumb-tucked',!p.thumbOpen)}
+    setHandRun(4);document.getElementById('hcButtons').addEventListener('click',event=>{if(!event.target.dataset.run)return;setHandRun(Number(event.target.dataset.run))});
+  </script>
+</body>
+</html>

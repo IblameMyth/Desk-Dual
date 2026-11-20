@@ -4,9 +4,20 @@ import { audio } from './audio.js';
 const openDialog = (dialog) => { if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.setAttribute('open', ''); };
 document.querySelectorAll('[data-soon]').forEach((card) => card.addEventListener('click', () => toast(`${card.dataset.soon} is coming soon!`)));
 document.querySelectorAll('dialog').forEach((dialog) => { dialog.querySelectorAll('[data-close]').forEach((button) => button.addEventListener('click', () => dialog.close())); dialog.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); }); });
-document.getElementById('btn-settings').addEventListener('click', () => openDialog(document.getElementById('settings-dialog')));
+const settingsButton = document.getElementById('btn-settings');
+if (settingsButton) {
+  settingsButton.addEventListener('click', () => openDialog(document.getElementById('settings-dialog')));
+}
+const howButton = document.getElementById('btn-how');
+if (howButton) {
+  howButton.addEventListener('click', () => openDialog(document.getElementById('how-dialog')));
+}
 const parse = (value) => value === 'true' ? true : value === 'false' ? false : value;
 function syncSettings() { document.querySelectorAll('.seg').forEach((seg) => { const current = settings[seg.dataset.setting]; seg.querySelectorAll('button').forEach((button) => button.setAttribute('aria-pressed', String(parse(button.dataset.value) === current))); }); }
 document.querySelectorAll('.seg button').forEach((button) => button.addEventListener('click', () => { setSetting(button.parentElement.dataset.setting, parse(button.dataset.value)); syncSettings(); }));
 syncSettings();
-document.addEventListener('click', (event) => { if (event.target.closest('.game-card, .footer-link, .btn, .seg button')) audio.click(); });
+document.addEventListener('pointerdown', () => audio.unlock(), { once: true });
+document.addEventListener('click', (event) => {
+  if (event.target.closest('.game-card, .footer-link, .btn, .seg button')) audio.click();
+  if (event.target.closest('#btn-how')) audio.reveal();
+});

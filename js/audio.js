@@ -82,6 +82,28 @@ export const audio = {
   matchWin() {
     [523, 659, 784, 1047, 784, 1047].forEach((f, i) => tone({ freq: f, dur: 0.22, type: 'triangle', vol: 0.22, delay: i * 0.13 }));
   },
+  bell() {
+    tone({ freq: 880, freq2: 660, dur: 0.38, type: 'sine', vol: 0.16 });
+    tone({ freq: 1320, freq2: 990, dur: 0.28, type: 'triangle', vol: 0.07, delay: 0.04 });
+  },
+  chalk() {
+    noise({ dur: 0.11, vol: 0.045, freq: 1300 });
+    tone({ freq: 340, freq2: 280, dur: 0.09, type: 'triangle', vol: 0.025 });
+  },
+  reveal() {
+    tone({ freq: 420, freq2: 840, dur: 0.12, type: 'triangle', vol: 0.11 });
+    tone({ freq: 840, freq2: 620, dur: 0.16, type: 'sine', vol: 0.08, delay: 0.12 });
+  },
+  vote() {
+    tone({ freq: 520, freq2: 390, dur: 0.08, type: 'square', vol: 0.055 });
+  },
+  page() {
+    noise({ dur: 0.09, vol: 0.025, freq: 1800 });
+  },
+  lose() {
+    tone({ freq: 440, freq2: 330, dur: 0.24, type: 'triangle', vol: 0.13 });
+    tone({ freq: 330, freq2: 180, dur: 0.32, type: 'triangle', vol: 0.11, delay: 0.18 });
+  },
   /** Quiet scratchy loop whose volume follows the pen speed (level 0..1). */
   slide(level) {
     if (!ctx) return;

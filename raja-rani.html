@@ -7,15 +7,95 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css"><link rel="stylesheet" href="raja-rani.css">
+  <link rel="stylesheet" href="classroom-theme.css">
+  <script src="js/classroom-sounds.js"></script>
 </head>
 <body class="menu-page rrc-page">
    <main class="menu rrc-menu" id="main-menu">
-    <a class="rrc-home-link" href="index.html">← ALL GAMES</a>
-    <div class="classroom-label">STD 9-A • CLASSROOM SPECIAL</div>
+    <div class="rrc-topblock">
+      <a class="rrc-home-link" href="index.html">← ALL GAMES</a>
+      <div class="classroom-label">STD 9-A • CLASSROOM SPECIAL</div>
+    </div>
     <svg class="hero" viewBox="0 0 420 110" aria-hidden="true" focusable="false">
-      <defs><g id="rrc-pen-shape"><rect x="-50" y="-11" width="104" height="22" fill="var(--pen)"/><rect x="-50" y="-11" width="104" height="9" fill="#fff" opacity=".18"/><path d="M54 -11 L86 -4 L86 4 L54 11 Z" fill="var(--pen-dark)"/><path d="M86 -4 L98 -1.5 L98 1.5 L86 4 Z" fill="#d5dae2"/><rect x="-80" y="-11" width="34" height="22" rx="11" fill="var(--pen-cap)"/><rect x="-50" y="-11" width="5" height="22" fill="#ffd34d"/><rect x="-74" y="-14" width="22" height="5" rx="2.5" fill="#ffd34d"/></g></defs>
-      <use href="#rrc-pen-shape" class="hero-pen hero-pen-blue" x="105" y="55"/><g transform="translate(420 0) scale(-1 1)"><use href="#rrc-pen-shape" class="hero-pen hero-pen-red" x="105" y="55"/></g>
-    </svg>
+     <defs>
+  <!-- Reusable Nostalgic Notebook Paper Chit Base -->
+  <g id="chit-paper">
+    <!-- Soft drop shadow -->
+    <rect x="-36" y="-26" width="72" height="52" rx="6" fill="var(--pen-dark)" opacity="0.24" transform="translate(0, 3.5)"/>
+    <!-- Notebook Paper Base -->
+    <rect x="-36" y="-26" width="72" height="52" rx="6" fill="#fcfaf2" stroke="var(--pen-dark)" stroke-width="1.8"/>
+    <!-- Subtle ruled notebook lines -->
+    <line x1="-35" y1="-9" x2="35" y2="-9" stroke="#9ec5fe" stroke-width="1.1" opacity="0.7"/>
+    <line x1="-35" y1="5" x2="35" y2="5" stroke="#9ec5fe" stroke-width="1.1" opacity="0.7"/>
+    <line x1="-35" y1="18" x2="35" y2="18" stroke="#9ec5fe" stroke-width="1.1" opacity="0.7"/>
+    <!-- Classic red margin line -->
+    <line x1="-22" y1="-25" x2="-22" y2="25" stroke="#f1948a" stroke-width="1.3" opacity="0.85"/>
+    <!-- Center fold crease -->
+    <line x1="0" y1="-26" x2="0" y2="26" stroke="var(--pen-dark)" stroke-width="1.1" stroke-dasharray="3 3" opacity="0.3"/>
+    <!-- Folded top-right paper flap -->
+    <path d="M22 -26 L36 -26 L36 -12 Z" fill="var(--pen)"/>
+    <path d="M22 -26 L22 -12 L36 -12 Z" fill="#e9ecef" stroke="var(--pen-dark)" stroke-width="1.1" stroke-linejoin="round"/>
+  </g>
+
+  <!-- 1. RAJA (Crown) -->
+  <g id="chit-raja">
+    <use href="#chit-paper"/>
+    <g transform="translate(3, 2) scale(0.54)">
+      <path d="M-36 14 L-42 -14 L-17 2 L0 -22 L17 2 L42 -14 L36 14 Z" fill="var(--pen)" stroke="var(--pen-dark)" stroke-width="2.6" stroke-linejoin="round"/>
+      <rect x="-36" y="14" width="72" height="9" rx="3" fill="var(--pen-cap)" stroke="var(--pen-dark)" stroke-width="2"/>
+      <circle cx="-42" cy="-17" r="4.5" fill="#ffd34d" stroke="var(--pen-dark)" stroke-width="1.6"/>
+      <circle cx="0" cy="-25" r="5.5" fill="#ffd34d" stroke="var(--pen-dark)" stroke-width="1.6"/>
+      <circle cx="42" cy="-17" r="4.5" fill="#ffd34d" stroke="var(--pen-dark)" stroke-width="1.6"/>
+    </g>
+  </g>
+
+  <!-- 2. RANI (Tiara) -->
+  <g id="chit-rani">
+    <use href="#chit-paper"/>
+    <g transform="translate(3, 3) scale(0.56)">
+      <path d="M-34 12 C-24 -6 -10 -16 0 -22 C10 -16 24 -6 34 12 Z" fill="var(--pen)" stroke="var(--pen-dark)" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M-34 12 Q0 5 34 12 L30 18 Q0 12 -30 18 Z" fill="var(--pen-cap)" stroke="var(--pen-dark)" stroke-width="2"/>
+      <!-- Center Diamond Jewel -->
+      <polygon points="0,-13 6,-4 0,5 -6,-4" fill="#ffd34d" stroke="var(--pen-dark)" stroke-width="1.6"/>
+      <circle cx="-16" cy="2" r="3.5" fill="#fff" opacity="0.85"/>
+      <circle cx="16" cy="2" r="3.5" fill="#fff" opacity="0.85"/>
+    </g>
+  </g>
+
+  <!-- 3. SIPAHI (Star Shield) -->
+  <g id="chit-sipahi">
+    <use href="#chit-paper"/>
+    <g transform="translate(3, 1) scale(0.58)">
+      <path d="M-30 -20 L30 -20 L30 2 C30 18 0 28 0 28 C0 28 -30 18 -30 2 Z" fill="var(--pen)" stroke="var(--pen-dark)" stroke-width="2.5" stroke-linejoin="round"/>
+      <polygon points="0,-9 3.5,-2 11,-2 5,3 7,10 0,6 -7,10 -5,3 -11,-2 -3.5,-2" fill="#ffd34d" stroke="var(--pen-dark)" stroke-width="1.5" stroke-linejoin="round"/>
+    </g>
+  </g>
+
+  <!-- 4. CHOR (Bandit Mask) -->
+  <g id="chit-chor">
+    <use href="#chit-paper"/>
+    <g transform="translate(3, 2) scale(0.58)">
+      <!-- Mask strap & domino mask shape -->
+      <path d="M-36 -6 C-24 -16 -8 -14 0 -7 C8 -14 24 -16 36 -6 C38 4 30 14 18 12 C10 11 4 5 0 5 C-4 5 -10 11 -18 12 C-30 14 -38 4 -36 -6 Z" fill="var(--pen-dark)" stroke="var(--pen-dark)" stroke-width="2"/>
+      <!-- Eye cutouts -->
+      <ellipse cx="-16" cy="-1" rx="8" ry="5" fill="#fcfaf2"/>
+      <ellipse cx="16" cy="-1" rx="8" ry="5" fill="#fcfaf2"/>
+      <!-- Subtle glint -->
+      <circle cx="-18" cy="-2" r="1.8" fill="var(--pen)"/>
+      <circle cx="14" cy="-2" r="1.8" fill="var(--pen)"/>
+    </g>
+  </g>
+</defs>
+
+<!-- Left Team (Blue): Raja & Rani -->
+<use href="#chit-raja" class="hero-pen hero-pen-blue" x="62" y="55" transform="rotate(-6 62 55)"/>
+<use href="#chit-rani" class="hero-pen hero-pen-blue" x="152" y="55" transform="rotate(5 152 55)"/>
+
+<!-- Right Team (Red): Sipahi & Chor -->
+<use href="#chit-sipahi" class="hero-pen hero-pen-red" x="268" y="55" transform="rotate(-5 268 55)"/>
+<use href="#chit-chor" class="hero-pen hero-pen-red" x="358" y="55" transform="rotate(6 358 55)"/>
+</svg>
+
     <h1 class="title rrc-brand-title"><span class="title-desk">RAJA RANI</span><br><span class="title-duel">CHOR SIPAHI</span></h1>
     <p class="subtitle">Think. Vote. Catch the Chor.</p>
     <nav class="menu-buttons" aria-label="Raja Rani game menu">
@@ -25,17 +105,16 @@
       <button class="btn btn-small" id="open-how" type="button">HOW TO PLAY</button>
         
   </main>
-  </main>
 
   <main class="rrc-play hidden" id="play-area">
-    <header class="rrc-play-head"><a href="raja-rani.html" class="rrc-home-link">← HOME</a><button class="rrc-menu-return" id="back-menu" type="button">MAIN MENU</button><div class="classroom-label">STD 9-A • RAJA RANI CHOR SIPAHI</div></header>
+    <header class="rrc-play-head"><div class="classroom-label">STD 9-A • RAJA RANI CHOR SIPAHI</div></header>
     <section class="rrc-panel hidden" id="ai-panel">
       <h2>Play with AI</h2><p class="rrc-muted">Three Indian classmates will play against you. All four players vote every round.</p>
       <label class="rrc-field">Your name<input id="human-name" maxlength="18" placeholder="Enter your name"></label><button class="btn btn-primary rrc-start" id="start-ai" type="button" disabled>START GAME</button><p class="rrc-error" id="ai-error" aria-live="polite"></p>
     </section>
     <section class="rrc-panel hidden" id="friends-panel">
       <h2>Who's playing?</h2><p class="rrc-muted">Enter four names. Each player privately sees their chit and votes when the device is passed to them.</p>
-      <div class="rrc-name-fields"><label class="rrc-field">Player 1<input maxlength="18" value="Aarav" placeholder="Player 1"></label><label class="rrc-field">Player 2<input maxlength="18" value="Ananya" placeholder="Player 2"></label><label class="rrc-field">Player 3<input maxlength="18" value="Kabir" placeholder="Player 3"></label><label class="rrc-field">Player 4<input maxlength="18" value="Meera" placeholder="Player 4"></label></div>
+      <div class="rrc-name-fields"><label class="rrc-field">Player 1<input maxlength="18" value="" placeholder="Enter Player 1 name"></label><label class="rrc-field">Player 2<input maxlength="18" value="" placeholder="Enter Player 2 name"></label><label class="rrc-field">Player 3<input maxlength="18" value="" placeholder="Enter Player 3 name"></label><label class="rrc-field">Player 4<input maxlength="18" value="" placeholder="Enter Player 4 name"></label></div>
       <button class="btn btn-primary rrc-start" id="start-friends" type="button">START GAME</button><p class="rrc-error" id="friends-error" aria-live="polite"></p>
     </section>
     <section class="rrc-panel hidden" id="round-panel">

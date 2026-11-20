@@ -127,6 +127,8 @@ export async function startFriendsGame() {
   }
 
   function startRound(showBanner = true) {
+    audio.unlock();
+    audio.bell();
     players.forEach(p => p.eliminated=false);
     turn=(round-1)%players.length; phase='aim'; fallAt=0; stats={collisions:0,strongest:0};
     const portrait=physics.size.h>physics.size.w;
@@ -147,6 +149,7 @@ export async function startFriendsGame() {
 
   function onShot({power}) {
     phase='move'; moveStart=performance.now(); fallAt=0; stats.strongest=Math.max(stats.strongest,power);
+    audio.chalk();
     audio.flick(power); vibrate(12); dirty=true;
   }
 
