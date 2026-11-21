@@ -75,8 +75,8 @@ function showRole(){
  let i=state.roleCursor;
  if(i>=state.players.length){
   state.wordsRevealed=true;
-  state.voteCursor=0;
-  nextFriendVote();
+  state.round=1;
+  beginClueRound();
   return;
  }
  let p=state.players[i];
@@ -136,8 +136,7 @@ function continueRound(message,counts){
   state.round++;
   state.votes=[];
    show('round-panel');
-   state.voteCursor=0;
-   nextFriendVote();
+    beginClueRound();
  };
 }
 function finish(caught,counts){
