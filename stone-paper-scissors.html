@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#102419">
   <meta name="description" content="Play Stone Paper Scissors on Desk Dual.">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <title>Stone Paper Scissors - Desk Dual</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,6 +44,7 @@
     <section class="khc-panel hidden" id="setup-ai">
       <h2>Play with AI</h2>
       <p class="khc-muted">Enter your name and choose an AI level.</p>
+      <div class="sps-result"><strong>CLASS RULES</strong><div class="sps-choices"><div class="sps-choice"><span>✊</span><small>BEATS ✌️</small></div><div class="sps-choice"><span>✋</span><small>BEATS ✊</small></div><div class="sps-choice"><span>✌️</span><small>BEATS ✋</small></div></div></div>
       <label class="khc-field">Your name
         <input id="ai-name" maxlength="18" placeholder="Enter your name">
       </label>
@@ -63,6 +68,7 @@
     <section class="khc-panel hidden" id="setup-friends">
       <h2>Two-player match</h2>
       <p class="khc-muted">Enter both names. Players choose secretly on the pass device.</p>
+      <div class="sps-result"><strong>PRIVATE CLASS MATCH</strong><p>Player 1 chooses first. Pass the device to Player 2 for the second hidden move.</p></div>
       <div class="khc-names">
         <label class="khc-field">Player 1
           <input id="friend-name-1" maxlength="18" placeholder="Enter Player 1 name">
@@ -83,11 +89,22 @@
     </section>
 
     <section class="khc-panel hidden" id="game-panel">
-      <div class="sps-scoreboard">
-        <div><span id="left-label">YOU</span><strong id="left-score">0</strong></div>
-        <div class="sps-score-center"><span id="round-label">ROUND 1</span><small id="target-label">FIRST TO 2</small></div>
-        <div><span id="right-label">AI</span><strong id="right-score">0</strong></div>
-      </div>
+      <header class="blackboard-score sps-blackboard-score" aria-label="Stone Paper Scissors classroom scoreboard">
+        <div class="chalk-class">STD 9-A<br><span>SUB : MATHS</span></div>
+        <div class="chalk-date">DATE : <span id="sps-board-date">--/--</span><br><span>H.W.</span><br><small>CH. 6 · Q. 1-5</small></div>
+        <div class="chalk-thought">Thought for the Day<br><em>“Practice makes a man perfect”</em></div>
+        <section class="chalk-scorebox sps-chalk-scorebox">
+          <div class="chalk-title">✊ STONE PAPER SCISSORS <small id="target-label">FIRST TO 2</small></div>
+          <div class="chalk-match">
+            <div class="chalk-team chalk-team-you"><span class="chalk-name" id="left-label">YOU</span><span class="chalk-score" id="left-score">0</span></div>
+            <span class="chalk-vs">vs</span>
+            <div class="chalk-team chalk-team-ai"><span class="chalk-name" id="right-label">AI</span><span class="chalk-score" id="right-score">0</span></div>
+          </div>
+          <div class="chalk-round" id="round-label">ROUND 1 · FIRST MOVE WINS</div>
+        </section>
+        <div class="chalk-doodles" aria-hidden="true">♡ &nbsp; ✊ ✋ ✌️ &nbsp; □ □ □</div>
+        <div class="chalk-sign">Mentor : Rinku</div>
+      </header>
       <h2 id="turn-title">Choose your move</h2>
       <p class="khc-muted" id="turn-description">Stone beats scissors. Scissors cut paper. Paper covers stone.</p>
       <div class="sps-moves" id="move-grid">

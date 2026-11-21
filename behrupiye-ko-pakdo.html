@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#6e3e1e"><meta name="description" content="Play Behrupiye Ko Pakdo on Desk Dual.">
+<meta name="theme-color" content="#6e3e1e"><meta name="description" content="Play Behrupiye Ko Pakdo on Desk Dual."><link rel="manifest" href="/manifest.json"><link rel="apple-touch-icon" href="/assets/icons/icon-192.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <title>Behrupiye Ko Pakdo - Desk Dual</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
@@ -15,11 +15,31 @@
 <a class="khc-home" href="index.html">← ALL GAMES</a><div class="classroom-label">STD 9-A • CLASSROOM SPECIAL</div>
 <div style="font-size:4.2rem;margin-top:8px" aria-hidden="true">🕵️‍♂️</div>
 <h1 class="khc-title">BEHRUPIYE<br>KO PAKDO</h1><p class="khc-subtitle">Vote for a category, share clues, and catch the Behrupiya!</p>
+<div class="khc-player-grid" aria-label="Classroom roles">
+  <div class="khc-player"><b>📚 CLASSMATE</b><small>Find the different word</small></div>
+  <div class="khc-player"><b>🕵️ BEHRUPIYA</b><small>Hide among the class</small></div>
+</div>
 <nav class="menu-buttons" aria-label="Behrupiye Ko Pakdo game menu"><button class="btn btn-primary" id="open-friends">PLAY WITH FRIENDS</button><button class="btn is-soon" type="button" data-soon="Online play" aria-label="Play online, coming soon">PLAY ONLINE <span class="tag">SOON</span></button><button class="btn btn-small" id="open-how">HOW TO PLAY</button></nav>
 </main>
 <main class="khc-play hidden" id="play-area">
 <header class="khc-head"><a href="behrupiye-ko-pakdo.html" class="khc-home">← Main Menu </a><button class="rrc-menu-return" id="back-menu">All Games</button><div class="classroom-label">STD 9-A • BEHRUPIYE KO PAKDO</div></header>
-<section class="khc-panel hidden" id="setup-friends"><h2>Who's in the classroom?</h2><p class="khc-muted">Add 3–15 players. Pass the device so everyone can privately see their word and role.</p><label class="khc-field">Number of players<select id="player-count"><option>3</option><option selected>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option></select></label><div class="khc-names" id="name-fields"></div><button class="btn btn-primary khc-start" id="start-friends">START GAME</button><p class="khc-error" id="friends-error"></p></section>
+<header class="blackboard-score khc-blackboard-score" aria-label="Behrupiye classroom scoreboard">
+  <div class="chalk-class">STD 9-A<br><span>SUB : MATHS</span></div>
+  <div class="chalk-date">DATE : <span id="khc-board-date">--/--</span><br><span>H.W.</span><br><small>CH. 6 · Q. 1-5</small></div>
+  <div class="chalk-thought">Thought for the Day<br><em>“Practice makes a man perfect”</em></div>
+  <section class="chalk-scorebox khc-chalk-scorebox">
+    <div class="chalk-title">🕵️ BEHRUPIYE <small id="khc-board-category">CATEGORY VOTE</small></div>
+    <div class="chalk-match">
+      <div class="chalk-team chalk-team-you"><span class="chalk-name" id="khc-player-left">CLASSMATES</span><span class="chalk-score" id="khc-score-left">–</span></div>
+      <span class="chalk-vs">vs</span>
+      <div class="chalk-team chalk-team-ai"><span class="chalk-name" id="khc-player-right">BEHRUPIYA</span><span class="chalk-score" id="khc-score-right">?</span></div>
+    </div>
+    <div class="chalk-round" id="khc-board-round">PRIVATE CLASSROOM ROUND · SECRET WORDS</div>
+  </section>
+  <div class="chalk-doodles" aria-hidden="true">✏ &nbsp; 🔍 &nbsp; ? &nbsp; ♡ &nbsp; □ □ □</div>
+  <div class="chalk-sign">Mentor : Rinku</div>
+</header>
+<section class="khc-panel hidden" id="setup-friends"><h2>Who's in the classroom?</h2><p class="khc-muted">Add 3–15 players. Pass the device so everyone can privately see their word and role.</p><div class="khc-card"><h3>📓 Classroom notebook</h3><p>Attendance first · Category vote second · Secret words last · Clues and private votes decide the verdict.</p></div><div class="khc-player-grid"><div class="khc-player"><b>3–15</b><small>Students allowed</small></div><div class="khc-player"><b>1</b><small>Behrupiya in the class</small></div></div><label class="khc-field">Number of players<select id="player-count"><option>3</option><option selected>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option></select></label><div class="khc-names" id="name-fields"></div><button class="btn btn-primary khc-start" id="start-friends">START GAME</button><p class="khc-error" id="friends-error"></p></section>
 <section class="khc-panel hidden" id="category-panel"><div class="khc-step"><span class="khc-pill" id="category-vote-progress">CATEGORY VOTE</span><span class="khc-pill" id="category-vote-mode">CLASS VOTE</span></div><h2 id="category-vote-title">Choose today's category</h2><p class="khc-muted" id="category-vote-description">Everyone votes once. The category with the most votes is selected.</p><div id="category-vote-area"></div></section>
 <section class="khc-panel hidden" id="round-panel"><div class="khc-step"><span class="khc-pill" id="round-label">ROUND 1</span><span class="khc-pill" id="mode-label">FRIENDS</span></div><h2 id="phase-title">Secret roles</h2><p class="khc-muted" id="phase-description">Only the named player should look at the screen.</p><div id="game-area"></div></section>
 <section class="khc-panel hidden" id="end-panel"><div style="text-align:center;font-size:3rem">🏆</div><h2>Classroom verdict</h2><div id="final-result"></div><button class="btn btn-primary khc-start" id="play-again">PLAY ANOTHER GAME</button><button class="btn khc-start" id="exit-game">EXIT TO MAIN MENU</button></section>
@@ -41,21 +61,34 @@ const alive=()=>state.players.map((p,i)=>p.alive?i:-1).filter(i=>i>=0);
 let state={};
 function show(id){panels.forEach(x=>$(x).classList.toggle('hidden',x!==id));$('main-menu').classList.add('hidden');$('play-area').classList.remove('hidden')}
 function makePlayer(name,human){return{name,human,alive:true,chor:false,word:'',clues:[],currentClue:''}}
+function updateKhcBoard(phase){
+ if(!$('khc-board-date'))return;
+ const now=new Date();
+ $('khc-board-date').textContent=`${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}`;
+ $('khc-board-category').textContent=state.category||'CATEGORY VOTE';
+ $('khc-board-round').textContent=`${phase} · ROUND ${state.round||1}`;
+ const aliveCount=state.players?alive().length:0;
+ $('khc-player-left').textContent='CLASSMATES';
+ $('khc-score-left').textContent=aliveCount||'–';
+ $('khc-player-right').textContent='BEHRUPIYA';
+ $('khc-score-right').textContent=state.category?'?':'–';
+}
 function buildNames(){let n=+$('player-count').value;$('name-fields').innerHTML=Array.from({length:n},(_,i)=>`<label class="khc-field">Player ${i+1}<input maxlength="18" value="" placeholder="Enter Player ${i+1} name"></label>`).join('')}
 function start(mode,players){
  state={mode,players,category:'',common:'',odd:'',chor:-1,round:1,roleCursor:0,clueOrder:[],clueCursor:0,votes:[],voteCursor:0,eliminated:[],categoryVotes:[],categoryCursor:0,wordsRevealed:false};
  players.forEach(p=>{p.alive=true;p.chor=false;p.word='';p.clues=[];p.currentClue=''});
- show('category-panel');nextCategoryVote();
+ show('category-panel');updateKhcBoard('CATEGORY VOTE');nextCategoryVote();
 }
 function nextCategoryVote(){
  const total=state.players.length,idx=state.categoryCursor;
  if(idx>=total){selectWinningCategory();return}
+ updateKhcBoard(`CATEGORY VOTE ${idx+1}/${total}`);
  const p=state.players[idx],cats=Object.keys(decks);
  $('category-vote-progress').textContent=`CATEGORY VOTE ${idx+1}/${total}`;
  $('category-vote-mode').textContent='FRIENDS';
  $('category-vote-title').textContent=`${p.name}, choose a category`;
  $('category-vote-description').textContent=`Pass the device to ${p.name}. Everyone gets one private vote.`;
- $('category-vote-area').innerHTML=`<div class="khc-player-grid">${cats.map((c,i)=>`<button class="khc-actions" style="display:block;width:100%;margin:0;padding:13px 8px" data-category-vote="${i}"><b>${esc(c)}</b><small style="display:block">${Object.keys(decks).includes(c)?decks[c].length:0} words</small></button>`).join('')}</div>`;
+ $('category-vote-area').innerHTML=`<div class="khc-card"><h3>📝 ${esc(p.name)}'s category slip</h3><p>Choose one notebook category. Do not let other players see your mark.</p></div><div class="khc-player-grid">${cats.map((c,i)=>`<button class="khc-actions" style="display:block;width:100%;margin:0;padding:13px 8px" data-category-vote="${i}"><b>✦ ${esc(c)}</b><small style="display:block">${Object.keys(decks).includes(c)?decks[c].length:0} classroom words</small></button>`).join('')}</div>`;
  document.querySelectorAll('[data-category-vote]').forEach(b=>b.onclick=()=>{state.categoryVotes.push({category:cats[+b.dataset.categoryVote],voter:idx});state.categoryCursor++;nextCategoryVote()});
 }
 function selectWinningCategory(){
@@ -67,7 +100,8 @@ function selectWinningCategory(){
  const words=shuffle(decks[winner]);state.common=words[0];state.odd=words[1];state.chor=Math.floor(Math.random()*state.players.length);
  sound()?.bell();
  state.players.forEach((p,i)=>{p.chor=i===state.chor;p.word=p.chor?state.odd:state.common;p.alive=true;p.clues=[];p.currentClue=''});
- $('category-vote-area').innerHTML=`<div class="khc-result"><h3>📚 Today's category: ${esc(winner)}</h3><p>${max} vote(s) · ${decks[winner].length} words in this category</p></div><button class="btn btn-primary khc-start" id="deal-words">DEAL SECRET WORDS</button>`;
+ updateKhcBoard('SECRET WORDS');
+ $('category-vote-area').innerHTML=`<div class="khc-result"><div style="font-size:2.2rem">📚</div><h3>Today's category: ${esc(winner)}</h3><p>${max} vote(s) · ${decks[winner].length} words in this category</p><p>Classmates share one word · The Behrupiya receives a different word</p></div><div class="khc-player-grid"><div class="khc-player"><b>👀 LOOK</b><small>Read your role only</small></div><div class="khc-player"><b>🤫 KEEP SECRET</b><small>Never show the screen</small></div></div><button class="btn btn-primary khc-start" id="deal-words">DEAL SECRET WORDS</button>`;
  $('category-vote-title').textContent='The class has chosen!';$('category-vote-description').textContent='Get ready for the secret word reveal.';
  $('deal-words').onclick=()=>{show('round-panel');showRole()};
 }
@@ -84,10 +118,10 @@ function showRole(){
  $('phase-title').textContent='Private word reveal';
  $('phase-description').textContent=`Pass the device to ${p.name}. Only ${p.name} should look.`;
  $('round-label').textContent='SECRET WORDS';$('mode-label').textContent='FRIENDS MODE';
- $('game-area').innerHTML=`<div class="khc-secret"><div class="emoji">🔐</div><h3>${esc(p.name)}</h3><p>Tap to reveal your secret.</p><button class="btn btn-primary khc-start" id="reveal">REVEAL MY WORD</button></div>`;
- $('reveal').onclick=()=>{sound()?.reveal();$('game-area').innerHTML=`<div class="khc-secret"><div class="emoji">${p.chor?'🕵️':'📚'}</div><h3>${p.chor?'YOU ARE THE BEHRUPIYA':'YOU ARE A CLASSMATE'}</h3><p>Category: <b>${esc(state.category)}</b><br>Your word: <b>${esc(p.word)}</b><br>${p.chor?'Your word is different. Blend in!':'All other classmates have the same word.'}</p><button class="btn btn-primary khc-start" id="hide-word">HIDE & PASS DEVICE</button></div>`;$('hide-word').onclick=()=>{sound()?.chalk();state.roleCursor++;showRole()}}
+ $('game-area').innerHTML=`<div class="khc-card"><h3>📓 Private notebook slip · Player ${i+1} of ${state.players.length}</h3><p>Pass the device. All other classmates should look away.</p></div><div class="khc-secret"><div class="emoji">🔐</div><h3>${esc(p.name)}</h3><p>Tap to reveal your secret word.</p><button class="btn btn-primary khc-start" id="reveal">REVEAL MY WORD</button></div>`;
+ $('reveal').onclick=()=>{sound()?.reveal();$('game-area').innerHTML=`<div class="khc-card"><h3>📚 TOP SECRET · ${esc(state.category)}</h3><p>Cover this screen after reading.</p></div><div class="khc-secret"><div class="emoji">${p.chor?'🕵️':'📚'}</div><h3>${p.chor?'YOU ARE THE BEHRUPIYA':'YOU ARE A CLASSMATE'}</h3><p>Category: <b>${esc(state.category)}</b><br>Your word: <b>${esc(p.word)}</b><br>${p.chor?'Your word is different. Blend in and describe it carefully!':'All classmates have the same word. Find who sounds different.'}</p><button class="btn btn-primary khc-start" id="hide-word">HIDE & PASS DEVICE</button></div>`;$('hide-word').onclick=()=>{sound()?.chalk();state.roleCursor++;showRole()}}
 }
-function setPhase(title,desc){$('phase-title').textContent=title;$('phase-description').textContent=desc;$('round-label').textContent='CLUE ROUND '+state.round;$('mode-label').textContent='FRIENDS'}
+function setPhase(title,desc){$('phase-title').textContent=title;$('phase-description').textContent=desc;$('round-label').textContent='CLUE ROUND '+state.round;$('mode-label').textContent='FRIENDS';updateKhcBoard(title)}
 function beginClueRound(){
  state.clueOrder=shuffle(alive());state.clueCursor=0;state.votes=[];
  state.players.forEach(p=>p.currentClue='');
@@ -99,7 +133,7 @@ function nextClue(){
  let idx=state.clueOrder[state.clueCursor],p=state.players[idx];
  $('phase-title').textContent=p.name+"'s clue";
  $('phase-description').textContent=state.mode==='friends'?`Pass the device to ${p.name}. Enter one clue, then pass it on.`:'Give one clue that fits your word without saying the word itself.';
- $('game-area').innerHTML=`<div class="khc-progress">CLUE ${state.clueCursor+1} OF ${state.clueOrder.length}</div><div class="khc-secret"><div class="emoji">✏️</div><h3>${esc(p.name)}</h3><p>${state.mode==='friends'?'Only this player should look at the screen.':'Your turn to give a clue.'}</p></div><label class="khc-field">Your clue<input id="clue-input" maxlength="32" placeholder="Enter a short clue" autocomplete="off"></label><p class="khc-error" id="clue-error"></p><button class="btn btn-primary khc-start" id="submit-clue">SUBMIT CLUE</button>`;
+ $('game-area').innerHTML=`<div class="khc-card"><h3>✏️ Chalkboard clue slip · Round ${state.round}</h3><p>Give one clue. Never write or say the exact secret word.</p></div><div class="khc-progress">CLUE ${state.clueCursor+1} OF ${state.clueOrder.length}</div><div class="khc-secret"><div class="emoji">✏️</div><h3>${esc(p.name)}</h3><p>${state.mode==='friends'?'Only this player should look at the screen. Other classmates look away.':'Your turn to give a clue.'}</p></div><label class="khc-field">Your clue<input id="clue-input" maxlength="32" placeholder="Enter a short clue" autocomplete="off"></label><p class="khc-error" id="clue-error"></p><button class="btn btn-primary khc-start" id="submit-clue">SUBMIT CLUE</button>`;
  $('submit-clue').onclick=()=>{let v=$('clue-input').value.trim();if(!v){$('clue-error').textContent='Enter a clue first.';return}if(v.toLowerCase()===p.word.toLowerCase()){$('clue-error').textContent='Do not say your exact secret word.';return}sound()?.chalk();p.currentClue=v;p.clues.push(v);state.clueCursor++;nextClue()};
 }
 function clueBoard(){return `<div class="khc-card"><h3>Clues this round</h3><p>Listen carefully. Who seems to be describing a different word?</p></div><div class="khc-player-grid">${state.clueOrder.map(i=>`<div class="khc-player"><b>${esc(state.players[i].name)}</b><small>“${esc(state.players[i].currentClue)}”</small></div>`).join('')}</div>`}
@@ -109,6 +143,7 @@ function showClueBoard(){
  $('start-vote').onclick=()=>{state.voteCursor=0;nextFriendVote()};
 }
 function nextFriendVote(){
+ updateKhcBoard('PRIVATE VOTE');
  let voters=alive();if(state.voteCursor>=voters.length){resolveVotes();return}
  let vi=voters[state.voteCursor],v=state.players[vi];
  $('phase-title').textContent='Private voting';$('phase-description').textContent=`Pass the device to ${v.name}. Choose one player.`;
@@ -116,10 +151,11 @@ function nextFriendVote(){
  const discussion=state.round===1&&state.votes.length===0
   ?'<div class="khc-card"><h3>Discuss orally</h3><p>Compare the words you saw, discuss who seems suspicious, then pass the device to vote.</p></div>'
   :'';
- $('game-area').innerHTML=discussion+`<div class="khc-progress">VOTE ${state.voteCursor+1} OF ${voters.length}</div><div class="khc-card"><h3>${esc(v.name)}'s vote</h3><p>Pick who you think has the different word.</p></div><div class="khc-actions">${alive().filter(i=>i!==vi).map(i=>`<button data-friend-vote="${i}">${esc(state.players[i].name)}</button>`).join('')}</div>`;
+ $('game-area').innerHTML=discussion+`<div class="khc-card"><h3>🗳️ Classroom voting register</h3><p>Round ${state.round} · Private ballot · Look away from the device until your own turn.</p></div><div class="khc-progress">VOTE ${state.voteCursor+1} OF ${voters.length}</div><div class="khc-card"><h3>${esc(v.name)}'s vote</h3><p>Choose the player who seems to know a different secret word.</p></div><div class="khc-actions">${alive().filter(i=>i!==vi).map(i=>`<button data-friend-vote="${i}">${esc(state.players[i].name)}</button>`).join('')}</div>`;
  document.querySelectorAll('[data-friend-vote]').forEach(b=>b.onclick=()=>{sound()?.vote();state.votes.push({voter:vi,target:+b.dataset.friendVote});state.voteCursor++;nextFriendVote()});
 }
 function resolveVotes(){
+ updateKhcBoard('VOTES COUNTED');
  let counts=state.players.map(()=>0);state.votes.forEach(v=>counts[v.target]++);
  let ids=alive(),max=Math.max(...ids.map(i=>counts[i])),top=ids.filter(i=>counts[i]===max);
  if(top.length!==1||max===0){continueRound('The vote was tied. No one leaves the classroom.',counts);return}
@@ -142,11 +178,12 @@ function continueRound(message,counts){
  };
 }
 function finish(caught,counts){
+ updateKhcBoard(caught?'BEHRUPIYA CAUGHT':'BEHRUPIYA ESCAPED');
  let chor=state.players[state.chor];
  $('phase-title').textContent=caught?'Behrupiya caught!':'Behrupiya escaped!';$('phase-description').textContent='The secret words are revealed.';
  let rows=state.players.map((p,i)=>`<div class="khc-player"><b>${esc(p.name)} ${p.alive?'':'(out)'}</b><small>${p.chor?'🕵️ BEHRUPIYA':'📚 CLASSMATE'} · Word: <b>${esc(p.word)}</b></small><small>${counts[i]} vote(s) this round</small></div>`).join('');
  $('game-area').innerHTML=`<div class="khc-result"><div style="font-size:2.5rem">${caught?'🎉':'😈'}</div><h3>${caught?'The class caught the Behrupiya!':'The Behrupiya survived!'}</h3><p>${esc(chor.name)} was the Behrupiya.</p><p>Category: <b>${esc(state.category)}</b></p><p>Classmates' word: <b>${esc(state.common)}</b> · Behrupiya's word: <b>${esc(state.odd)}</b></p></div><h3 style="font-family:var(--font-display);margin:18px 0 8px">Classroom reveal</h3><div class="khc-player-grid">${rows}</div><button class="btn btn-primary khc-start" id="finish-round">VIEW VERDICT</button>`;
- $('finish-round').onclick=()=>{show('end-panel');$('final-result').innerHTML=`<div class="khc-result"><h3>${caught?'🏆 Classmates win!':'🕵️ Behrupiya wins!'}</h3><p>Behrupiya: <b>${esc(chor.name)}</b></p><p>Category: ${esc(state.category)}</p><p>Classmates' word: <b>${esc(state.common)}</b></p><p>Behrupiya's word: <b>${esc(state.odd)}</b></p></div>`};
+ $('finish-round').onclick=()=>{show('end-panel');$('final-result').innerHTML=`<div class="khc-card"><h3>📓 Classroom verdict register</h3><p>STD 9-A · Behrupiye Ko Pakdo · Secret word reveal complete</p></div><div class="khc-result"><div style="font-size:2.6rem">${caught?'🎉':'🕵️'}</div><h3>${caught?'🏆 Classmates win!':'Behrupiya wins!'}</h3><p>Behrupiya: <b>${esc(chor.name)}</b></p><p>Category: <b>${esc(state.category)}</b></p></div><div class="khc-player-grid"><div class="khc-player"><b>📚 CLASSMATE WORD</b><small>${esc(state.common)}</small></div><div class="khc-player"><b>🕵️ BEHRUPIYA WORD</b><small>${esc(state.odd)}</small></div></div><div class="khc-card"><h3>✎ Classroom result</h3><p>${caught?'The class identified the Behrupiya by the clues and voting.':'The Behrupiya survived the clues and the classroom vote.'}</p></div>`};
 }
 $('open-friends').onclick=()=>{buildNames();show('setup-friends')};
 $('back-menu').onclick=()=>location.href='index.html';

@@ -6,3 +6,4 @@
 .rrc-topblock{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%;margin:0 0 8px}
 .rrc-topblock .rrc-home-link{display:block;position:relative;width:fit-content;margin:0;color:#f6edda;font:900 .78rem var(--font-body);letter-spacing:.06em;text-align:center;text-decoration:none}
 .rrc-topblock .classroom-label{display:inline-block;margin:0}
+.rrc-play-nav{display:flex;gap:8px;align-items:center}.rrc-play-nav .rrc-home-link{margin:0;color:#21180f;background:#eee2c9;border:2px solid #3c2a1b;border-radius:8px;padding:8px 12px;font:900 .75rem var(--font-body);letter-spacing:.06em;text-decoration:none}.rrc-play-nav .rrc-menu-return{font:900 .75rem var(--font-body)}

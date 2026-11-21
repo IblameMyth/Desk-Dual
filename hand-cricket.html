@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#102419">
   <meta name="description" content="Play Hand Cricket on Desk Dual.">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <title>Hand Cricket - Desk Dual</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,6 +44,7 @@
     <section class="hc-panel hidden" id="setup-ai">
       <h2>Play with AI</h2>
       <p class="hc-muted">Choose a level, enter your name, and start the toss.</p>
+      <div class="hc-ball-result"><strong>Match rules</strong>Different numbers add runs · Matching numbers mean OUT · One innings each</div>
       <label class="hc-field">Your name<input id="ai-name" maxlength="18" placeholder="Enter your name"></label>
       <label class="hc-field">AI level
         <select id="ai-level"><option value="easy">Easy · random bowling</option><option value="hard">Hard · smart bowling</option></select>
@@ -50,6 +55,7 @@
     <section class="hc-panel hidden" id="setup-friends">
       <h2>Two-player match</h2>
       <p class="hc-muted">Rename your players, then start the toss.</p>
+      <div class="hc-ball-result"><strong>Pass the device</strong>Player 1 chooses the batter number · Player 2 chooses the bowler number privately</div>
       <div class="hc-name-fields">
         <label class="hc-field">Player 1<input id="friend-name-1" maxlength="18" value="" placeholder="Enter Player 1 name"></label>
         <label class="hc-field">Player 2<input id="friend-name-2" maxlength="18" value="" placeholder="Enter Player 2 name"></label>
@@ -59,11 +65,22 @@
     </section>
     <section class="hc-panel hidden" id="toss-panel"><div id="toss-stage"></div></section>
     <section class="hc-panel hidden" id="game-panel">
-      <div class="hc-scoreboard">
-        <div><span id="batter-label">BATTER</span><strong id="batter-score">0</strong><small>RUNS</small></div>
-        <div class="hc-center-score"><span id="innings-label">1ST INNINGS</span><div class="hc-wicket"><span></span></div><small id="target-label">NOT OUT</small></div>
-        <div><span id="bowler-label">BOWLER</span><strong id="bowler-choice">–</strong><small>LAST BALL</small></div>
-      </div>
+      <header class="blackboard-score hc-blackboard-score" aria-label="Hand Cricket classroom blackboard scoreboard">
+        <div class="chalk-class">STD 9-A<br><span>SUB : MATHS</span></div>
+        <div class="chalk-date">DATE : <span id="hc-board-date">--/--</span><br><span>H.W.</span><br><small id="hc-homework">CH. 6 · Q. 1-5</small></div>
+        <div class="chalk-thought">Thought for the Day<br><em>“Practice makes a man perfect”</em></div>
+        <section class="chalk-scorebox hc-chalk-scorebox">
+          <div class="chalk-title">✋ HAND CRICKET <small id="innings-label">1ST INNINGS · NOT OUT</small></div>
+          <div class="chalk-match">
+            <div class="chalk-team chalk-team-you" id="player-one-board"><span class="chalk-name" id="player-one-label">PLAYER 1</span><span class="chalk-score" id="player-one-score">0</span></div>
+            <span class="chalk-vs">vs</span>
+            <div class="chalk-team chalk-team-ai" id="player-two-board"><span class="chalk-name" id="player-two-label">PLAYER 2</span><span class="chalk-score" id="player-two-score">0</span></div>
+          </div>
+          <div class="chalk-round" id="target-label">1ST INNINGS · NOT OUT · LAST BALL –</div>
+        </section>
+        <div class="chalk-doodles" aria-hidden="true">♡ &nbsp; □ □ □ □ □ &nbsp; LAST <span id="bowler-choice">–</span></div>
+        <div class="chalk-sign">Mentor : Rinku</div>
+      </header>
       <h2 id="turn-title">Choose a number</h2>
       <p class="hc-muted" id="turn-description">Pick 1–6. If the bowler shows the same number, you are out.</p>
       <div class="hc-choice-stage" id="choice-stage">

@@ -55,6 +55,11 @@
   }
 
   function updateScoreboard() {
+    if ($('sps-board-date')) {
+      const now = new Date();
+      $('sps-board-date').textContent =
+        `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}`;
+    }
     $('left-label').textContent = state.players[0].name.toUpperCase();
     $('right-label').textContent = state.players[1].name.toUpperCase();
     $('left-score').textContent = state.scores[0];

@@ -250,11 +250,21 @@
   }
 
   function updateBoard() {
-    $('batter-label').textContent = state.players[state.batter].name.toUpperCase();
-    $('batter-score').textContent = state.scores[state.batter];
-    $('bowler-label').textContent = state.players[1 - state.batter].name.toUpperCase();
+    if ($('hc-board-date')) {
+      const now = new Date();
+      $('hc-board-date').textContent =
+        `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}`;
+    }
+    $('player-one-label').textContent = state.players[0].name.toUpperCase();
+    $('player-two-label').textContent = state.players[1].name.toUpperCase();
+    $('player-one-score').textContent = state.scores[0];
+    $('player-two-score').textContent = state.scores[1];
+    $('player-one-board').classList.toggle('hc-board-batting', state.batter === 0);
+    $('player-two-board').classList.toggle('hc-board-batting', state.batter === 1);
     $('innings-label').textContent = state.innings === 1 ? '1ST INNINGS' : '2ND INNINGS';
-    $('target-label').textContent = state.target === null ? 'NOT OUT' : `TARGET ${state.target + 1}`;
+    const targetText = state.target === null ? 'NOT OUT' : `TARGET ${state.target + 1}`;
+    $('target-label').textContent =
+      `${state.innings === 1 ? '1ST INNINGS' : '2ND INNINGS'} · ${targetText} · LAST BALL ${$('bowler-choice').textContent}`;
   }
 
   function setTurn() {
@@ -369,6 +379,7 @@
       state.out = true;
       state.waiting = true;
       showHands(batterNumber, bowlerNumber, false);
+      updateBoard();
       $('continue-round').textContent = 'CONTINUE';
       $('continue-round').classList.remove('hidden');
       $('turn-title').textContent = 'Wicket!';
@@ -435,8 +446,8 @@
       ? 'Perfect finish. Great classroom cricket!'
       : 'The chase is complete.';
     $('final-score').innerHTML =
-      `<div><span>${state.players[0].name}</span><strong>${first}</strong></div>` +
-      `<div><span>${state.players[1].name}</span><strong>${second}</strong></div>`;
+      `<div><span>🏏 ${state.players[0].name}</span><strong>${first}</strong><small>RUNS</small></div>` +
+      `<div><span>🏏 ${state.players[1].name}</span><strong>${second}</strong><small>RUNS</small></div>`;
     first === second ? sound()?.bell() : sound()?.win();
   }
 

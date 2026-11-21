@@ -21,3 +21,33 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('.game-card, .footer-link, .btn, .seg button')) audio.click();
   if (event.target.closest('#btn-how')) audio.reveal();
 });
+
+let installPrompt = null;
+const installButton = document.getElementById('btn-install-app');
+
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  installPrompt = event;
+  if (installButton) installButton.hidden = false;
+});
+
+if (installButton) {
+  installButton.addEventListener('click', async () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    await installPrompt.userChoice;
+    installPrompt = null;
+    installButton.hidden = true;
+  });
+}
+
+window.addEventListener('appinstalled', () => {
+  installPrompt = null;
+  if (installButton) installButton.hidden = true;
+});
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
