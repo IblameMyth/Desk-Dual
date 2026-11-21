@@ -3,10 +3,13 @@
 
   const $ = id => document.getElementById(id);
   const sound = () => window.ClassroomSounds;
+  const MAX_OVERS = 6;
+  const BALLS_PER_OVER = 6;
+  const MAX_BALLS = MAX_OVERS * BALLS_PER_OVER;
   const state = {
     mode: null, difficulty: 'easy', players: [],
-    batter: 0, firstBatter: 0, scores: [0, 0],
-    innings: 1, target: null, waiting: false, out: false,
+    batter: 0, firstBatter: 0, scores: [0, 0], balls: [0, 0], wickets: [0, 0],
+    innings: 1, target: null, waiting: false, out: false, inningsComplete: false,
     tossChoice: null, tossNumber: null, friendTossNumber: null,
     friendStep: null, friendBatterNumber: null,
     humanHistory: []
@@ -235,10 +238,13 @@
     state.firstBatter = firstBatter;
     state.batter = firstBatter;
     state.scores = [0, 0];
+    state.balls = [0, 0];
+    state.wickets = [0, 0];
     state.innings = 1;
     state.target = null;
     state.waiting = false;
     state.out = false;
+    state.inningsComplete = false;
     state.friendStep = null;
     state.friendBatterNumber = null;
     state.humanHistory = [];
@@ -262,9 +268,11 @@
     $('player-one-board').classList.toggle('hc-board-batting', state.batter === 0);
     $('player-two-board').classList.toggle('hc-board-batting', state.batter === 1);
     $('innings-label').textContent = state.innings === 1 ? '1ST INNINGS' : '2ND INNINGS';
-    const targetText = state.target === null ? 'NOT OUT' : `TARGET ${state.target + 1}`;
+    const targetText = state.target === null ? 'NO TARGET' : `TARGET ${state.target + 1}`;
+    const balls = state.balls[state.batter];
+    const overs = `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}`;
     $('target-label').textContent =
-      `${state.innings === 1 ? '1ST INNINGS' : '2ND INNINGS'} · ${targetText} · LAST BALL ${$('bowler-choice').textContent}`;
+      `${state.innings === 1 ? '1ST INNINGS' : '2ND INNINGS'} · ${targetText} · ${state.scores[state.batter]}/${state.wickets[state.batter]} · ${overs} OVERS · LAST BALL ${$('bowler-choice').textContent}`;
   }
 
   function setTurn() {
@@ -357,14 +365,19 @@
   }
 
   function aiBowlerNumber() {
-    if (state.difficulty === 'hard' && state.humanHistory.length) {
-      const counts = [0, 0, 0, 0, 0, 0, 0];
-      state.humanHistory.forEach(number => counts[number]++);
-      let likely = 1;
+    // Hard mode learns tendencies, but never locks onto one number. Recent
+    // choices matter more and a substantial random chance prevents perfect reads.
+    if (state.difficulty === 'hard' && state.humanHistory.length >= 2 && Math.random() < 0.48) {
+      const weights = [0, 0, 0, 0, 0, 0, 0];
+      state.humanHistory.slice(-12).forEach((number, index, recent) => {
+        weights[number] += 1 + index / Math.max(1, recent.length - 1);
+      });
+      const total = weights.slice(1).reduce((sum, weight) => sum + weight, 0);
+      let roll = Math.random() * total;
       for (let number = 1; number <= 6; number++) {
-        if (counts[number] > counts[likely]) likely = number;
+        roll -= weights[number];
+        if (roll <= 0) return number;
       }
-      if (Math.random() < 0.65) return likely;
     }
     return 1 + Math.floor(Math.random() * 6);
   }
@@ -374,13 +387,17 @@
   }
 
   function playDelivery(batterNumber, bowlerNumber) {
+    if (state.inningsComplete) return;
     $('bowler-choice').textContent = bowlerNumber;
-    if (batterNumber === bowlerNumber) {
+    state.balls[state.batter]++;
+    const isOut = batterNumber === bowlerNumber;
+    if (isOut) {
       state.out = true;
+      state.wickets[state.batter] = 1;
       state.waiting = true;
       showHands(batterNumber, bowlerNumber, false);
       updateBoard();
-      $('continue-round').textContent = 'CONTINUE';
+      $('continue-round').textContent = 'END INNINGS';
       $('continue-round').classList.remove('hidden');
       $('turn-title').textContent = 'Wicket!';
       $('turn-description').textContent = 'Both hands showed the same number.';
@@ -393,7 +410,6 @@
     }
 
     state.scores[state.batter] += batterNumber;
-    $('batter-score').textContent = state.scores[state.batter];
     $('turn-title').textContent = `+${batterNumber} run${batterNumber === 1 ? '' : 's'}`;
     $('turn-description').textContent =
       `${state.players[state.batter].name} is on ${state.scores[state.batter]} runs.`;
@@ -402,14 +418,14 @@
       `<strong>${batterNumber} vs ${bowlerNumber}</strong>${batterNumber >= 4 ? (batterNumber === 6 ? 'SIX!' : 'FOUR!') : 'Different numbers ·'} ${batterNumber} run${batterNumber === 1 ? '' : 's'} added.`;
     $('ball-result').classList.remove('hidden');
     state.waiting = true;
-    $('continue-round').textContent =
-      state.innings === 2 && state.scores[state.batter] > state.target
-        ? 'MATCH RESULT'
-        : 'NEXT BALL';
+
+    const chased = state.innings === 2 && state.scores[state.batter] > state.target;
+    const oversFinished = state.balls[state.batter] >= MAX_BALLS;
+    state.inningsComplete = chased || oversFinished;
+    $('continue-round').textContent = chased ? 'MATCH RESULT' : oversFinished ? 'END INNINGS' : 'NEXT BALL';
     $('continue-round').classList.remove('hidden');
     updateBoard();
     if (batterNumber >= 4) sound()?.boundary(batterNumber);
-    else if (batterNumber === 1) sound()?.run(1);
     else sound()?.run(batterNumber);
   }
 
@@ -419,6 +435,7 @@
       state.innings = 2;
       state.batter = 1 - state.firstBatter;
       state.waiting = true;
+      state.inningsComplete = false;
       $('choice-stage').classList.add('hidden');
       $('continue-round').textContent = 'START SECOND INNINGS';
       $('continue-round').classList.remove('hidden');
@@ -468,12 +485,14 @@
     }
     if (state.out) {
       state.out = false;
+      state.inningsComplete = true;
       if (state.innings === 1) finishInnings();
       else finishMatch();
       return;
     }
-    if (state.innings === 2 && state.scores[state.batter] > state.target) {
-      finishMatch();
+    if (state.inningsComplete) {
+      if (state.innings === 1) finishInnings();
+      else finishMatch();
       return;
     }
     if (state.innings === 2 && state.waiting) {

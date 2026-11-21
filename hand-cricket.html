@@ -44,7 +44,7 @@
     <section class="hc-panel hidden" id="setup-ai">
       <h2>Play with AI</h2>
       <p class="hc-muted">Choose a level, enter your name, and start the toss.</p>
-      <div class="hc-ball-result"><strong>Match rules</strong>Different numbers add runs · Matching numbers mean OUT · One innings each</div>
+      <div class="hc-ball-result"><strong>Match rules</strong>Different numbers add runs · Matching numbers mean OUT · 6 overs per innings</div>
       <label class="hc-field">Your name<input id="ai-name" maxlength="18" placeholder="Enter your name"></label>
       <label class="hc-field">AI level
         <select id="ai-level"><option value="easy">Easy · random bowling</option><option value="hard">Hard · smart bowling</option></select>
@@ -100,11 +100,11 @@
   </main>
   <dialog id="how-dialog">
     <h2>How to play</h2>
-    <ol><li>Choose who bats first.</li><li>The batter chooses a number from 1 to 6.</li><li>The bowler chooses a number from 1 to 6.</li><li>If both numbers match, the batter is out.</li><li>Different numbers add the batter's number to the score.</li><li>The other player chases the target and the higher score wins.</li></ol>
+    <ol><li>Choose who bats first.</li><li>The batter chooses a number from 1 to 6.</li><li>The bowler chooses a number from 1 to 6.</li><li>If both numbers match, the batter is out.</li><li>Different numbers add the batter's number to the score.</li><li>Each innings lasts until a wicket or 6 overs (36 balls).</li><li>The other player chases the target; the higher score wins.</li></ol>
     <form method="dialog"><button class="btn btn-primary btn-small">GOT IT</button></form>
   </dialog>
   <script src="js/classroom-sounds.js"></script>
   <script src="assets/hand-cricket-hand.js"></script>
-  <script src="js/hand-cricket.js?v=20261121"></script>
+  <script src="js/hand-cricket.js?v=20261122"></script>
 </body>
 </html>

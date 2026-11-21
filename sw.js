@@ -1,4 +1,4 @@
-const CACHE_NAME = "desk-dual-v2";
+const CACHE_NAME = "desk-dual-v4";
 const CORE_ASSETS = [
   "/",
   "/index.html",
