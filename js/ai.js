@@ -62,17 +62,17 @@ export function planShot(levelNumber, me, opp, size, playArea = { x: 0, y: 0, w:
   // Convert target launch speed back through the same sub-linear flick curve
   // used by PhysicsWorld.flick(). This keeps AI shot strength consistent with
   // the same drag/release power model used by human players in Friends mode.
-  let power = Math.pow(speedForDistance(desired, penMaxSpeed) / penMaxSpeed, 1 / 1.12);
+  let power = (speedForDistance(desired, penMaxSpeed) / penMaxSpeed);
   power = clamp(power * (0.96 + rand() * 0.10), cfg.powerMin, cfg.powerMax);
 
   // Avoid suicidal full-power shots when the launch direction points toward an edge.
   const room = distanceToEdge(me, dir, playArea) - 24;
-  const launchSpeed = CONFIG.maxSpeed * Math.pow(power, 1.12) * (pen.strength || 1);
+  const launchSpeed = CONFIG.maxSpeed * power * (pen.strength || 1);
   const desiredTravel = travelDistance(launchSpeed);
   if (desiredTravel > room && cfg.edgeAwareness > 0.3) {
     const safe = Math.max(dist * 0.9, room * 0.72);
     const safeSpeed = speedForDistance(Math.max(30, safe), penMaxSpeed);
-    power = clamp(Math.pow(Math.max(0, safeSpeed / penMaxSpeed), 1 / 1.12), cfg.powerMin, cfg.powerMax);
+    power = clamp(Math.max(0, safeSpeed / penMaxSpeed), cfg.powerMin, cfg.powerMax);
   }
 
   const jitter = Math.max(0, 18 - levelNumber * 1.25);

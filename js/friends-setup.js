@@ -4,7 +4,7 @@ const KEY='deskDuelFriendsSetupV1';
 const list=document.getElementById('player-list');
 const count=document.getElementById('player-count');
 let players=[];
-try { const saved=JSON.parse(localStorage.getItem(KEY)||'null'); if(Array.isArray(saved?.players)) players=saved.players.slice(0,5); } catch(_){}
+try { const saved=JSON.parse(localStorage.getItem(KEY)||'null'); if(Array.isArray(saved?.players)) players=saved.players.slice(0,2); } catch(_){}
 if(players.length<2) players=[
   {name:'',penId:'pen1'},
   {name:'',penId:'pen2'}
@@ -25,10 +25,8 @@ function render(){
     const remove=document.createElement('button'); remove.type='button'; remove.className='btn btn-small remove-player'; remove.textContent='REMOVE'; remove.disabled=players.length<=2; remove.addEventListener('click',()=>{players.splice(i,1);render();});
     row.append(badge,fields,remove); return row;
   }));
-  document.getElementById('add-player').disabled=players.length>=5;
 }
 
-document.getElementById('add-player').addEventListener('click',()=>{ if(players.length>=5)return; players.push({name:'',penId:PENS[players.length%PENS.length].id}); render(); });
 document.getElementById('start-friends').addEventListener('click',()=>{
   const missing=players.some(p=>!(p.name||'').trim());
   if(missing){ alert('Enter every player name before starting.'); return; }

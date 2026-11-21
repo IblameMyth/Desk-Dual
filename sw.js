@@ -1,4 +1,4 @@
-const CACHE_NAME = "desk-dual-v4";
+const CACHE_NAME = "desk-dual-penfight-balanced-v6";
 const CORE_ASSETS = [
   "/",
   "/index.html",

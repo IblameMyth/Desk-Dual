@@ -69,9 +69,10 @@ export const audio = {
     tone({ freq: 320 + power * 280, freq2: 140, dur: 0.11, type: 'triangle', vol: 0.15 + power * 0.12 });
   },
   hit(speed) {
+    // Soft wooden/plastic tap rather than a sharp, loud digital crack.
     const s = Math.min(speed / 18, 1);
-    tone({ freq: 950, freq2: 300, dur: 0.09, type: 'square', vol: 0.06 + s * 0.16 });
-    noise({ dur: 0.05, vol: 0.12 + s * 0.2, freq: 3000 });
+    tone({ freq: 520 + s * 150, freq2: 260, dur: 0.075, type: 'triangle', vol: 0.018 + s * 0.026 });
+    noise({ dur: 0.025, vol: 0.012 + s * 0.018, freq: 1500 });
   },
   fall() {
     tone({ freq: 620, freq2: 80, dur: 0.55, type: 'sine', vol: 0.22 });

@@ -35,12 +35,12 @@ function spawnFor(index, portrait) {
   // decision-making differs in AI mode; starting positions and physics rules do not.
   if (portrait) {
     return index === 0
-      ? { fx: 0.50, fy: 0.18, angle: 0 }
-      : { fx: 0.50, fy: 0.72, angle: Math.PI };
+      ? { fx: 0.50, fy: 0.34, angle: 0 }
+      : { fx: 0.50, fy: 0.66, angle: Math.PI };
   }
   return index === 0
-    ? { fx: 0.50, fy: 0.18, angle: 0 }
-    : { fx: 0.50, fy: 0.72, angle: Math.PI };
+    ? { fx: 0.50, fy: 0.30, angle: 0 }
+    : { fx: 0.50, fy: 0.70, angle: Math.PI };
 }
 
 async function main() {
@@ -49,6 +49,9 @@ async function main() {
     return;
   }
   const [{ PhysicsWorld, CONFIG }, { planShot }] = await Promise.all([import('./physics.js'), import('./ai.js')]);
+  // AI mode uses the same launch speed and physics as Friends mode.
+  // Keep matchups fair by matching the AI pen's physical tier to the player's
+  // equipped pen; AI level differences come from decision-making, not stronger stats.
   const renderer = new DeskRenderer(canvas);
   canvas.addEventListener('pen-model-loaded', () => { dirty = true; });
 
@@ -129,7 +132,8 @@ async function main() {
       const portrait = d.h > d.w;
       players.forEach((p, i) => {
         const model = i === 0 ? playerPen : opponentPen;
-        physics.addPen(p.id, { ...spawnFor(i, portrait), skin: i === 0 ? 'blue' : 'red', asset: model.asset, modelId: model.id, strength: model.strength || 1 });
+        const matchStrength = MODE === 'ai' ? (playerPen.strength || 1) : (model.strength || 1);
+        physics.addPen(p.id, { ...spawnFor(i, portrait), skin: i === 0 ? 'blue' : 'red', asset: model.asset, modelId: model.id, strength: MODE === 'ai' && i === 1 ? matchStrength : (model.strength || 1) });
       });
       physics.onCollision = ({ speed }) => {
         if (speed < 0.5) return;
@@ -221,7 +225,7 @@ async function main() {
   function resolveShot() {
     const fell = players.map((p) => {
       const s = physics.penStatus(p.id);
-      return s.fullyOut || s.centerOut;
+      return s.centerOut;
     });
     if (fell[0] && fell[1]) return endRound(null);
     if (fell[0] || fell[1]) return endRound(fell[0] ? 1 : 0); // the opponent of the fallen pen scores
@@ -390,7 +394,9 @@ async function main() {
 
     if (phase === 'move') {
       needDraw = true;
-      if (!fallAt && players.some((p) => physics.penStatus(p.id).fullyOut)) {
+      // A pen is out once its centre crosses the desk boundary. Waiting for the
+      // whole long body to clear allowed visibly-fallen pens to keep playing.
+      if (!fallAt && players.some((p) => physics.penStatus(p.id).centerOut)) {
         fallAt = now;
         audio.fall();
       }

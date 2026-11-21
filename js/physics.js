@@ -15,25 +15,25 @@ export const CONFIG = {
     length: 153,
     width: 19,
     density: 0.0017,
-    restitution: 0.10,
-    friction: 0.34,
-    frictionStatic: 0.48,
-    frictionAir: 0.014,
+    restitution: 0.18,
+    friction: 0.30,
+    frictionStatic: 0.34,
+    frictionAir: 0.020,
   },
-  // Small constant slowdown gives the characteristic classroom-desk glide.
+  // Moderate, consistent desk drag creates a longer, smooth glide without runaway shots.
   // Damping is expressed per 60 Hz reference frame and scaled by dt so
   // motion stays identical and smooth on 60/90/120 Hz displays.
-  deskFriction: 0.055,
-  angularDamping: 0.985,
-  maxPull: 175,
-  minPull: 12,
-  // Shot speed increased by 50% from the previous 12.6 reference.
-  maxSpeed: 18.9,
+  deskFriction: 0.65,
+  angularDamping: 0.90,
+  maxPull: 190,
+  minPull: 8,
+  // Controlled launch speed; lower launch velocity with calibrated drag keeps impacts readable.
+  maxSpeed: 10,
   spinFactor: 1 / 5200,
-  maxSpin: 0.62,
+  maxSpin: 0.42,
   grabPadding: 18,
-  restSpeed: 0.045,
-  restSpin: 0.00055,
+  restSpeed: 0.025,
+  restSpin: 0.0003,
   wallThickness: 220,
   solidWalls: false,
   wallRestitution: 0.42,
@@ -51,8 +51,8 @@ export class PhysicsWorld {
       gravity: { x: 0, y: 0, scale: 0 },
       // More solver passes reduce residual overlap when two thin pens hit at
       // an angle, especially during strong shots on mobile browsers.
-      positionIterations: 8,
-      velocityIterations: 6,
+      positionIterations: 10,
+      velocityIterations: 8,
       constraintIterations: 2,
       enableSleeping: false,
     });
@@ -75,25 +75,34 @@ export class PhysicsWorld {
           const rvy = a.velocity.y - b.velocity.y;
           const speed = Math.hypot(rvx, rvy);
 
-          // A real pen-on-pen hit loses a lot of energy to plastic, rubber,
-          // rolling and spin. Matter's restitution is intentionally low, but
-          // this extra tangential damping prevents a hard flick from turning
-          // the opponent into a second projectile.
-          if (speed > 0.2) {
-            const damp = 0.78;
-            Body.setVelocity(a, { x: a.velocity.x * damp, y: a.velocity.y * damp });
-            Body.setVelocity(b, { x: b.velocity.x * damp, y: b.velocity.y * damp });
-            Body.setAngularVelocity(a, a.angularVelocity * 0.92);
-            Body.setAngularVelocity(b, b.angularVelocity * 0.92);
-          }
-          this.onCollision?.({ speed });
+          // Collision audio/statistics only. Do not add an artificial shove:
+          // Matter.js already transfers momentum, and a bonus impulse was
+          // making a single clean hit launch the target off the desk.
+          this.onCollision?.({
+            speed,
+            massA: a.mass,
+            massB: b.mass,
+            relativeMass: Math.max(a.mass, b.mass) / Math.max(0.0001, Math.min(a.mass, b.mass)),
+          });
         }
       }
     });
   }
 
   addPen(id, { fx = 0.5, fy = 0.5, angle = 0, skin = 'blue', asset = null, modelId = 'starter', strength = 1 } = {}) {
-    const { length, width, density, restitution, friction, frictionStatic, frictionAir } = CONFIG.pen;
+    const { length: baseLength, width: baseWidth, density, restitution, friction, frictionStatic, frictionAir } = CONFIG.pen;
+
+    // Pen tiers must matter in collisions, not only when launching a shot.
+    // Higher-tier models are visibly larger and carry more mass. Keep the
+    // density adjusted for the size change so total mass follows the tier
+    // curve instead of accidentally being multiplied twice by the larger area.
+    const tier = Math.max(0.85, Math.min(1.80, Number(strength) || 1));
+    const sizeScale = 0.90 + ((tier - 0.85) / 0.95) * 0.30; // 0.90x -> 1.20x
+    const massScale = Math.pow(tier / 0.90, 0.55);          // gentle tier advantage; starter and Level 1 match
+    const length = baseLength * sizeScale;
+    const width = baseWidth * sizeScale;
+    const tierDensity = density * massScale / (sizeScale * sizeScale);
+
     const body = Bodies.rectangle(
       this.playArea.x + fx * this.playArea.w,
       this.playArea.y + fy * this.playArea.h,
@@ -101,7 +110,7 @@ export class PhysicsWorld {
       width,
       {
         angle,
-        density,
+        density: tierDensity,
         restitution,
         friction,
         frictionStatic,
@@ -111,7 +120,7 @@ export class PhysicsWorld {
       },
     );
     Composite.add(this.engine.world, body);
-    const pen = { id, body, skin, length, width, fx, fy, angle, asset, modelId, strength }; 
+    const pen = { id, body, skin, length, width, fx, fy, angle, asset, modelId, strength: tier, sizeScale, massScale }; 
     this.pens.set(id, pen);
     this.renderState.set(id, {
       prevX: body.position.x, prevY: body.position.y, prevA: body.angle,
@@ -215,7 +224,7 @@ export class PhysicsWorld {
     const power = Math.min(len / CONFIG.maxPull, 1);
     // A slightly sub-linear curve keeps short flicks controllable while
     // allowing a committed flick to launch the pen noticeably faster.
-    const launchPower = Math.pow(power, 1.12);
+    const launchPower = power;
     // Every pen has its own strength. Better pens launch faster from the same flick.
     const speed = CONFIG.maxSpeed * launchPower * (pen.strength || 1);
     const vx = (pull.x / len) * speed;

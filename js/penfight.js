@@ -10,27 +10,15 @@ if (view === 'levels') import('./levels.js');
 if (view === 'friends') import('./friends-setup.js');
 async function loadPhysicsEngine() {
   if (window.Matter) return true;
-  // Try independent CDNs in sequence. A single blocked CDN should not prevent
-  // Pen Fight from starting; once loaded, Matter is shared by both game modes.
-  const sources = [
-    'https://cdn.jsdelivr.net/npm/matter-js@0.20.0/build/matter.min.js',
-    'https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js',
-    'https://unpkg.com/matter-js@0.20.0/build/matter.min.js'
-  ];
-  for (const src of sources) {
-    try {
-      await new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        const timeout = setTimeout(() => { script.remove(); reject(new Error('Physics CDN timed out')); }, 10000);
-        script.src = src;
-        script.onload = () => { clearTimeout(timeout); resolve(); };
-        script.onerror = () => { clearTimeout(timeout); script.remove(); reject(new Error('Physics CDN failed')); };
-        document.head.appendChild(script);
-      });
-      if (window.Matter) return true;
-    } catch (_) { /* Try the next provider. */ }
+  // Prefer the bundled local engine: gameplay must not depend on a third-party
+  // CDN, ad blocker, captive portal, or internet connection.
+  try {
+    await import('./matter-fallback.js');
+    return Boolean(window.Matter);
+  } catch (error) {
+    console.error('Local Pen Fight physics failed to initialize:', error);
+    return false;
   }
-  return false;
 }
 
 if (view === 'game') {
@@ -43,7 +31,7 @@ if (view === 'game') {
   updateDate();
   loadPhysicsEngine().then((loaded) => {
     if (!loaded) {
-      const message = 'Pen Fight could not download its physics engine. Check your connection, then reload the page.';
+      const message = 'Pen Fight could not start its local physics engine. Please reload the page.';
       ui.createHud().showFatal(message);
       return;
     }

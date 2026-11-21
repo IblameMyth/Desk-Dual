@@ -38,7 +38,7 @@
     <dialog id="name-dialog" aria-labelledby="name-title"><h2 id="name-title">What's your name?</h2><p class="name-dialog-note">This name will be written on the classroom scoreboard.</p><form id="name-form" method="dialog"><input id="player-name-input" name="playerName" maxlength="16" autocomplete="nickname" placeholder="Enter your name" required><button class="btn btn-primary" value="continue">START GAME</button></form></dialog>
     <dialog id="ai-dialog" aria-labelledby="ai-title"><h2 id="ai-title">AI Levels</h2><div class="diff-list"><a class="btn" href="penfight.html?mode=ai&amp;level=1">EASY <span class="diff-note">wild aim, random power</span></a><a class="btn" href="penfight.html?mode=ai&amp;level=5">MEDIUM <span class="diff-note">decent aim, sensible power</span></a><a class="btn" href="penfight.html?mode=ai&amp;level=10">HARD <span class="diff-note">sharp aim, smart power</span></a></div><button class="btn btn-small" type="button" data-close>CANCEL</button></dialog>
     <dialog id="settings-dialog" aria-labelledby="settings-title"><h2 id="settings-title">Settings</h2><div class="setting"><span class="setting-label" id="lbl-sound">Sound</span><div class="seg" role="group" aria-labelledby="lbl-sound" data-setting="sound"><button type="button" data-value="true">ON</button><button type="button" data-value="false">OFF</button></div></div><div class="setting"><span class="setting-label" id="lbl-vib">Vibration</span><div class="seg" role="group" aria-labelledby="lbl-vib" data-setting="vibration"><button type="button" data-value="true">ON</button><button type="button" data-value="false">OFF</button></div></div><button class="btn btn-primary btn-small settings-done" type="button" data-close>DONE</button></dialog>
-    <dialog id="how-dialog" aria-labelledby="how-title"><h2 id="how-title">How to play</h2><div class="demo" aria-hidden="true"><span class="demo-aim"></span><span class="demo-pen"></span></div><ol><li>Place your finger or mouse on your pen.</li><li>Drag backwards to aim.</li><li>Release to flick.</li><li>Knock your opponent's pen off the desk.</li><li>Win 3 rounds to win the match.</li></ol><button class="btn btn-primary btn-small" type="button" data-close>GOT IT</button></dialog>
+    <dialog id="how-dialog" aria-labelledby="how-title"><h2 id="how-title">How to play</h2><div class="demo" aria-hidden="true"><span class="demo-aim"></span><span class="demo-pen"></span></div><ol><li>Take turns. Touch only your own pen.</li><li>Drag backwards to set the flick direction and power.</li><li>Release once to flick. No second push.</li><li>Wait until both pens stop before the next turn.</li><li>Knock the opponent's entire pen off the desk while keeping yours on it.</li><li>First to 3 round wins takes the match.</li></ol><button class="btn btn-primary btn-small" type="button" data-close>GOT IT</button></dialog>
   </section>
 
   <section class="app-view" data-view="levels" hidden><main class="levels-page"><div class="levels-wrap"><nav class="setup-topnav" aria-label="Pen Fight setup navigation"><a class="btn btn-small" href="index.html">← ALL GAMES</a><a class="btn btn-small" href="penfight.html">MAIN MENU</a></nav><header class="levels-head"><div><h1 class="levels-title">AI <span>LEVELS</span></h1><p class="levels-sub">Beat each kid. Take their pen. Climb from school pens to the final prize.</p></div></header><section class="collection"><div class="collection-head"><h2>Your Pen Collection</h2><span id="progress-text" class="muted"></span></div><div id="collection" class="pen-strip"></div></section><section id="levels" class="level-grid"></section><div class="levels-actions"><button class="btn btn-small" id="reset" type="button">RESET PROGRESS</button></div></div></main></section>
@@ -54,17 +54,16 @@
           <div>
             <p class="friends-kicker">LOCAL MULTIPLAYER</p>
             <h1>PLAY WITH <span>FRIENDS</span></h1>
-            <p>Choose 2–5 players. Every player can use any pen from your full pen list.</p>
+            <p>Play with exactly 2 friends. Each player can choose any pen from your full pen list.</p>
           </div>
         </header>
         <section class="friends-card">
           <div class="friends-card-head">
             <div><h2>Players</h2><small>Win 3 rounds to win the match.</small></div>
-            <div class="count-pill"><b id="player-count">2</b> / 5</div>
+            <div class="count-pill"><b id="player-count">2</b> / 2</div>
           </div>
           <div id="player-list" class="player-list"></div>
           <div class="friends-actions">
-            <button class="btn" id="add-player" type="button">+ ADD PLAYER</button>
             <button class="btn btn-primary" id="start-friends" type="button">START MATCH</button>
           </div>
         </section>

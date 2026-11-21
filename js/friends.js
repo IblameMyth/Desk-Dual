@@ -1,4 +1,4 @@
-/* Local friends mode: 2–5 players, a best-of-match free-for-all: first player to win 3 rounds wins the match. */
+/* Local friends mode: exactly 2 players; first player to win 3 rounds wins the match. */
 import * as ui from './ui.js';
 import { FlickInput } from './input.js';
 import { DeskRenderer } from './render.js';
@@ -15,14 +15,14 @@ function getSetup() {
   try {
     const raw = JSON.parse(localStorage.getItem('deskDuelFriendsSetupV1') || 'null');
     if (!raw || !Array.isArray(raw.players)) return null;
-    const players = raw.players.filter(Boolean).slice(0, 5).map((p, i) => ({
+    const players = raw.players.filter(Boolean).slice(0, 2).map((p, i) => ({
       id: `p${i + 1}`,
       name: String(p.name || `PLAYER ${i + 1}`).trim().slice(0, 16) || `PLAYER ${i + 1}`,
       penId: PEN_BY_ID[p.penId] ? p.penId : 'pen1',
       ai: false,
       eliminated: false,
     }));
-    return players.length >= 2 ? players : null;
+    return players.length === 2 ? players : null;
   } catch (_) { return null; }
 }
 
@@ -158,7 +158,7 @@ export async function startFriendsGame() {
     players.forEach((p,i)=>{
       if (!p.eliminated) {
         const s=physics.penStatus(p.id);
-        if (s.fullyOut || s.centerOut) fallen.push(i);
+        if (s.centerOut) fallen.push(i);
       }
     });
     fallen.forEach(i=>players[i].eliminated=true);
@@ -270,7 +270,7 @@ export async function startFriendsGame() {
     } else {hud.setPower(0);hud.setHint(phase==='move'?'Sliding... wait for the pens to stop.':'');}
     if(phase==='move'){
       needDraw=true;
-      if(!fallAt && players.some((p)=>!p.eliminated&&physics.penStatus(p.id).fullyOut)){fallAt=now;audio.fall();}
+      if(!fallAt && players.some((p)=>!p.eliminated&&physics.penStatus(p.id).centerOut)){fallAt=now;audio.fall();}
       const rested=physics.allResting(),timedOut=now-moveStart>MAX_MOVE_MS;
       if((fallAt&&now-fallAt>FALL_DELAY_MS)||(!fallAt&&rested)||timedOut){if(!rested)physics.freeze();resolveShot();}
     }
