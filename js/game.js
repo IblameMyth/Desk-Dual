@@ -132,8 +132,12 @@ async function main() {
       const portrait = d.h > d.w;
       players.forEach((p, i) => {
         const model = i === 0 ? playerPen : opponentPen;
-        const matchStrength = MODE === 'ai' ? (playerPen.strength || 1) : (model.strength || 1);
-        physics.addPen(p.id, { ...spawnFor(i, portrait), skin: i === 0 ? 'blue' : 'red', asset: model.asset, modelId: model.id, strength: MODE === 'ai' && i === 1 ? matchStrength : (model.strength || 1) });
+        const baseStrength = model.strength || 1;
+        // In solo matches, give the human pen a clear impact advantage so a
+        // well-aimed player can finish an AI pen in roughly 3–4 solid hits.
+        // Friends matches retain the original equal physics.
+        const matchStrength = MODE === 'ai' ? (i === 0 ? baseStrength * 1.42 : baseStrength * 0.82) : baseStrength;
+        physics.addPen(p.id, { ...spawnFor(i, portrait), skin: i === 0 ? 'blue' : 'red', asset: model.asset, modelId: model.id, strength: matchStrength });
       });
       physics.onCollision = ({ speed }) => {
         if (speed < 0.5) return;

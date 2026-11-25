@@ -1,8 +1,9 @@
-const CACHE_NAME = "desk-dual-penfight-balanced-v6";
+const CACHE_NAME = "desk-dual-classroom-games-v9";
 const CORE_ASSETS = [
   "/",
   "/index.html",
   "/style.css",
+  "/index.css",
   "/js/main.js",
   "/manifest.json",
   "/assets/icons/icon-192.png",
@@ -41,16 +42,17 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  // Network-first for same-origin files so CSS/JS/HTML fixes show up immediately;
+  // the cache is only a fallback when offline.
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-      return fetch(event.request).then((response) => {
+    fetch(event.request)
+      .then((response) => {
         if (response.ok && new URL(event.request.url).origin === self.location.origin) {
           const copy = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
         }
         return response;
-      });
-    })
+      })
+      .catch(() => caches.match(event.request))
   );
 });

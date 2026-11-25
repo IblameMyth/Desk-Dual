@@ -1,0 +1,145 @@
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id), panels=['setup-friends','category-panel','round-panel','end-panel'];
+const decks=window.BEHRUPIYE_CATEGORIES;
+const sound=()=>window.ClassroomSounds;
+document.addEventListener('pointerdown',()=>sound()?.unlock(),{once:true});
+document.addEventListener('click',event=>{if(event.target.closest('button,a'))sound()?.tap()});
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const alive=()=>state.players.map((p,i)=>p.alive?i:-1).filter(i=>i>=0);
+let state={};
+function show(id){panels.forEach(x=>$(x).classList.toggle('hidden',x!==id));$('main-menu').classList.add('hidden');$('play-area').classList.remove('hidden')}
+function makePlayer(name,human){return{name,human,alive:true,chor:false,word:'',clues:[],currentClue:''}}
+function updateKhcBoard(phase){
+ if(!$('khc-board-date'))return;
+ const now=new Date();
+ $('khc-board-date').textContent=`${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}`;
+ $('khc-board-category').textContent=state.category||'CATEGORY VOTE';
+ $('khc-board-round').textContent=`${phase} · ROUND ${state.round||1}`;
+ const aliveCount=state.players?alive().length:0;
+ $('khc-player-left').textContent='CLASSMATES';
+ $('khc-score-left').textContent=aliveCount||'–';
+ $('khc-player-right').textContent='BEHRUPIYA';
+ $('khc-score-right').textContent=state.category?'?':'–';
+}
+function buildNames(){let n=+$('player-count').value;$('name-fields').innerHTML=Array.from({length:n},(_,i)=>`<label class="khc-field">Player ${i+1}<input maxlength="18" value="" placeholder="Enter Player ${i+1} name"></label>`).join('')}
+function start(mode,players){
+ state={mode,players,category:'',common:'',odd:'',chor:-1,round:1,roleCursor:0,clueOrder:[],clueCursor:0,votes:[],voteCursor:0,eliminated:[],categoryVotes:[],categoryCursor:0,wordsRevealed:false};
+ players.forEach(p=>{p.alive=true;p.chor=false;p.word='';p.clues=[];p.currentClue=''});
+ show('category-panel');updateKhcBoard('CATEGORY VOTE');nextCategoryVote();
+}
+function nextCategoryVote(){
+ const total=state.players.length,idx=state.categoryCursor;
+ if(idx>=total){selectWinningCategory();return}
+ updateKhcBoard(`CATEGORY VOTE ${idx+1}/${total}`);
+ const p=state.players[idx],cats=Object.keys(decks);
+ $('category-vote-progress').textContent=`CATEGORY VOTE ${idx+1}/${total}`;
+ $('category-vote-mode').textContent='FRIENDS';
+ $('category-vote-title').textContent=`${p.name}, choose a category`;
+ $('category-vote-description').textContent=`Pass the device to ${p.name}. Everyone gets one private vote.`;
+ $('category-vote-area').innerHTML=`<div class="khc-card"><h3>📝 ${esc(p.name)}'s category slip</h3><p>Choose one notebook category. Do not let other players see your mark.</p></div><div class="khc-player-grid">${cats.map((c,i)=>`<button class="khc-actions" style="display:block;width:100%;margin:0;padding:13px 8px" data-category-vote="${i}"><b>✦ ${esc(c)}</b><small style="display:block">${Object.keys(decks).includes(c)?decks[c].length:0} classroom words</small></button>`).join('')}</div>`;
+ document.querySelectorAll('[data-category-vote]').forEach(b=>b.onclick=()=>{state.categoryVotes.push({category:cats[+b.dataset.categoryVote],voter:idx});state.categoryCursor++;nextCategoryVote()});
+}
+function selectWinningCategory(){
+ const counts={};state.categoryVotes.forEach(v=>counts[v.category]=(counts[v.category]||0)+1);
+ const max=Math.max(...Object.values(counts));const tied=Object.keys(counts).filter(c=>counts[c]===max);
+ // Tie-break: among tied categories, the category receiving the latest vote wins.
+ const winner=[...state.categoryVotes].reverse().find(v=>tied.includes(v.category)).category;
+ state.category=winner;
+ const words=shuffle(decks[winner]);state.common=words[0];state.odd=words[1];state.chor=Math.floor(Math.random()*state.players.length);
+ sound()?.bell();
+ state.players.forEach((p,i)=>{p.chor=i===state.chor;p.word=p.chor?state.odd:state.common;p.alive=true;p.clues=[];p.currentClue=''});
+ updateKhcBoard('SECRET WORDS');
+ $('category-vote-area').innerHTML=`<div class="khc-result"><div style="font-size:2.2rem">📚</div><h3>Today's category: ${esc(winner)}</h3><p>${max} vote(s) · ${decks[winner].length} words in this category</p><p>Classmates share one word · The Behrupiya receives a different word</p></div><div class="khc-player-grid"><div class="khc-player"><b>👀 LOOK</b><small>Read your role only</small></div><div class="khc-player"><b>🤫 KEEP SECRET</b><small>Never show the screen</small></div></div><button class="btn btn-primary khc-start" id="deal-words">DEAL SECRET WORDS</button>`;
+ $('category-vote-title').textContent='The class has chosen!';$('category-vote-description').textContent='Get ready for the secret word reveal.';
+ $('deal-words').onclick=()=>{show('round-panel');showRole()};
+}
+function showRole(){
+ let i=state.roleCursor;
+ if(i>=state.players.length){
+  state.wordsRevealed=true;
+  state.round=1;
+  state.voteCursor=0;
+  nextFriendVote();
+  return;
+ }
+ let p=state.players[i];
+ $('phase-title').textContent='Private word reveal';
+ $('phase-description').textContent=`Pass the device to ${p.name}. Only ${p.name} should look.`;
+ $('round-label').textContent='SECRET WORDS';$('mode-label').textContent='FRIENDS MODE';
+ $('game-area').innerHTML=`<div class="khc-card"><h3>📓 Private notebook slip · Player ${i+1} of ${state.players.length}</h3><p>Pass the device. All other classmates should look away.</p></div><div class="khc-secret"><div class="emoji">🔐</div><h3>${esc(p.name)}</h3><p>Tap to reveal your secret word.</p><button class="btn btn-primary khc-start" id="reveal">REVEAL MY WORD</button></div>`;
+ $('reveal').onclick=()=>{sound()?.reveal();$('game-area').innerHTML=`<div class="khc-card"><h3>📚 TOP SECRET · ${esc(state.category)}</h3><p>Cover this screen after reading.</p></div><div class="khc-secret"><div class="emoji">${p.chor?'🕵️':'📚'}</div><h3>${p.chor?'YOU ARE THE BEHRUPIYA':'YOU ARE A CLASSMATE'}</h3><p>Category: <b>${esc(state.category)}</b><br>Your word: <b>${esc(p.word)}</b><br>${p.chor?'Your word is different. Blend in and describe it carefully!':'All classmates have the same word. Find who sounds different.'}</p><button class="btn btn-primary khc-start" id="hide-word">HIDE & PASS DEVICE</button></div>`;$('hide-word').onclick=()=>{sound()?.chalk();state.roleCursor++;showRole()}}
+}
+function setPhase(title,desc){$('phase-title').textContent=title;$('phase-description').textContent=desc;$('round-label').textContent='CLUE ROUND '+state.round;$('mode-label').textContent='FRIENDS';updateKhcBoard(title)}
+function beginClueRound(){
+ state.clueOrder=shuffle(alive());state.clueCursor=0;state.votes=[];
+ state.players.forEach(p=>p.currentClue='');
+ setPhase('Clue round '+state.round,'Every active player gives one clue, one at a time. All clues become public before voting.');
+ nextClue();
+}
+function nextClue(){
+ if(state.clueCursor>=state.clueOrder.length){showClueBoard();return}
+ let idx=state.clueOrder[state.clueCursor],p=state.players[idx];
+ $('phase-title').textContent=p.name+"'s clue";
+ $('phase-description').textContent=state.mode==='friends'?`Pass the device to ${p.name}. Enter one clue, then pass it on.`:'Give one clue that fits your word without saying the word itself.';
+ $('game-area').innerHTML=`<div class="khc-card"><h3>✏️ Chalkboard clue slip · Round ${state.round}</h3><p>Give one clue. Never write or say the exact secret word.</p></div><div class="khc-progress">CLUE ${state.clueCursor+1} OF ${state.clueOrder.length}</div><div class="khc-secret"><div class="emoji">✏️</div><h3>${esc(p.name)}</h3><p>${state.mode==='friends'?'Only this player should look at the screen. Other classmates look away.':'Your turn to give a clue.'}</p></div><label class="khc-field">Your clue<input id="clue-input" maxlength="32" placeholder="Enter a short clue" autocomplete="off"></label><p class="khc-error" id="clue-error"></p><button class="btn btn-primary khc-start" id="submit-clue">SUBMIT CLUE</button>`;
+ $('submit-clue').onclick=()=>{let v=$('clue-input').value.trim();if(!v){$('clue-error').textContent='Enter a clue first.';return}if(v.toLowerCase()===p.word.toLowerCase()){$('clue-error').textContent='Do not say your exact secret word.';return}sound()?.chalk();p.currentClue=v;p.clues.push(v);state.clueCursor++;nextClue()};
+}
+function clueBoard(){return `<div class="khc-card"><h3>Clues this round</h3><p>Listen carefully. Who seems to be describing a different word?</p></div><div class="khc-player-grid">${state.clueOrder.map(i=>`<div class="khc-player"><b>${esc(state.players[i].name)}</b><small>“${esc(state.players[i].currentClue)}”</small></div>`).join('')}</div>`}
+function showClueBoard(){
+ setPhase('All clues are in!','Everyone has given one clue. Discuss what you heard, then vote.');
+ $('game-area').innerHTML=clueBoard()+`<button class="btn btn-primary khc-start" id="start-vote">START VOTING</button>`;
+ $('start-vote').onclick=()=>{state.voteCursor=0;nextFriendVote()};
+}
+function nextFriendVote(){
+ updateKhcBoard('PRIVATE VOTE');
+ let voters=alive();if(state.voteCursor>=voters.length){resolveVotes();return}
+ let vi=voters[state.voteCursor],v=state.players[vi];
+ $('phase-title').textContent='Private voting';$('phase-description').textContent=`Pass the device to ${v.name}. Choose one player.`;
+ $('round-label').textContent='PRIVATE VOTE';$('mode-label').textContent='FRIENDS';
+ const discussion=state.round===1&&state.votes.length===0
+  ?'<div class="khc-card"><h3>Discuss orally</h3><p>Compare the words you saw, discuss who seems suspicious, then pass the device to vote.</p></div>'
+  :'';
+ $('game-area').innerHTML=discussion+`<div class="khc-card"><h3>🗳️ Classroom voting register</h3><p>Round ${state.round} · Private ballot · Look away from the device until your own turn.</p></div><div class="khc-progress">VOTE ${state.voteCursor+1} OF ${voters.length}</div><div class="khc-card"><h3>${esc(v.name)}'s vote</h3><p>Choose the player who seems to know a different secret word.</p></div><div class="khc-actions">${alive().filter(i=>i!==vi).map(i=>`<button data-friend-vote="${i}">${esc(state.players[i].name)}</button>`).join('')}</div>`;
+ document.querySelectorAll('[data-friend-vote]').forEach(b=>b.onclick=()=>{sound()?.vote();state.votes.push({voter:vi,target:+b.dataset.friendVote});state.voteCursor++;nextFriendVote()});
+}
+function resolveVotes(){
+ updateKhcBoard('VOTES COUNTED');
+ let counts=state.players.map(()=>0);state.votes.forEach(v=>counts[v.target]++);
+ let ids=alive(),max=Math.max(...ids.map(i=>counts[i])),top=ids.filter(i=>counts[i]===max);
+ if(top.length!==1||max===0){continueRound('The vote was tied. No one leaves the classroom.',counts);return}
+ let accused=top[0];
+ if(state.players[accused].chor){finish(true,counts);return}
+ state.players[accused].alive=false;state.eliminated.push(accused);
+ if(alive().length<=2){finish(false,counts);return}
+ continueRound(`${state.players[accused].name} was voted out, but was a classmate — not the Behrupiya. Another clue round begins!`,counts);
+}
+function continueRound(message,counts){
+ $('phase-title').textContent='The Behrupiya is still hidden!';$('phase-description').textContent=message;
+ $('game-area').innerHTML=`<div class="khc-result"><div style="font-size:2.4rem">🕵️</div><h3>Another round!</h3><p>${esc(message)}</p><p>Players still in: <b>${alive().length}</b></p></div><div class="khc-player-grid">${alive().map(i=>`<div class="khc-player"><b>${esc(state.players[i].name)}</b><small>${counts[i]} vote(s)</small></div>`).join('')}</div><button class="btn btn-primary khc-start" id="next-round">GIVE NEXT CLUES</button>`;
+ $('next-round').textContent=state.mode==='friends'?'DISCUSS & VOTE AGAIN':'GIVE NEXT CLUES';
+ $('next-round').onclick=()=>{
+  state.round++;
+  state.votes=[];
+   show('round-panel');
+    state.voteCursor=0;
+    nextFriendVote();
+ };
+}
+function finish(caught,counts){
+ updateKhcBoard(caught?'BEHRUPIYA CAUGHT':'BEHRUPIYA ESCAPED');
+ let chor=state.players[state.chor];
+ $('phase-title').textContent=caught?'Behrupiya caught!':'Behrupiya escaped!';$('phase-description').textContent='The secret words are revealed.';
+ let rows=state.players.map((p,i)=>`<div class="khc-player"><b>${esc(p.name)} ${p.alive?'':'(out)'}</b><small>${p.chor?'🕵️ BEHRUPIYA':'📚 CLASSMATE'} · Word: <b>${esc(p.word)}</b></small><small>${counts[i]} vote(s) this round</small></div>`).join('');
+ $('game-area').innerHTML=`<div class="khc-result"><div style="font-size:2.5rem">${caught?'🎉':'😈'}</div><h3>${caught?'The class caught the Behrupiya!':'The Behrupiya survived!'}</h3><p>${esc(chor.name)} was the Behrupiya.</p><p>Category: <b>${esc(state.category)}</b></p><p>Classmates' word: <b>${esc(state.common)}</b> · Behrupiya's word: <b>${esc(state.odd)}</b></p></div><h3 style="font-family:var(--font-display);margin:18px 0 8px">Classroom reveal</h3><div class="khc-player-grid">${rows}</div><button class="btn btn-primary khc-start" id="finish-round">VIEW VERDICT</button>`;
+ $('finish-round').onclick=()=>{show('end-panel');$('final-result').innerHTML=`<div class="khc-card"><h3>📓 Classroom verdict register</h3><p>STD 9-A · Behrupiye Ko Pakdo · Secret word reveal complete</p></div><div class="khc-result"><div style="font-size:2.6rem">${caught?'🎉':'🕵️'}</div><h3>${caught?'🏆 Classmates win!':'Behrupiya wins!'}</h3><p>Behrupiya: <b>${esc(chor.name)}</b></p><p>Category: <b>${esc(state.category)}</b></p></div><div class="khc-player-grid"><div class="khc-player"><b>📚 CLASSMATE WORD</b><small>${esc(state.common)}</small></div><div class="khc-player"><b>🕵️ BEHRUPIYA WORD</b><small>${esc(state.odd)}</small></div></div><div class="khc-card"><h3>✎ Classroom result</h3><p>${caught?'The class identified the Behrupiya by the clues and voting.':'The Behrupiya survived the clues and the classroom vote.'}</p></div>`};
+}
+$('open-friends').onclick=()=>{buildNames();show('setup-friends')};
+$('back-menu').onclick=()=>location.href='index.html';
+$('open-how').onclick=()=>$('how-dialog').showModal();
+$('player-count').onchange=buildNames;
+$('start-friends').onclick=()=>{let names=[...$('name-fields').querySelectorAll('input')].map(i=>i.value.trim());if(names.some(n=>!n)){$('friends-error').textContent='Please fill every player name.';return}if(new Set(names.map(n=>n.toLowerCase())).size!==names.length){$('friends-error').textContent='Every player needs a different name.';return}start('friends',names.map(n=>makePlayer(n,true)))};
+$('play-again').onclick=()=>{const mode=state.mode,players=state.players.map(p=>makePlayer(p.name,p.human));start(mode,players)};
+$('exit-game').onclick=()=>{show('setup-friends');$('play-area').classList.add('hidden');$('main-menu').classList.remove('hidden')};
+})();

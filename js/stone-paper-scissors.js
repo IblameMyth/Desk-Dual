@@ -83,19 +83,25 @@
   }
 
   function aiMove() {
-    if (state.mode !== 'ai') return Object.keys(moves)[Math.floor(Math.random() * 3)];
-    if ($('ai-level').value === 'hard' && state.playerHistory.length) {
-      const counts = { stone: 0, paper: 0, scissors: 0 };
-      state.playerHistory.forEach(move => counts[move]++);
-      let likely = 'stone';
-      Object.keys(counts).forEach(move => {
-        if (counts[move] > counts[likely]) likely = move;
-      });
-      if (Math.random() < 0.65) return winsAgainst[likely] === 'stone'
-        ? 'stone'
-        : winsAgainst[likely];
+    const choices = Object.keys(moves);
+    if (state.mode !== 'ai' || $('ai-level').value !== 'hard' || !state.playerHistory.length) {
+      return choices[Math.floor(Math.random() * choices.length)];
     }
-    return Object.keys(moves)[Math.floor(Math.random() * 3)];
+    // Detect repeated choices and short cycles. Hard AI adapts to the player's
+    // recent behaviour, but keeps a little unpredictability so it isn't perfect.
+    const recent = state.playerHistory.slice(-6);
+    const counts = { stone: 0, paper: 0, scissors: 0 };
+    recent.forEach(move => counts[move]++);
+    let likely = recent[recent.length - 1];
+    for (const move of choices) if (counts[move] > counts[likely]) likely = move;
+    const counter = { stone: 'paper', paper: 'scissors', scissors: 'stone' };
+    let prediction = likely;
+    if (recent.length >= 3 && recent[recent.length - 1] === recent[recent.length - 3]) {
+      // If the player is alternating a two-move pattern, anticipate the next.
+      prediction = recent[recent.length - 2];
+    }
+    if (Math.random() < 0.82) return counter[prediction];
+    return choices[Math.floor(Math.random() * choices.length)];
   }
 
   function winner(left, right) {

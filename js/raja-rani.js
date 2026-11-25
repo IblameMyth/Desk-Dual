@@ -9,19 +9,7 @@ const roleInfo = {
   Chor:{emoji:'🕵️',points:0,description:'Chor earns 800 if the majority fails to catch them.'}
 };
 const state = {mode:null,players:[],round:1,maxRounds:5,voteOrder:[],voteCursor:0,votes:[],roles:[],tied:[]};
-function updateRrcBoard(phase='SECRET CHITS'){
-  if (!$('rrc-board-date')) return;
-  const now=new Date();
-  $('rrc-board-date').textContent=`${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}`;
-  $('rrc-board-phase').textContent=phase;
-  $('rrc-board-round').textContent=`ROUND ${state.round} / ${state.maxRounds} · ${phase}`;
-  if (state.players.length>=2){
-    $('rrc-player-left').textContent=state.players[0].name.toUpperCase();
-    $('rrc-score-left').textContent=state.players[0].score;
-    $('rrc-player-right').textContent=state.players[1].name.toUpperCase();
-    $('rrc-score-right').textContent=state.players[1].score;
-  }
-}
+function updateRrcBoard(){ /* Classroom board removed; game state is shown in the active panels. */ }
 const aiAccuracy = 0.59;
 const sound = () => window.ClassroomSounds;
 document.addEventListener('pointerdown', () => sound()?.unlock(), { once: true });

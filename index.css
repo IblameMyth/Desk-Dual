@@ -1,0 +1,134 @@
+/* ==========================================================================
+   Desk Dual — home screen (index.html)
+   Notebook-paper desk, blackboard label, hand-drawn title, game cards.
+   ========================================================================== */
+body.deskdual-home{
+  min-height:100vh;min-height:100dvh;
+  padding:clamp(14px,2.6vw,28px) clamp(10px,2.4vw,24px) 18px;
+  color:#2b1d12;
+  background-color:#e8dfc5;
+  background-image:
+    linear-gradient(rgba(150,128,84,.2) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(150,128,84,.2) 1px,transparent 1px);
+  background-size:27px 27px;
+  background-attachment:fixed;
+}
+.home-shell{width:min(1100px,100%);margin:0 auto}
+
+/* ---- header ---- */
+.home-header{display:flex;flex-direction:column;align-items:center;text-align:center}
+.classroom-label{
+  display:inline-block;padding:9px 20px;
+  color:#f6edda;background:#19301f;
+  border:3px solid #5a3920;border-radius:5px;box-shadow:0 4px 0 rgba(58,37,20,.35);
+  font:900 .74rem var(--font-body);letter-spacing:.1em;text-transform:uppercase;
+}
+.home-eyebrow{
+  margin:22px 0 0;color:#9a7a4a;
+  font:900 .74rem var(--font-body);letter-spacing:.24em;
+}
+.home-title{
+  margin:4px 0 6px;color:#3a2a1c;
+  font:800 clamp(3.1rem,9vw,5.3rem)/.98 'Trebuchet MS',Candara,var(--font-body);
+  letter-spacing:-.01em;text-transform:uppercase;
+  transform:rotate(-2deg);
+}
+.home-title span,.home-title b{display:inline-block;font-weight:inherit}
+.home-title span{text-shadow:-4px 4px 0 #2f5f9f}
+.home-title b{text-shadow:4px 3px 0 #a83232}
+.home-subtitle{
+  margin:6px 0 24px;color:#5b4326;
+  font:800 clamp(.88rem,2.4vw,1.02rem) var(--font-body);
+}
+
+/* ---- game grid ---- */
+.game-grid{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:17px;align-items:stretch;
+}
+.game-card{
+  position:relative;display:flex;flex-direction:column;align-items:stretch;
+  min-width:0;min-height:247px;margin:0 0 5px;padding:18px;
+  color:#2b1d12;text-align:center;text-decoration:none;
+  background:#f8efd9;
+  border:1.5px solid #3a2514;border-radius:11px;
+  box-shadow:0 5px 0 #4a2f1a;
+  font:inherit;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  transition:transform .12s ease,box-shadow .12s ease;
+}
+.game-card.playable{border-color:#2f5f9f;box-shadow:0 5px 0 #2f5f9f}
+.game-card.playable:hover,.game-card.playable:focus-visible{transform:translateY(-3px);box-shadow:0 8px 0 #2f5f9f}
+.game-card.coming:hover{transform:translateY(-2px)}
+.game-card:focus-visible{outline:3px solid #f1c94d;outline-offset:3px}
+.game-card:active{transform:translateY(2px)}
+
+.game-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:12px}
+.game-icon{
+  display:grid;place-items:center;flex:0 0 56px;width:56px;height:56px;
+  font-size:28px;line-height:1;
+  background:#eadfc8;border:1.5px solid #a58a64;border-radius:13px;
+}
+.game-status{
+  display:inline-block;padding:8px 12px;
+  color:#5b4326;background:#eadfc8;
+  border:1px solid #b9a276;border-radius:3px;
+  font:900 .66rem var(--font-body);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap;
+}
+.game-status.available{color:#fff;background:#2f5f9f;border-color:#2f5f9f}
+
+.game-card h2{
+  margin:6px 0 6px;color:#2b1d12;
+  font:400 1.42rem/1.12 'Trebuchet MS',Candara,var(--font-body);
+}
+.game-card p{
+  margin:0 0 14px;color:#5b4326;
+  font:700 .86rem/1.5 var(--font-body);
+}
+.card-action{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  min-height:46px;margin-top:auto;padding:0 14px;
+  color:#5b4326;background:#eadfc8;
+  border:1.5px dashed #a58a64;border-radius:14px;
+  font:900 .76rem var(--font-body);letter-spacing:.04em;text-transform:uppercase;
+}
+.playable .card-action{
+  color:#fff;background:#3268ed;
+  border:1.5px solid #193b9c;border-radius:14px;
+  box-shadow:0 3px 0 #193b9c;
+}
+.playable:active .card-action{transform:translateY(2px);box-shadow:0 1px 0 #193b9c}
+
+/* ---- footer ---- */
+.home-footer{
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 18px;
+  margin-top:20px;padding-top:14px;
+  border-top:1.5px dashed #c7bb9b;
+  color:#5b4326;font:900 .66rem var(--font-body);letter-spacing:.1em;text-transform:uppercase;
+}
+.home-footer>div{display:flex;align-items:center;gap:18px}
+.footer-link{
+  padding:4px 0;color:#3a2a1c;background:none;border:0;
+  font:inherit;letter-spacing:inherit;text-transform:inherit;text-decoration:none;cursor:pointer;
+}
+.footer-link:hover{color:#2f5f9f;text-decoration:underline}
+.footer-link[hidden]{display:none}
+
+/* ---- responsive ---- */
+@media(max-width:980px){
+  .game-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:720px){
+  .game-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .game-card{min-height:225px;padding:14px}
+  .game-icon{flex-basis:46px;width:46px;height:46px;font-size:23px;border-radius:11px}
+  .game-status{padding:6px 8px;font-size:.58rem}
+  .game-card h2{font-size:1.15rem}
+  .game-card p{font-size:.78rem;line-height:1.4}
+  .card-action{min-height:42px;font-size:.7rem}
+}
+@media(max-width:330px){
+  .game-grid{grid-template-columns:1fr}
+  .game-card{min-height:200px}
+}
+@media(prefers-reduced-motion:reduce){.game-card{transition:none}}
