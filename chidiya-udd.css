@@ -1,0 +1,166 @@
+/* Chidiya Udd — uses the shared classroom frame (style.css + behrupiye-ko-pakdo.css) */
+.cu-page{overflow-x:hidden;-webkit-text-size-adjust:100%}
+.cu-page .cu-logo{margin:4px auto 0;font-size:4.6rem;line-height:1;filter:drop-shadow(0 6px 2px rgba(20,14,8,.25));transform:rotate(-5deg)}
+.cu-page .khc-menu .btn.is-soon{color:#21180f;background:#eadfc8;border-style:dashed;box-shadow:0 6px 0 #3c2a1b;cursor:not-allowed}
+.cu-page .khc-menu .tag{color:#493316;background:#f2cf53;border-radius:3px;padding:3px 7px;font:900 .65rem var(--font-body)}
+.cu-page .khc-title{font-size:clamp(2.6rem,9vw,4.8rem)}
+
+/* paper cards (same look as the other games' result cards) */
+.cu-result{margin:14px auto;padding:16px;color:#284638;background:#fff9eb;border:2px solid #c4a878;border-radius:5px;text-align:center;box-shadow:2px 3px 0 rgba(92,66,38,.12)}
+.cu-result strong{display:block;font:1.55rem var(--font-display);margin-bottom:5px}
+.cu-result p{margin:4px 0 0;color:#725a3d;font-weight:800;line-height:1.4}
+.cu-rules{display:flex;align-items:center;justify-content:center;gap:22px;margin:8px 0}
+.cu-rule{min-width:120px}
+.cu-rule span{display:block;font-size:2.8rem}
+.cu-rule small{display:block;margin-top:4px;color:#725a3d;font-weight:900;line-height:1.35}
+
+.cu-play-nav{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-bottom:8px}
+.cu-play-nav .khc-home,.cu-play-nav .rrc-menu-return{display:inline-flex;align-items:center;justify-content:center;margin:0;text-decoration:none;color:#21180f;padding:8px 12px;background:#eee2c9;border:3px solid #3c2a1b;border-radius:4px;box-shadow:0 5px 0 #3c2a1b}
+.cu-play-nav .rrc-menu-return{font:900 .78rem var(--font-body);letter-spacing:.04em}
+
+/* ---------- classroom stage: wall, blackboard, chalk tray, floor, benches ---------- */
+.cu-stage{position:relative;margin:12px 0 6px;padding:14px 10px 0;overflow:hidden;
+  background:
+    repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 2px,transparent 2px 46px),
+    linear-gradient(#dccfae,#cdbd96);
+  border:3px solid #68472c;border-radius:5px;box-shadow:3px 4px 0 #68472c}
+.cu-board{position:relative;width:min(100%,640px);min-height:clamp(190px,34vw,245px);margin:0 auto;padding:14px 10px 40px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;color:#f4e5bf;
+  background:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.07),transparent 60%),linear-gradient(135deg,#1c392d,#143027);
+  border:10px ridge #79512f;border-width:10px 10px 12px;
+  box-shadow:inset 0 0 0 3px #d2b77c,inset 0 0 40px rgba(0,0,0,.35),0 4px 0 #4a2b19}
+.cu-board-idle{font:clamp(1.6rem,6vw,2.3rem) var(--font-display);letter-spacing:.03em;opacity:.9}
+.cu-board-animal{display:flex;flex-direction:column;align-items:center;text-align:center;animation:cuPop .32s ease-out}
+.cu-animal-emoji{font-size:clamp(3rem,11vw,4.6rem);line-height:1;filter:drop-shadow(0 4px 1px rgba(0,0,0,.35))}
+.cu-animal-name{margin-top:4px;font:clamp(2rem,8vw,3.3rem)/1 var(--font-display);letter-spacing:.03em;color:#f6edd0;text-transform:uppercase;text-shadow:2px 2px 0 rgba(0,0,0,.4)}
+.cu-animal-hi{margin-top:3px;min-height:1.2em;font:italic 800 clamp(.85rem,3vw,1.05rem) var(--font-body);color:#e8cf91;letter-spacing:.06em}
+@keyframes cuPop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+.cu-timer{position:absolute;left:16px;right:16px;bottom:9px;height:9px;border:2px dashed rgba(244,229,191,.6);border-radius:5px;overflow:hidden}
+.cu-timer i{display:block;width:100%;height:100%;background:#ffe38a;transform-origin:left center}
+.cu-paused{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,24,17,.72);font:2.4rem var(--font-display);letter-spacing:.08em;color:#f4e5bf;z-index:6}
+.cu-tray{position:relative;width:calc(100% - 14px);max-width:640px;height:12px;margin:0 auto;background:linear-gradient(#a9743f,#7b5230);border-radius:0 0 3px 3px;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.cu-chalk{position:absolute;top:-4px;width:20px;height:5px;border-radius:2px;background:#f4efe0}
+.cu-chalk.c1{left:16%}
+.cu-chalk.c2{left:21%;background:#f3b6c6;transform:rotate(-8deg)}
+.cu-duster{position:absolute;top:-9px;right:12%;width:36px;height:10px;background:#5a4636;border-top:3px solid #2f2a26;border-radius:2px}
+
+/* floor + benches. The floor starts at the chalk tray; the benches are pulled up so raised fingers poke into the blackboard. */
+.cu-benches{position:relative;margin:-40px -10px 0;padding:0 8px 10px;
+  background:linear-gradient(transparent 40px,#6e4524 40px 46px,#b4875a 46px,#9a6a40 100%)}
+.cu-bench{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));width:min(100%,680px);margin:0 auto}
+.cu-bench+.cu-bench{margin-top:6px}
+.cu-seat{position:relative;display:flex;flex-direction:column;align-items:center;min-width:0;height:100%}
+.cu-handwrap{position:relative;z-index:2;width:min(86%,92px);aspect-ratio:100/140;margin-bottom:-16px}
+.cu-hand{width:100%;height:100%;transition:transform .2s ease,filter .2s ease,opacity .2s ease;-webkit-tap-highlight-color:transparent}
+.cu-hand svg{display:block;width:100%;height:100%;overflow:visible}
+.cu-seat.is-human .cu-hand{cursor:pointer}
+
+/* hand drawing (flat skin tones, like the reference) */
+.cu-hand .sk{fill:var(--skin)}
+.cu-hand .sk-edge{stroke:var(--skin-d);stroke-width:1.6;stroke-linejoin:round}
+.cu-hand .crease{fill:none;stroke:var(--skin-d);stroke-width:1.7;stroke-linecap:round}
+.cu-hand .nail{fill:var(--nail)}
+.cu-hand .sl{fill:var(--sleeve);stroke:var(--sleeve-d);stroke-width:1.6;stroke-linejoin:round}
+.cu-hand .sl-line{fill:none;stroke:var(--sleeve-d);stroke-width:1.6;stroke-linecap:round}
+.cu-finger{transform:translateY(46px);transition:transform .16s cubic-bezier(.3,1.7,.5,1)}
+.is-up .cu-finger{transform:translateY(0)}
+
+/* "UDD!" speech bubble */
+.cu-bubble{position:absolute;left:50%;bottom:100%;z-index:4;padding:3px 9px;white-space:nowrap;
+  font:.85rem/1.1 var(--font-display);letter-spacing:.04em;color:#284638;background:#fff9eb;border:2px solid #3c2a1b;border-radius:10px;
+  opacity:0;transform:translate(-50%,6px) scale(.6);transition:opacity .12s ease,transform .18s cubic-bezier(.3,1.7,.5,1);pointer-events:none}
+.cu-bubble::after{content:"";position:absolute;left:50%;bottom:-7px;width:9px;height:9px;background:inherit;border-right:2px solid #3c2a1b;border-bottom:2px solid #3c2a1b;transform:translateX(-50%) rotate(45deg)}
+.is-say .cu-bubble{opacity:1;transform:translate(-50%,-2px) scale(1)}
+.is-right .cu-bubble{background:#dff1d2;color:#25672b}
+.is-wrong .cu-bubble,.is-miss .cu-bubble{background:#f8d2cc;color:#a13a30}
+
+.is-right .cu-hand{animation:cuHop .35s ease-out}
+.is-wrong .cu-hand{animation:cuShake .4s ease-in-out}
+.is-out .cu-hand{filter:grayscale(1) brightness(.85);opacity:.55;transform:translateY(12px)}
+@keyframes cuHop{40%{transform:translateY(-8px)}100%{transform:translateY(0)}}
+@keyframes cuShake{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+
+/* wooden bench */
+.cu-desk{position:relative;z-index:1;width:100%;flex:1;display:flex;flex-direction:column}
+.cu-desk-top{height:24px;background:
+    repeating-linear-gradient(90deg,rgba(120,70,30,.10) 0 2px,transparent 2px 9px),
+    linear-gradient(#e4b878,#d29f5e);
+  border-top:3px solid #efcb94;box-shadow:inset 0 -3px 0 rgba(90,50,20,.25),inset 2px 0 0 rgba(90,50,20,.18)}
+.cu-bench .cu-seat:first-child .cu-desk-top{border-top-left-radius:6px}
+.cu-bench .cu-seat:last-child .cu-desk-top{border-top-right-radius:6px}
+.cu-desk-front{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px 3px 8px;background:linear-gradient(#a56b36,#8b5829);border-bottom:4px solid #5f3a1b;box-shadow:inset 2px 0 0 rgba(60,30,10,.22)}
+.cu-tag{max-width:100%;padding:2px 6px;overflow:hidden;color:#21180f;background:#f6edda;border:2px solid #3c2a1b;border-radius:3px;font:900 .68rem var(--font-body);letter-spacing:.03em;text-overflow:ellipsis;text-transform:uppercase;white-space:nowrap}
+.cu-meta{color:#f4e5bf;font:800 .64rem var(--font-body);letter-spacing:.05em}
+.cu-udd{width:calc(100% - 4px);max-width:86px;min-height:38px;padding:5px 4px;color:#fff;background:#32609a;border:3px solid #3c2a1b;border-radius:4px;box-shadow:0 4px 0 #3c2a1b;
+  font:1rem/1 var(--font-display);letter-spacing:.03em;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .08s ease,box-shadow .08s ease}
+.cu-udd:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 #3c2a1b}
+.cu-udd:disabled{opacity:.5;cursor:not-allowed;background:#7b8a9e}
+.cu-udd small{display:block;margin-top:2px;font:800 .55rem var(--font-body);opacity:.85}
+.cu-bot{display:flex;align-items:center;justify-content:center;min-height:38px;color:#f4e5bf;font:900 .66rem var(--font-body);letter-spacing:.08em}
+.is-out .cu-tag{text-decoration:line-through;opacity:.8}
+
+.cu-hint{margin:10px 0 0;color:#725a3d;font:800 .8rem var(--font-body);text-align:center}
+.cu-pause{display:flex;margin:12px auto 0;min-width:170px}
+.cu-pause.hidden{display:none!important}
+
+/* final result: first-to-last ranking written on a classroom blackboard */
+.cu-final-board{height:auto;min-height:260px;margin:16px 0;padding:70px 18px 44px}
+.cu-final-list{position:relative;display:flex;flex-direction:column;gap:2px}
+.cu-final-row{display:grid;grid-template-columns:78px minmax(0,1fr) auto;align-items:center;gap:8px;padding:7px 8px;border-bottom:1px dashed rgba(244,229,191,.35);color:#f4e5bf}
+.cu-final-row .rank{font:1.15rem var(--font-display);letter-spacing:.03em;white-space:nowrap}
+.cu-final-row .nm{min-width:0;overflow:hidden;font:1.25rem var(--font-display);letter-spacing:.03em;text-overflow:ellipsis;text-transform:uppercase;white-space:nowrap}
+.cu-final-row .st{font:900 .74rem var(--font-body);letter-spacing:.06em;text-align:right;white-space:nowrap}
+.cu-final-row.win{color:#ffe38a;background:rgba(255,227,138,.08);border-bottom:2px solid rgba(255,227,138,.6)}
+.cu-final-head{padding-bottom:4px;border-bottom:2px solid rgba(244,229,191,.7);font:900 .68rem var(--font-body);letter-spacing:.1em;opacity:.85}
+.cu-final-head span:last-child{text-align:right}
+
+@media(pointer:coarse){.cu-udd small{display:none}}
+@media(max-width:540px){
+  .cu-page .cu-logo{font-size:3.8rem}
+  .cu-rules{gap:10px}
+  .cu-rule{min-width:100px}
+  .cu-stage{padding:10px 6px 0}
+  .cu-benches{margin:-40px -6px 0;padding:0 4px 8px}
+  .cu-handwrap{width:min(92%,64px);margin-bottom:-13px}
+  .cu-tag{padding:1px 3px;font-size:.58rem;border-width:1.5px}
+  .cu-meta{font-size:.56rem}
+  .cu-udd{min-height:34px;font-size:.78rem;border-width:2px;box-shadow:0 3px 0 #3c2a1b}
+  .cu-bubble{padding:2px 6px;font-size:.66rem}
+  .cu-desk-top{height:20px}
+  .cu-paused{font-size:1.8rem}
+  .cu-final-board{padding:62px 10px 40px}
+  .cu-final-row{grid-template-columns:62px minmax(0,1fr) auto;gap:6px;padding:6px 4px}
+  .cu-final-row .rank{font-size:.95rem}
+  .cu-final-row .nm{font-size:1.05rem}
+  .cu-final-row .st{font-size:.62rem}
+}
+
+/* ---------- phone friendliness ---------- */
+.cu-stage,.cu-hand,.cu-udd{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.cu-page .khc-play{padding-bottom:calc(28px + env(safe-area-inset-bottom,0px))}
+@media(pointer:coarse){
+  .cu-hint{display:none}
+  .cu-udd{min-height:46px}
+  .cu-pause{min-height:48px}
+}
+@media(max-width:540px){
+  .cu-blackboard-score{height:auto;margin:0 0 10px;padding:8px;border-width:6px 6px 8px}
+  .cu-blackboard-score .chalk-class,.cu-blackboard-score .chalk-date,.cu-blackboard-score .chalk-thought,
+  .cu-blackboard-score .chalk-sign,.cu-blackboard-score .chalk-doodles{display:none}
+  .cu-blackboard-score .cu-chalk-scorebox{position:relative;left:auto;bottom:auto;width:100%;box-sizing:border-box}
+  #turn-title{margin:6px 0 2px;font-size:1.3rem}
+  #turn-description{display:none}
+  .cu-stage{margin:8px 0 4px}
+  .cu-board{min-height:170px}
+  .cu-udd{min-height:44px;font-size:.85rem}
+  .cu-handwrap{width:min(94%,72px)}
+  .cu-pause{width:100%;max-width:360px}
+}
+@media(max-height:520px) and (orientation:landscape){
+  .cu-blackboard-score{height:auto;margin:0 0 6px;padding:6px}
+  .cu-blackboard-score .chalk-class,.cu-blackboard-score .chalk-date,.cu-blackboard-score .chalk-thought,
+  .cu-blackboard-score .chalk-sign,.cu-blackboard-score .chalk-doodles{display:none}
+  .cu-blackboard-score .cu-chalk-scorebox{position:relative;left:auto;bottom:auto;width:100%;box-sizing:border-box}
+  #turn-description{display:none}
+  .cu-board{min-height:120px;padding-bottom:30px}
+}

@@ -263,3 +263,31 @@ dialog ol{padding-left:22px;line-height:1.55}
 
 /* readable "back" links on the tan notebook pages (they were cream-on-tan) */
 .hc-play-head .hc-home,.khc-head .khc-home{color:#21180f;text-decoration:none;font:900 .78rem var(--font-body);letter-spacing:.04em}
+
+
+/* Contact page: keep every card inside the viewport on narrow phones */
+.contact-page .about-shell{
+  width:min(900px,100%);
+  max-width:100%;
+  padding-inline:12px;
+}
+.contact-page .about-topbar{width:100%;min-width:0}
+.contact-page .about-board{width:100%;min-width:0}
+.contact-page .contact-grid{width:100%;min-width:0;grid-template-columns:repeat(2,minmax(0,1fr))}
+.contact-page .contact-card{min-width:0;grid-template-columns:48px minmax(0,1fr) auto}
+.contact-page .contact-card > span:nth-child(2){min-width:0}
+.contact-page .contact-card small{overflow-wrap:anywhere;word-break:normal}
+@media(max-width:640px){
+  .contact-page .about-shell{padding-inline:10px}
+  .contact-page .about-topbar{gap:8px}
+  .contact-page .about-board{padding:30px 14px 22px;border-width:8px}
+  .contact-page .about-board>.about-kicker{margin-top:12px}
+  .contact-page .about-chalk-title{font-size:clamp(1.8rem,8vw,2.5rem);overflow-wrap:anywhere}
+  .contact-page .about-lead{font-size:.94rem;line-height:1.5;margin-bottom:18px}
+  .contact-page .contact-grid{grid-template-columns:minmax(0,1fr);gap:12px}
+  .contact-page .contact-card{grid-template-columns:46px minmax(0,1fr) auto;gap:10px;padding:11px 10px}
+  .contact-page .contact-icon{width:44px;height:44px;font-size:1.35rem}
+  .contact-page .contact-card strong{font-size:1.12rem}
+  .contact-page .contact-card small{font-size:.75rem}
+  .contact-page .contact-arrow{font-size:1.1rem}
+}

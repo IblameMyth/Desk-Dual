@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#102419">
+  <meta name="description" content="Play Chidiya Udd on Desk Dual.">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Chidiya Udd - Desk Dual</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="behrupiye-ko-pakdo.css">
+  <link rel="stylesheet" href="chidiya-udd.css">
+</head>
+<body class="menu-page khc-page cu-page">
+  <main class="menu khc-menu" id="main-menu">
+    <a class="khc-home" href="index.html">← ALL GAMES</a>
+    <div class="classroom-label">STD 9-A • CLASSROOM SPECIAL</div>
+    <div class="cu-logo" aria-hidden="true">🐦</div>
+    <h1 class="khc-title">CHIDIYA<br>UDD</h1>
+    <p class="khc-subtitle">Raise your finger only when it can fly.</p>
+    <nav class="menu-buttons" aria-label="Chidiya Udd game menu">
+      <button class="btn btn-primary" id="open-ai" type="button">PLAY WITH AI</button>
+      <button class="btn" id="open-friends" type="button">PLAY WITH FRIENDS</button>
+      <button class="btn is-soon" type="button" aria-label="Play online, coming soon">PLAY ONLINE <span class="tag">SOON</span></button>
+      <button class="btn btn-small" id="open-how" type="button">HOW TO PLAY</button>
+    </nav>
+  </main>
+
+  <main class="khc-play hidden" id="play-area">
+    <header class="khc-head">
+      <nav class="cu-play-nav" aria-label="Chidiya Udd setup navigation">
+        <a class="khc-home" href="index.html">← ALL GAMES</a>
+        <a class="rrc-menu-return" id="back-menu" href="chidiya-udd.html">MAIN MENU</a>
+      </nav>
+      <div class="classroom-label">STD 9-A • CHIDIYA UDD</div>
+    </header>
+
+    <section class="khc-panel hidden" id="setup-ai">
+      <h2>Play with AI</h2>
+      <p class="khc-muted">You and 3 AI classmates sit on the bench. Enter your name and choose an AI level.</p>
+      <div class="cu-result"><strong>CLASS RULES</strong>
+        <div class="cu-rules">
+          <div class="cu-rule"><span>🦅</span><small>CAN FLY<br>RAISE IN 2 SEC ✔</small></div>
+          <div class="cu-rule"><span>🐘</span><small>CAN’T FLY<br>KEEP IT DOWN ✖</small></div>
+        </div>
+      </div>
+      <label class="khc-field">Your name
+        <input id="ai-name" maxlength="18" placeholder="Enter your name">
+      </label>
+      <label class="khc-field">AI level
+        <select id="ai-level">
+          <option value="easy">Easy · slow and sloppy classmates</option>
+          <option value="hard">Hard · quick and careful classmates</option>
+        </select>
+      </label>
+      <button class="btn btn-primary khc-start" id="start-ai" type="button" disabled>START GAME</button>
+      <p class="khc-error" id="ai-error"></p>
+    </section>
+
+    <section class="khc-panel hidden" id="setup-friends">
+      <h2>Play with friends</h2>
+      <p class="khc-muted">2 to 10 players share one device. Everyone gets their own hand and UDD! button on the bench.</p>
+      <label class="khc-field">Number of players
+        <select id="friend-count"></select>
+      </label>
+      <div class="khc-names" id="friend-names"></div>
+      <button class="btn btn-primary khc-start" id="start-friends" type="button">START GAME</button>
+      <p class="khc-error" id="friends-error"></p>
+    </section>
+
+    <section class="khc-panel hidden" id="game-panel">
+      <header class="blackboard-score cu-blackboard-score" aria-label="Chidiya Udd classroom scoreboard">
+        <div class="chalk-class">STD 9-A<br><span>SUB : EVS</span></div>
+        <div class="chalk-date">DATE : <span id="cu-board-date">--/--</span><br><span>H.W.</span><br><small>CH. 3 · BIRDS &amp; BEASTS</small></div>
+        <div class="chalk-thought">Thought for the Day<br><em>“Birds of a feather flock together”</em></div>
+        <section class="chalk-scorebox cu-chalk-scorebox">
+          <div class="chalk-title">🐦 CHIDIYA UDD <small id="target-label">LAST ONE STANDING</small></div>
+          <div class="chalk-match">
+            <div class="chalk-team chalk-team-you"><span class="chalk-name">ALIVE</span><span class="chalk-score" id="left-score">0</span></div>
+            <span class="chalk-vs">·</span>
+            <div class="chalk-team chalk-team-ai"><span class="chalk-name">ROUND</span><span class="chalk-score" id="right-score">0</span></div>
+          </div>
+          <div class="chalk-round" id="round-label">GET READY</div>
+        </section>
+        <div class="chalk-doodles" aria-hidden="true">♡ &nbsp; 🐦 🦋 🦅 &nbsp; □ □ □</div>
+        <div class="chalk-sign">Mentor : Rinku</div>
+      </header>
+
+      <h2 id="turn-title">Get ready…</h2>
+      <p class="khc-muted" id="turn-description">Raise a finger only if the animal can fly.</p>
+
+      <div class="cu-stage" id="stage">
+        <div class="cu-board" id="board" aria-live="polite">
+          <div class="cu-board-idle" id="board-idle">Get ready…</div>
+          <div class="cu-board-animal hidden" id="board-animal">
+            <div class="cu-animal-name" id="animal-name"></div>
+            <div class="cu-animal-hi" id="animal-hi"></div>
+          </div>
+          <div class="cu-timer hidden" id="timer"><i id="timer-bar"></i></div>
+          <div class="cu-paused hidden" id="paused-note">PAUSED</div>
+        </div>
+        <div class="cu-tray" aria-hidden="true"><span class="cu-chalk c1"></span><span class="cu-chalk c2"></span><span class="cu-duster"></span></div>
+        <div class="cu-benches" id="benches"></div>
+      </div>
+
+      <p class="cu-hint" id="key-hint"></p>
+      <div class="cu-result hidden" id="round-result" aria-live="polite"></div>
+      <button class="btn hc-start cu-pause" id="pause-btn" type="button">PAUSE</button>
+    </section>
+
+    <section class="khc-panel hidden" id="result-panel">
+      <div style="text-align:center;font-size:3.2rem">🏆</div>
+      <h2 id="match-result-title">Match result</h2>
+      <p class="khc-muted" id="match-result-copy"></p>
+      <div class="blackboard-score cu-final-board" aria-label="Chidiya Udd final result board">
+        <div class="chalk-class">STD 9-A<br><span>SUB : EVS</span></div>
+        <div class="chalk-date">DATE : <span id="cu-final-date">--/--</span><br><span>RESULT</span></div>
+        <div class="chalk-thought">Thought for the Day<br><em>“Birds of a feather flock together”</em></div>
+        <div class="cu-final-list" id="standings"></div>
+        <div class="chalk-sign">Mentor : Rinku</div>
+      </div>
+      <button class="btn btn-primary khc-start" id="play-again" type="button">PLAY AGAIN</button>
+      <button class="btn khc-start" id="exit-game" type="button">MAIN MENU</button>
+    </section>
+  </main>
+
+  <dialog id="how-dialog">
+    <h2>How to play</h2>
+    <ol>
+      <li>An animal name appears on the blackboard, one at a time. You get 2 seconds for each one.</li>
+      <li>If the animal can fly, tap your UDD! button. Your finger goes up and you shout “Udd!”.</li>
+      <li>If the animal cannot fly, keep your finger down.</li>
+      <li>Raise a finger for an animal that cannot fly, or miss one that can, and you are out.</li>
+      <li>The game ends as soon as only one player is left. The last one on the bench wins, and the blackboard shows everyone from first to last.</li>
+      <li>With friends, press 1–9 and 0 on the keyboard for players 1–10, or tap your own button.</li>
+    </ol>
+    <form method="dialog"><button class="btn btn-primary btn-small">GOT IT</button></form>
+  </dialog>
+
+  <script src="js/classroom-sounds.js"></script>
+  <script src="js/chidiya-udd.js"></script>
+</body>
+</html>
