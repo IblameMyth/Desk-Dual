@@ -59,4 +59,41 @@
 .hc-toss-options button.selected{color:#fff;background:#32609a;border-color:#193b65}
 .hc-choice-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
 dialog{width:min(92vw,480px);max-height:88dvh;overflow-y:auto;box-sizing:border-box;color:#302216;background:#f6edda;border:3px solid #68472c;border-radius:8px;box-shadow:5px 7px 0 #68472c}dialog::backdrop{background:rgba(16,36,25,.62)}dialog h2{margin:0 0 12px;font:1.8rem var(--font-display)}dialog ol{line-height:1.55}
-@media(max-width:540px){.hc-menu{width:calc(100% - 26px);min-height:78dvh;padding:18px}.hc-title{font-size:clamp(2.8rem,16vw,4rem)}.hc-logo{width:132px}.hc-menu-buttons{width:min(100%,340px)}.hc-name-fields{grid-template-columns:1fr}.hc-play{padding:14px 10px 28px}.hc-play-head{display:grid;grid-template-columns:1fr 1fr}.hc-play-head .classroom-label{grid-column:1/-1}.hc-menu-return{justify-self:end}.hc-panel{margin:10px 0;padding:16px 8px}.hc-scoreboard{grid-template-columns:48px minmax(72px,1fr) 62px minmax(72px,1fr) 42px;min-height:132px;padding:14px 6px 8px;border-width:8px 2px}.hc-board-left{padding-left:2px}.hc-board-subject{font-size:.54rem}.hc-board-subject small{font-size:.48rem}.hc-board-status{font-size:.48rem}.hc-board-status strong{font-size:1.35rem}.hc-board-game{font-size:.52rem}.hc-board-vs{font-size:.58rem}.hc-board-player{max-width:78px;font-size:.66rem}.hc-board-score-line strong{font-size:2.15rem}.hc-board-center strong{font-size:.58rem}.hc-board-center span{font-size:.52rem}.hc-blackboard-score{height:138px}.hc-blackboard-score .chalk-scorebox{left:10px;bottom:8px;width:52%}.hc-blackboard-score .chalk-doodles{right:9px;bottom:18px}.hc-blackboard-score .chalk-sign{right:9px;bottom:7px}.hc-number-grid{gap:8px}.hc-number-grid button{min-height:64px}}
+@media(max-width:540px){
+  .hc-menu{width:calc(100% - 26px);min-height:78dvh;padding:18px}
+  .hc-title{font-size:clamp(2.8rem,16vw,4rem)}
+  .hc-logo{width:132px}
+  .hc-menu-buttons{width:min(100%,340px)}
+  .hc-name-fields{grid-template-columns:1fr}
+  .hc-play{padding:14px 10px 28px}
+  .hc-play-head{display:grid;grid-template-columns:1fr 1fr}
+  .hc-play-head .classroom-label{grid-column:1/-1}
+  .hc-menu-return{justify-self:end}
+  .hc-panel{margin:10px 0;padding:16px 8px}
+  .hc-scoreboard{grid-template-columns:48px minmax(72px,1fr) 62px minmax(72px,1fr) 42px;min-height:132px;padding:14px 6px 8px;border-width:8px 2px}
+  .hc-board-left{padding-left:2px}
+  .hc-board-subject{font-size:.54rem}
+  .hc-board-subject small{font-size:.48rem}
+  .hc-board-status{font-size:.48rem}
+  .hc-board-status strong{font-size:1.35rem}
+  .hc-board-game{font-size:.52rem}
+  .hc-board-vs{font-size:.58rem}
+  .hc-board-player{max-width:78px;font-size:.66rem}
+  .hc-board-score-line strong{font-size:2.15rem}
+  .hc-board-center strong{font-size:.58rem}
+  .hc-board-center span{font-size:.52rem}
+  .hc-blackboard-score{display:grid;grid-template-columns:1fr 1fr;grid-template-areas:"class date" "scorebox scorebox" "doodles sign";gap:8px;height:auto;min-height:0;padding:12px 10px}
+  .hc-blackboard-score .chalk-class,.hc-blackboard-score .chalk-date,.hc-blackboard-score .chalk-thought,.hc-blackboard-score .chalk-scorebox,.hc-blackboard-score .chalk-doodles,.hc-blackboard-score .chalk-sign{position:static;inset:auto;transform:none;width:100%;max-width:100%;margin:0;box-sizing:border-box}
+  .hc-blackboard-score .chalk-class{grid-area:class;text-align:left;font-size:.72rem;line-height:1.3}
+  .hc-blackboard-score .chalk-date{grid-area:date;text-align:right;font-size:.72rem;line-height:1.3}
+  .hc-blackboard-score .chalk-thought{display:none}
+  .hc-blackboard-score .chalk-scorebox{grid-area:scorebox;padding:8px}
+  .hc-blackboard-score .chalk-title{font-size:.88rem}
+  .hc-blackboard-score .chalk-match{margin:4px 0;gap:10px}
+  .hc-blackboard-score .chalk-score{font-size:2rem}
+  .hc-blackboard-score .chalk-round{font-size:.7rem;line-height:1.3}
+  .hc-blackboard-score .chalk-doodles{grid-area:doodles;text-align:left;align-self:center;font-size:.68rem}
+  .hc-blackboard-score .chalk-sign{grid-area:sign;text-align:right;align-self:center;font-size:.68rem}
+  .hc-number-grid{gap:8px}
+  .hc-number-grid button{min-height:64px}
+}
