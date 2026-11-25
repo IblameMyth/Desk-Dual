@@ -87,7 +87,7 @@ From competitive AI challenges to playing with friends, every game is designed t
 | 🥢 Chop Stick | Count fingers and outsmart your opponent. | 🚧 Coming Soon |
 | 🌀 Beyblade | Spin your way to victory. | 🚧 Coming Soon |
 | 🥁 Bench Beats | Turn your classroom into a rhythm station. | 🚧 Coming Soon |
-| 🚢 Battleship | Plan your attacks and sink the enemy fleet. | 🟢 Play Now |
+| 🚢 Battleship | Plan your attacks and sink the enemy fleet. | 🚧 Coming Soon |
 | ✏️ Pencil-Box Tower | Stack, balance and build. | 🚧 Coming Soon |
 | 🍾 Bottle Flip | Master the perfect landing. | 🚧 Coming Soon |
 | 🏒 Notebook Hockey | Bring hockey to your notebook. | 🚧 Coming Soon |
