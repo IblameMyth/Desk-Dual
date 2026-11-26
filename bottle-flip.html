@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#102419">
+  <meta name="description" content="Play Bottle-Flip on Desk Dual: flip a half-filled water bottle onto the desk and stick the landing.">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Bottle-Flip - Desk Dual</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="behrupiye-ko-pakdo.css">
+  <link rel="stylesheet" href="bottle-flip.css">
+</head>
+<body class="menu-page khc-page bf-page">
+  <main class="menu khc-menu" id="main-menu">
+    <a class="khc-home" href="index.html">← ALL GAMES</a>
+    <div class="classroom-label">STD 9-A • CLASSROOM SPECIAL</div>
+    <div class="bf-logo" aria-hidden="true">
+      <svg viewBox="0 0 44 104" width="44" height="104" xmlns="http://www.w3.org/2000/svg">
+        <defs><clipPath id="bf-logo-clip"><path d="M13 14V22C13 28 4 30 4 40V92Q4 101 13 101H31Q40 101 40 92V40C40 30 31 28 31 22V14Z"/></clipPath></defs>
+        <path d="M13 14V22C13 28 4 30 4 40V92Q4 101 13 101H31Q40 101 40 92V40C40 30 31 28 31 22V14Z" fill="#d6ecfa" fill-opacity=".55"/>
+        <g clip-path="url(#bf-logo-clip)">
+          <rect x="0" y="64" width="44" height="40" fill="#3d86c8"/>
+          <rect x="0" y="44" width="44" height="18" fill="#f6edda"/>
+          <rect x="0" y="44" width="44" height="3" fill="#a83232"/>
+          <rect x="0" y="59" width="44" height="3" fill="#a83232"/>
+          <text x="22" y="56" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="900" font-size="9" fill="#284638">9-A</text>
+        </g>
+        <path d="M13 14V22C13 28 4 30 4 40V92Q4 101 13 101H31Q40 101 40 92V40C40 30 31 28 31 22V14Z" fill="none" stroke="#4a6d8a" stroke-width="2.5"/>
+        <path d="M10 46V88" stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-linecap="round"/>
+        <rect x="12" y="3" width="20" height="10" rx="2" fill="#32609a" stroke="#193b65" stroke-width="2"/>
+        <rect x="11" y="13" width="22" height="4" fill="#9fc3e0"/>
+      </svg>
+    </div>
+    <h1 class="khc-title">BOTTLE<br>FLIP</h1>
+    <p class="khc-subtitle">Flip the bottle and stick the perfect landing.</p>
+    <nav class="menu-buttons" aria-label="Bottle-Flip game menu">
+      <button class="btn btn-primary" id="open-ai" type="button">PLAY WITH AI</button>
+      <button class="btn" id="open-friends" type="button">PLAY WITH FRIENDS</button>
+      <button class="btn is-soon" type="button" aria-label="Play online, coming soon">PLAY ONLINE <span class="tag">SOON</span></button>
+      <button class="btn btn-small" id="open-how" type="button">HOW TO PLAY</button>
+    </nav>
+  </main>
+
+  <main class="khc-play hidden" id="play-area">
+    <header class="khc-head">
+      <nav class="bf-play-nav" aria-label="Bottle-Flip navigation">
+        <a class="khc-home" href="index.html">← ALL GAMES</a>
+        <a class="rrc-menu-return" id="back-menu" href="bottle-flip.html">MAIN MENU</a>
+      </nav>
+      <div class="classroom-label">STD 9-A • BOTTLE-FLIP</div>
+    </header>
+
+    <section class="khc-panel hidden" id="setup-ai">
+      <h2>Play with AI</h2>
+      <p class="khc-muted">Enter your name, choose an AI level and how many flips each. A coin toss decides who flips first.</p>
+      </div>
+      <label class="khc-field">Your name
+        <input id="ai-name" maxlength="18" placeholder="Enter your name" autocomplete="off">
+      </label>
+      <label class="khc-field">AI level
+        <select id="ai-level">
+          <option value="easy">Easy · shaky hands</option>
+          <option value="hard">Hard · steady hands</option>
+        </select>
+      </label>
+      <label class="khc-field">Flips each
+        <select id="ai-best-of">
+          <option value="3">3 flips</option>
+          <option value="5">5 flips</option>
+          <option value="7">7 flips</option>
+        </select>
+      </label>
+      <label class="khc-field">Meter speed
+        <select id="ai-speed">
+          <option value="slow">Slow · easy timing</option>
+          <option value="normal" selected>Normal</option>
+          <option value="fast">Fast · for pros</option>
+        </select>
+      </label>
+      <button class="btn btn-primary khc-start" id="start-ai" type="button" disabled>START GAME</button>
+      <p class="khc-error" id="ai-error"></p>
+    </section>
+
+    <section class="khc-panel hidden" id="setup-friends">
+      <h2>Play with a friend</h2>
+      <p class="khc-muted">Two players share one phone or screen. Take turns flipping the same bottle.</p>
+      <div class="khc-names">
+        <label class="khc-field">Player 1
+          <input id="friend-name-1" maxlength="18" placeholder="Enter Player 1 name" autocomplete="off">
+        </label>
+        <label class="khc-field">Player 2
+          <input id="friend-name-2" maxlength="18" placeholder="Enter Player 2 name" autocomplete="off">
+        </label>
+      </div>
+      <label class="khc-field">Flips each
+        <select id="best-of">
+          <option value="3">3 flips</option>
+          <option value="5">5 flips</option>
+          <option value="7">7 flips</option>
+        </select>
+      </label>
+      <label class="khc-field">Meter speed
+        <select id="friend-speed">
+          <option value="slow">Slow · easy timing</option>
+          <option value="normal" selected>Normal</option>
+          <option value="fast">Fast · for pros</option>
+        </select>
+      </label>
+      <button class="btn btn-primary khc-start" id="start-friends" type="button">START GAME</button>
+      <p class="khc-error" id="friends-error"></p>
+    </section>
+
+    <section class="khc-panel hidden" id="toss-panel"><div id="toss-stage"></div></section>
+
+    <section class="khc-panel hidden" id="game-panel">
+      <header class="blackboard-score bf-blackboard-score" aria-label="Bottle-Flip classroom scoreboard">
+        <div class="chalk-class">STD 9-A<br><span>SUB : SCIENCE</span></div>
+        <div class="chalk-date">DATE : <span id="bf-board-date">--/--</span><br><span>H.W.</span><br><small>CH. 11 · FORCE &amp; MOTION</small></div>
+        <div class="chalk-thought">Thought for the Day<br><em>“Timing is everything”</em></div>
+        <section class="chalk-scorebox bf-chalk-scorebox">
+          <div class="chalk-title">🍾 BOTTLE-FLIP <small id="target-label">3 FLIPS EACH</small></div>
+          <div class="bf-scores" id="score-list"></div>
+          <div class="chalk-round" id="round-label">FLIP 1 OF 3</div>
+        </section>
+        <div class="chalk-doodles" aria-hidden="true">▯ ↻ ▯ &nbsp; □ □ □</div>
+        <div class="chalk-sign">Mentor : Rinku</div>
+      </header>
+
+      <h2 id="turn-title">Your flip</h2>
+      <p class="khc-muted" id="turn-description">Tap FLIP when the marker is inside the green zone.</p>
+
+      <div class="bf-stage" id="stage" aria-label="Classroom desk with a water bottle">
+        <canvas id="bf-canvas" width="400" height="270"></canvas>
+        <div class="bf-chip" id="turn-chip">GET READY</div>
+        <div class="bf-banner" id="banner" aria-live="polite"></div>
+      </div>
+
+      <div class="bf-meter-wrap">
+        <div class="bf-meter" id="meter" role="img" aria-label="Flip power meter. Stop the marker in the green zone.">
+          <div class="bf-zone bf-zone-cap" id="zone-cap"></div>
+          <div class="bf-zone bf-zone-ok" id="zone-ok"><i></i></div>
+          <div class="bf-marker" id="marker"></div>
+        </div>
+        <div class="bf-meter-labels"><span>WEAK</span><span id="meter-key">GREEN = STAND · GOLD = CAP</span><span>STRONG</span></div>
+      </div>
+
+      <button class="btn btn-primary bf-flip" id="flip-btn" type="button" disabled><span aria-hidden="true">🍾</span> FLIP</button>
+      <p class="bf-hint" id="flip-hint">Press FLIP, tap the desk, or hit the space bar.</p>
+
+      <div class="bf-log" id="flip-log" aria-label="Flip results"></div>
+      <button class="btn btn-primary bf-next hidden" id="continue-round" type="button">NEXT</button>
+    </section>
+
+    <section class="khc-panel hidden" id="result-panel">
+      <div class="bf-board-result" id="final-board" aria-live="polite">
+        <div class="bf-board-chalk-top">STD 9-A · MATCH RESULT</div>
+        <div class="bf-board-trophy" aria-hidden="true">🏆</div>
+        <h2 id="match-result-title">Match result</h2>
+        <p id="match-result-copy"></p>
+        <div class="bf-final-score" id="final-score"></div>
+        <div class="bf-board-foot" id="final-foot"></div>
+      </div>
+      <button class="btn btn-primary khc-start" id="play-again" type="button">PLAY AGAIN</button>
+      <button class="btn khc-start" id="exit-game" type="button">MAIN MENU</button>
+    </section>
+  </main>
+
+  <dialog id="how-dialog" aria-labelledby="how-title">
+    <h2 id="how-title">How to play</h2>
+    <div class="bf-demo" aria-hidden="true">
+      <span class="bf-demo-bottle"></span>
+      <span class="bf-demo-desk"></span>
+      <span class="bf-demo-label">STAND!</span>
+    </div>
+    <ol>
+      <li>It is lunch break and the bench is free. Take turns flipping a <b>half-filled water bottle</b> onto the desk.</li>
+      <li>A marker slides along the meter. Tap <b>FLIP</b> (or tap the desk, or press the space bar) to stop it and throw.</li>
+      <li>Stop it inside the <b>green zone</b> to land the bottle upright. The bright middle is the safest, the edges can still wobble and fall.</li>
+      <li>The zone moves a little every flip, because the water sloshes differently each time. Watch it before you tap!</li>
+      <li><b>Standing = 1 point.</b> The tiny <b>gold zone</b> lands the bottle upside-down on its cap for <b>3 points</b>, but it is very hard.</li>
+      <li>Too weak and it lands flat. Too strong and it flies off the desk.</li>
+      <li>A coin toss picks who flips first. After everyone has flipped, the most points wins. A tie goes to sudden death.</li>
+    </ol>
+    <form method="dialog"><button class="btn btn-primary btn-small">GOT IT</button></form>
+  </dialog>
+
+  <script src="js/classroom-sounds.js"></script>
+  <script src="js/bottle-flip.js"></script>
+</body>
+</html>
