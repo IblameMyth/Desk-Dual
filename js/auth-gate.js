@@ -29,7 +29,11 @@
     var revealed = false;
     cloud.onUser(function (user) {
       if (!user) { toSignIn(); return; }   // signed out (here or in another tab) or never signed in
-      if (!revealed) { revealed = true; reveal(); cloud.flushPending().catch(function () {}); }
+      if (!revealed) { revealed = true; reveal(); cloud.flushPending().catch(function () {});
+        cloud.syncOnLoad().catch(function () {});
+        document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') cloud.pushLocal().catch(function () {}); });
+        window.addEventListener('pagehide', function () { cloud.pushLocal().catch(function () {}); });
+      }
     });
   }).catch(toSignIn);
 })();

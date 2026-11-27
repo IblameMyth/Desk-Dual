@@ -4,6 +4,7 @@
 import { firebaseConfig, isFirebaseConfigured } from './firebase-config.js';
 
 const V = '10.12.5';
+const SYNCED_KEY = 'deskDuelSyncedUid';
 const CDN = `https://www.gstatic.com/firebasejs/${V}`;
 
 /* Local keys that get saved to the cloud. */
@@ -67,6 +68,11 @@ export async function signInWithGoogle() {
   if (!m) throw Object.assign(new Error('Firebase is not configured.'), { code: 'app/not-configured' });
   const provider = new m.GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
+  const mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
+  if (mobile) { // popups are unreliable on phones: use the full-page redirect
+    await m.signInWithRedirect(m.auth, provider);
+    return null;
+  }
   try {
     const result = await m.signInWithPopup(m.auth, provider);
     return result.user;
@@ -136,7 +142,65 @@ export async function syncNow() {
     data: merged,
     updatedAt: m.serverTimestamp()
   }, { merge: true });
+  try { localStorage.setItem(SYNCED_KEY, user.uid); } catch (_) {}
+  await ensureGameDocs(m, user);
   return true;
+}
+
+/* While playing: send this device's progress/name/settings to the cloud (this device wins). */
+export async function pushLocal() {
+  const m = await load();
+  const user = m?.auth.currentUser;
+  if (!m || !user) return false;
+  const ref = m.doc(m.db, 'users', user.uid);
+  const snap = await m.getDoc(ref);
+  const cloud = snap.exists() ? (snap.data().data || {}) : {};
+  const local = readLocal();
+  const merged = { ...cloud, ...local, penProgress: mergeProgress(local.penProgress, cloud.penProgress) };
+  writeLocal(merged);
+  await m.setDoc(ref, { data: merged, updatedAt: m.serverTimestamp() }, { merge: true });
+  return true;
+}
+
+/* First time on this device/account: cloud wins (so a new phone gets the old data).
+   After that: this device pushes what it has. */
+export async function syncOnLoad() {
+  const uid = currentUser?.uid;
+  let synced = null;
+  try { synced = localStorage.getItem(SYNCED_KEY); } catch (_) {}
+  if (uid && synced === uid) { await pushLocal(); await ensureGameDocs(await load(), currentUser); return true; }
+  return syncNow();
+}
+
+let pushTimer = null;
+export function schedulePush(delay = 2500) {
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(() => { pushLocal().catch(() => {}); }, delay);
+}
+
+/* Every account gets one stats document per game from the first login, starting at zero. */
+const GAME_DEFAULTS = {
+  'penfight': { pensUnlocked: [], level: 1, wins: 0, losses: 0 },
+  'raja-rani': { rounds: 0, wins: 0, timesRaja: 0, timesRani: 0, timesSipahi: 0, timesChor: 0 },
+  'hand-cricket': { runs: 0, wickets: 0, highScore: 0 },
+  'behrupiye-ko-pakdo': { correctGuesses: 0, rounds: 0, wins: 0 },
+  'stone-paper-scissors': { wins: 0, losses: 0, draws: 0 },
+  'ashta-chamma': { wins: 0, tokens: 0, completedMatches: 0 },
+  'chidiya-udd': { score: 0, highScore: 0 },
+  'chop-sticks': { wins: 0, losses: 0 },
+  'battleship': { wins: 0, losses: 0, shipsDestroyed: 0 },
+  'pencil-tower': { highestTower: 0, score: 0 },
+  'bottle-flip': { successfulFlips: 0, bestStreak: 0 },
+  'npat': { score: 0, rounds: 0, validAnswers: 0, totalAnswers: 0 }
+};
+async function ensureGameDocs(m, user) {
+  if (!m || !user) return;
+  const snap = await m.getDocs(m.collection(m.db, 'users', user.uid, 'games'));
+  const have = new Set();
+  snap.forEach((d) => have.add(d.id));
+  await Promise.all(Object.entries(GAME_DEFAULTS).filter(([g]) => !have.has(g)).map(([g, zero]) =>
+    m.setDoc(m.doc(m.db, 'users', user.uid, 'games', g), { ...zero, updatedAt: m.serverTimestamp() })
+      .catch(() => {})));
 }
 
 /* ---------- per-game stats: users/{uid}/games/{game} ----------
@@ -170,6 +234,7 @@ export async function recordGame(game, ops = {}, { queue = true } = {}) {
       }
       tx.set(ref, { ...next, updatedAt: m.serverTimestamp() }, { merge: true });
     });
+    schedulePush();
     return true;
   } catch (err) {
     if (queue && err?.code !== 'permission-denied') writePending([...readPending(), { game, ops }]);
@@ -201,6 +266,7 @@ export function friendlyError(error) {
     'app/not-configured': 'Firebase is not set up yet. Add your config in js/firebase-config.js.',
     'auth/unauthorized-domain': 'This website address is not authorized. Add it in Firebase → Authentication → Settings → Authorized domains.',
     'auth/operation-not-allowed': 'Google sign-in is turned off. Enable Google in Firebase → Authentication → Sign-in method.',
+    'auth/web-storage-unsupported': 'This browser is blocking storage. Turn off private mode or tracking protection, or open the site in Chrome or Safari.',
     'auth/popup-closed-by-user': 'The Google window was closed before finishing.',
     'auth/network-request-failed': 'Network error. Check your connection and try again.',
     'permission-denied': 'Cloud save was refused. Publish firestore.rules in your Firebase project.'
