@@ -108,13 +108,33 @@ async function main() {
   });
 
   // ---------- layout ----------
+  // Phone desk: world width is kept small (pens are a fixed 153 units long, so a
+  // smaller world makes the bench smaller relative to the pens). The height is
+  // derived once from the screen shape and then cached, so mobile address-bar
+  // show/hide never changes the world or resets the pens mid-round.
+  let mobileWorld = null;
+  function mobileDesk(cw, ch) {
+    if (!mobileWorld) {
+      const aspect = Math.min(Math.max(cw / ch, 0.5), 0.8);
+      const w = 540;
+      const h = Math.round(w / aspect);
+      mobileWorld = { w, h, playArea: { x: 40, y: 36, w: w - 80, h: h - 76 } };
+    }
+    return mobileWorld;
+  }
+
   function applyLayout() {
     const cs = getComputedStyle(stage);
     const cw = stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
     const ch = stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
     if (cw < 50 || ch < 50) return;
 
-    const d = cw < ch ? CONFIG.desk.portrait : CONFIG.desk.landscape; // portrait screens get a portrait desk
+    // Portrait screens get a portrait desk. On phones (narrow portrait) the desk
+    // uses a much smaller world so the bench is not oversized and the pens look
+    // bigger. Desktop / landscape keep the original desk untouched.
+    let d;
+    if (cw < ch && cw <= 820) d = mobileDesk(cw, ch);
+    else d = cw < ch ? CONFIG.desk.portrait : CONFIG.desk.landscape;
 
     // Fill the entire available stage: no centered letterbox / empty side bands.
     // Keep the same 2D procedural classroom renderer and physics-world dimensions;
