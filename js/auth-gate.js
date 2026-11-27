@@ -29,6 +29,8 @@
     var revealed = false;
     cloud.onUser(function (user) {
       if (!user) { toSignIn(); return; }   // signed out (here or in another tab) or never signed in
+      // A different account is now using this browser: drop the previous player's local data and reload clean.
+      if (cloud.claimDevice(user)) { cloud.syncNow().catch(function () {}).then(function () { location.reload(); }); return; }
       if (!revealed) { revealed = true; reveal(); cloud.flushPending().catch(function () {}); }
     });
   }).catch(toSignIn);
