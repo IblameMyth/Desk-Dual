@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#8c5428">
+  <link rel="manifest" href="/manifest.json">
+  <title>My Stats - Desk Dual</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="stats.css">
+  <script src="js/auth-gate.js"></script>
+</head>
+<body class="about-page">
+  <main class="about-shell">
+    <header class="about-topbar">
+      <a class="about-brand" href="index.html">DESK DUAL</a>
+      <span class="about-kicker">REPORT CARD</span>
+    </header>
+    <section class="about-board" aria-labelledby="stats-title">
+      <h1 class="about-chalk-title" id="stats-title">My Stats</h1>
+      <p class="about-lead" id="stats-owner">Loading your report card…</p>
+      <div class="stats-grid" id="stats-grid" aria-live="polite"></div>
+      <footer class="about-footer">
+        <a class="btn btn-primary about-back" href="index.html">← BACK TO HOME</a>
+      </footer>
+    </section>
+  </main>
+  <script type="module" src="js/stats.js"></script>
+</body>
+</html>

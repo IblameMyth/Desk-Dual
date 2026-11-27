@@ -1,0 +1,9 @@
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin:18px 0 8px}
+.stats-card{padding:14px 16px;color:#2b1d12;background:#f6edda;border:3px solid #3c2a1b;border-radius:6px;box-shadow:0 4px 0 #3c2a1b}
+.stats-card h2{margin:0 0 8px;font:400 1.15rem "Lilita One",sans-serif;color:#2b1d12}
+.stats-card dl{margin:0;display:grid;gap:5px}
+.stats-row{display:flex;justify-content:space-between;gap:10px;font:800 .85rem Nunito,sans-serif;border-bottom:1px dashed rgba(60,42,27,.35);padding-bottom:3px}
+.stats-row:last-child{border-bottom:0}
+.stats-row dt{font-weight:600}
+.stats-row dd{margin:0;font-weight:900}
+@media (max-width:520px){.stats-grid{grid-template-columns:1fr}}
