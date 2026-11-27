@@ -9,7 +9,8 @@ const goHome = () => setTimeout(() => { window.location.href = target; }, 800);
 
 async function done(user) {
   say(`Welcome${user.displayName ? ', ' + user.displayName : ''}! Saving your progress…`);
-  try { await syncNow(); } catch (err) { say(friendlyError(err)); return; }
+  // Login already worked. If syncing progress hiccups, don't show an error: it retries on the home page.
+  try { await syncNow(); } catch (err) { console.warn('Progress sync failed (will retry):', err); }
   goHome();
 }
 

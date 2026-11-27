@@ -88,7 +88,41 @@ export async function finishRedirect() {
 
 export async function signOutUser() {
   const m = await load();
-  if (m) await m.signOut(m.auth);
+  if (!m) return;
+  try { await flushPending(); await syncNow(); } catch (_) {}   // save this player's unsynced progress first
+  await m.signOut(m.auth);
+  clearUserLocal();                                             // the next player starts clean
+  try { localStorage.removeItem(OWNER_KEY); } catch (_) {}
+}
+
+/* ---------- one device, many accounts ----------
+   localStorage belongs to the browser, not to the Google account. Without this, a second account
+   signing in on the same browser would inherit (and then upload) the first account's pens, name and
+   progress. So we remember which uid owns the data on this device; when a different uid signs in,
+   the previous player's local data is wiped and the new account starts from its own cloud copy only. */
+const OWNER_KEY = 'deskDuelDeviceOwnerV1';
+const PENDING_KEY = 'deskDuelPendingStatsV1';
+
+function clearUserLocal() {
+  let hadData = false;
+  for (const key of [...Object.values(KEYS), PENDING_KEY]) {
+    try {
+      if (localStorage.getItem(key) != null) hadData = true;
+      localStorage.removeItem(key);
+    } catch (_) {}
+  }
+  return hadData;
+}
+
+/* Returns true if another player's local data was removed (the page should reload to drop it from memory). */
+export function claimDevice(user) {
+  if (!user) return false;
+  let owner = null;
+  try { owner = localStorage.getItem(OWNER_KEY); } catch (_) {}
+  if (owner === user.uid) return false;
+  const cleared = clearUserLocal();
+  try { localStorage.setItem(OWNER_KEY, user.uid); } catch (_) {}
+  return cleared;
 }
 
 /* ---------- local <-> cloud data ---------- */
@@ -119,21 +153,37 @@ function mergeProgress(a, b) {
   return { ...b, ...a, owned, unlockedLevel: Math.max(a.unlockedLevel || 1, b.unlockedLevel || 1), equipped: lead.equipped || 'starter' };
 }
 
+/* Firestore refuses `undefined` anywhere in a document, so drop it (deeply) before saving. */
+function stripUndefined(v) {
+  if (Array.isArray(v)) return v.filter((x) => x !== undefined).map(stripUndefined);
+  if (v && typeof v === 'object') {
+    const out = {};
+    for (const [k, x] of Object.entries(v)) if (x !== undefined) out[k] = stripUndefined(x);
+    return out;
+  }
+  return v;
+}
+
 /* Pull the cloud copy, merge it with this device, save the result in both places. */
 export async function syncNow() {
   const m = await load();
   const user = m?.auth.currentUser;
   if (!m || !user) return false;
+  claimDevice(user);   // never merge another account's local data into this one
   const ref = m.doc(m.db, 'users', user.uid);
   const snap = await m.getDoc(ref);
   const cloud = snap.exists() ? (snap.data().data || {}) : {};
   const local = readLocal();
-  const merged = { ...local, ...cloud, penProgress: mergeProgress(local.penProgress, cloud.penProgress) };
+  const merged = { ...local, ...cloud };
+  // Firestore rejects `undefined`: a brand-new account has no pen progress yet, so only set it when it exists.
+  const progress = mergeProgress(local.penProgress, cloud.penProgress);
+  if (progress) merged.penProgress = progress;
+  else delete merged.penProgress;
   // A name/setup already on this device wins only if the cloud has none.
   writeLocal(merged);
   await m.setDoc(ref, {
     profile: { displayName: user.displayName || '', photoURL: user.photoURL || '' },
-    data: merged,
+    data: stripUndefined(merged),
     updatedAt: m.serverTimestamp()
   }, { merge: true });
   return true;
@@ -145,7 +195,6 @@ export async function syncNow() {
 export const GAME_IDS = ['penfight', 'raja-rani', 'hand-cricket', 'behrupiye-ko-pakdo', 'stone-paper-scissors',
   'ashta-chamma', 'chidiya-udd', 'chop-sticks', 'battleship', 'pencil-tower', 'bottle-flip', 'npat'];
 
-const PENDING_KEY = 'deskDuelPendingStatsV1';
 const readPending = () => { try { return JSON.parse(localStorage.getItem(PENDING_KEY) || '[]') || []; } catch (_) { return []; } };
 const writePending = (list) => { try { localStorage.setItem(PENDING_KEY, JSON.stringify(list.slice(-50))); } catch (_) {} };
 const whole = (v) => Math.max(0, Math.min(1e9, Math.round(Number(v) || 0)));
@@ -153,10 +202,12 @@ const whole = (v) => Math.max(0, Math.min(1e9, Math.round(Number(v) || 0)));
 /* recordGame('chop-sticks', { inc: { wins: 1 }, max: { highScore: 12 }, set: { lastRole: 'Raja' }, union: { pensUnlocked: ['pen1'] } }) */
 export async function recordGame(game, ops = {}, { queue = true } = {}) {
   if (!GAME_IDS.includes(game)) return false;
+  let uid = null;
   try {
     const m = await load();
     const user = m?.auth.currentUser;
     if (!m || !user) throw new Error('not signed in');
+    uid = user.uid;
     const ref = m.doc(m.db, 'users', user.uid, 'games', game);
     await m.runTransaction(m.db, async (tx) => {
       const snap = await tx.get(ref);
@@ -172,7 +223,8 @@ export async function recordGame(game, ops = {}, { queue = true } = {}) {
     });
     return true;
   } catch (err) {
-    if (queue && err?.code !== 'permission-denied') writePending([...readPending(), { game, ops }]);
+    // queued stats remember their owner, so they can never be uploaded to a different account
+    if (queue && uid && err?.code !== 'permission-denied') writePending([...readPending(), { uid, game, ops }]);
     return false;
   }
 }
@@ -181,8 +233,11 @@ export async function recordGame(game, ops = {}, { queue = true } = {}) {
 export async function flushPending() {
   const list = readPending();
   if (!list.length) return;
+  const m = await load();
+  const uid = m?.auth.currentUser?.uid;
+  if (!uid) return;
   writePending([]);
-  for (const item of list) await recordGame(item.game, item.ops);
+  for (const item of list) if (item.uid === uid) await recordGame(item.game, item.ops);
 }
 
 /* All of this player's stats: { 'chop-sticks': { wins: 3, losses: 1 }, ... } */
