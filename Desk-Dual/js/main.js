@@ -62,6 +62,7 @@ if (accountButton) {
         accountButton.textContent = `SIGN OUT (${(user.displayName || 'PLAYER').split(' ')[0].toUpperCase()})`;
         accountButton.removeAttribute('href');
         accountButton.onclick = async (event) => { event.preventDefault(); await signOutUser(); toast('Signed out.'); };
+        syncNow().catch(() => {});
       } else {
         accountButton.textContent = 'SIGN IN';
         accountButton.setAttribute('href', 'signin.html');

@@ -1,4 +1,4 @@
-const CACHE_NAME = "desk-dual-classroom-games-v16";
+const CACHE_NAME = "desk-dual-classroom-games-v13";
 const CORE_ASSETS = [
   "/",
   "/index.html",
@@ -29,8 +29,6 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
-  const reqUrl = new URL(event.request.url);
-  if (reqUrl.pathname.startsWith("/__/")) return; // Firebase sign-in handler/iframe: never cache or intercept
   if (new URL(event.request.url).origin !== self.location.origin) return; // let Firebase/Google requests go straight to the network
 
   if (event.request.mode === "navigate") {
