@@ -1,10 +1,9 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
+/* Firebase web config for Desk Dual.
+   Plain browser module: no bundler, no imports. cloud.js loads the Firebase SDK from the CDN
+   and reads `firebaseConfig` / `isFirebaseConfigured` from here.
+   (The apiKey of a Firebase web app is not a secret; access is controlled by firestore.rules
+   and the Authorized domains list in Firebase Authentication.) */
+export const firebaseConfig = {
   apiKey: "AIzaSyDuqpSGUSgVXOEJaVY6I14wQ7k8uF5rjr0",
   authDomain: "desk-dual.firebaseapp.com",
   projectId: "desk-dual",
@@ -13,5 +12,4 @@ const firebaseConfig = {
   appId: "1:235869021159:web:bad4613fd12cd538155342"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+export const isFirebaseConfigured = Boolean(firebaseConfig.apiKey);
