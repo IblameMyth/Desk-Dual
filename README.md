@@ -91,7 +91,7 @@ From competitive AI challenges to playing with friends, every game is designed t
 | ✏️ Pencil-Box Tower | Stack, balance and build. | 🚧 Coming Soon |
 | 🍾 Bottle Flip | Master the perfect landing. | 🟢 Play Now |
 | 🏒 Notebook Hockey | Bring hockey to your notebook. | 🚧 Coming Soon |
-| ⚽ Paper Football | Fold, flick and score a desk-side goal. | 🚧 Coming Soon |
+| 📝 Name Place Animal Thing | One letter, 25 seconds. Fill the sheet before your benchmate. | 🟢 Play Now |
 
 ---
 

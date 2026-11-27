@@ -51,3 +51,23 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
   });
 }
+
+/* Account button + cloud sync (never blocks the menu if Firebase is missing). */
+const accountButton = document.getElementById('btn-account');
+if (accountButton) {
+  import('./cloud.js').then(({ cloudEnabled, onUser, syncNow, signOutUser }) => {
+    if (!cloudEnabled) return; // not configured: keep the SIGN IN link, which explains setup
+    onUser((user) => {
+      if (user) {
+        accountButton.textContent = `SIGN OUT (${(user.displayName || 'PLAYER').split(' ')[0].toUpperCase()})`;
+        accountButton.removeAttribute('href');
+        accountButton.onclick = async (event) => { event.preventDefault(); await signOutUser(); toast('Signed out.'); };
+        syncNow().catch(() => {});
+      } else {
+        accountButton.textContent = 'SIGN IN';
+        accountButton.setAttribute('href', 'signin.html');
+        accountButton.onclick = null;
+      }
+    });
+  }).catch(() => {});
+}

@@ -237,6 +237,10 @@ dialog ol{padding-left:22px;line-height:1.55}
 .about-chalk-title{margin:0 0 10px;color:#f4e5bf;font:clamp(2rem,7vw,3.4rem)/1 var(--font-display);text-align:center;text-shadow:3px 3px 0 #32609a,6px 6px 0 #a83232;transform:rotate(-1deg)}
 .about-lead{max-width:660px;margin:0 auto 24px;color:#ecdcb4;font:700 1rem/1.6 var(--font-body);text-align:center}
 .about-section-grid,.contact-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:20px}
+.signin-grid{grid-template-columns:minmax(0,440px);justify-content:center}
+.signin-card{text-align:center}
+.signin-card .btn{margin:8px 0 12px}
+.signin-card #signin-status{margin:0}
 .about-card,.about-developer,.contact-note,.contact-card{
   color:#302216;background-color:#f6edda;
   background-image:repeating-linear-gradient(0deg,transparent 0 30px,rgba(91,127,151,.12) 31px 32px);

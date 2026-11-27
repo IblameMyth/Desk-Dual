@@ -16,7 +16,16 @@ body.deskdual-home{
 .home-shell{width:min(1100px,100%);margin:0 auto}
 
 /* ---- header ---- */
-.home-header{display:flex;flex-direction:column;align-items:center;text-align:center}
+.home-header{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center}
+.account-btn{
+  position:absolute;top:0;right:0;z-index:2;
+  display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:7px 16px;
+  color:#3a2a1c;background:#eee2c9;border:3px solid #3c2a1b;border-radius:4px;box-shadow:0 4px 0 #3c2a1b;
+  font:900 .72rem var(--font-body);letter-spacing:.1em;text-transform:uppercase;text-decoration:none;cursor:pointer;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .08s ease,box-shadow .08s ease;
+}
+.account-btn:hover{background:#f6edda;color:#2f5f9f}
+.account-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #3c2a1b}
 .classroom-label{
   display:inline-block;padding:9px 20px;
   color:#f6edda;background:#19301f;
@@ -119,6 +128,7 @@ body.deskdual-home{
   .game-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media(max-width:720px){
+  .account-btn{position:static;align-self:flex-end;margin-bottom:12px}
   .game-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
   .game-card{min-height:225px;padding:14px}
   .game-icon{flex-basis:46px;width:46px;height:46px;font-size:23px;border-radius:11px}

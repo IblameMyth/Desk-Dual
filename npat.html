@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#102419">
+  <meta name="description" content="Play Name, Place, Animal, Thing on Desk Dual.">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Name Place Animal Thing - Desk Dual</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="behrupiye-ko-pakdo.css">
+  <link rel="stylesheet" href="npat.css">
+</head>
+<body class="menu-page khc-page np-page">
+  <main class="menu khc-menu" id="main-menu">
+    <a class="khc-home" href="index.html">← ALL GAMES</a>
+    <div class="classroom-label">STD 9-A • CLASSROOM SPECIAL</div>
+    <div class="np-logo" aria-hidden="true">📝</div>
+    <h1 class="khc-title">NAME<br>PLACE<br>ANIMAL<br>THING</h1>
+    <p class="khc-subtitle">One letter. Twenty-five seconds. Fill the sheet before the bell.</p>
+    <nav class="menu-buttons" aria-label="Name Place Animal Thing menu">
+      <button class="btn btn-primary" id="open-ai" type="button">PLAY WITH AI</button>
+      <button class="btn" id="open-friends" type="button">PLAY WITH FRIENDS</button>
+      <button class="btn btn-small" id="open-how" type="button">HOW TO PLAY</button>
+    </nav>
+  </main>
+
+  <main class="khc-play hidden" id="play-area">
+    <header class="khc-head">
+      <nav class="np-nav" aria-label="Navigation">
+        <a class="khc-home" href="index.html">← ALL GAMES</a>
+        <a class="rrc-menu-return" href="npat.html">MAIN MENU</a>
+      </nav>
+      <div class="classroom-label">STD 9-A • NAME PLACE ANIMAL THING</div>
+    </header>
+
+    <section class="khc-panel hidden" id="setup-ai">
+      <h2>Play with AI</h2>
+      <p class="khc-muted">Enter your name and choose the rules. A new letter is picked every round.</p>
+      <label class="khc-field">Your name<input id="ai-name" maxlength="18" placeholder="Enter your name" autocomplete="off"></label>
+      <label class="khc-field">AI level
+        <select id="ai-level"><option value="easy">Easy · wobbly hands</option><option value="hard">Hard · class topper</option></select>
+      </label>
+      <label class="khc-field">Rounds
+        <select id="ai-rounds"><option value="3">3 rounds</option><option value="5" selected>5 rounds</option><option value="10">10 rounds</option></select>
+      </label>
+      <label class="khc-field">Fictional names (Goku, Batman…)
+        <select id="ai-fiction"><option value="no">Not allowed · real names only</option><option value="yes">Allowed</option></select>
+      </label>
+      <label class="khc-field">Bonus rule
+        <select id="ai-bonus"><option value="no">Off</option><option value="yes">15 pts if you’re the only one to fill a column</option></select>
+      </label>
+      <button class="btn btn-primary khc-start" id="start-ai" type="button" disabled>START GAME</button>
+      <p class="khc-error" id="ai-error"></p>
+    </section>
+
+    <section class="khc-panel hidden" id="setup-friends">
+      <h2>Play with friends</h2>
+      <p class="khc-muted">Share one phone. Each player gets their own 25 seconds, so no peeking!</p>
+      <label class="khc-field">Players
+        <select id="f-count"><option value="2">2 players</option><option value="3">3 players</option><option value="4">4 players</option><option value="5">5 players</option><option value="6">6 players</option><option value="7">7 players</option><option value="8">8 players</option><option value="9">9 players</option><option value="10">10 players</option></select>
+      </label>
+      <div id="f-names"></div>
+      <label class="khc-field">Rounds
+        <select id="f-rounds"><option value="3">3 rounds</option><option value="5" selected>5 rounds</option><option value="10">10 rounds</option></select>
+      </label>
+      <label class="khc-field">Fictional names (Goku, Batman…)
+        <select id="f-fiction"><option value="no">Not allowed · real names only</option><option value="yes">Allowed</option></select>
+      </label>
+      <label class="khc-field">Bonus rule
+        <select id="f-bonus"><option value="no">Off</option><option value="yes">15 pts if you’re the only one to fill a column</option></select>
+      </label>
+      <button class="btn btn-primary khc-start" id="start-friends" type="button">START GAME</button>
+      <p class="khc-error" id="friends-error"></p>
+    </section>
+
+    <section class="khc-panel hidden" id="game-panel">
+      <header class="blackboard-score np-blackboard" aria-label="Scoreboard">
+        <div class="chalk-class">STD 9-A<br><span>SUB : ENGLISH</span></div>
+        <div class="chalk-date">DATE : <span id="np-date">--/--</span><br><span>H.W.</span><br><small>CH. 4 · VOCABULARY</small></div>
+        <div class="chalk-thought">Thought for the Day<br><em>“Think fast, write faster”</em></div>
+        <section class="chalk-scorebox np-scorebox">
+          <div class="chalk-title">📝 N · P · A · T <small>TOTAL POINTS</small></div>
+          <div class="chalk-match" id="score-match"></div>
+          <div class="chalk-round" id="round-label">ROUND 1 OF 5</div>
+        </section>
+        <div class="chalk-doodles" aria-hidden="true">♡ &nbsp; A B C &nbsp; □ □ □</div>
+        <div class="chalk-sign">Mentor : Rinku</div>
+      </header>
+
+      <div id="g-write">
+        <div class="np-top">
+          <div class="np-letter" id="letter-card" aria-live="polite" aria-label="Letter">?</div>
+          <div class="np-clock">
+            <div class="np-who" id="who-label"></div>
+            <div class="np-time"><b id="time-num">25</b><span>sec</span></div>
+            <div class="np-bar"><i id="time-bar"></i></div>
+          </div>
+        </div>
+        <div class="np-sheet-write" id="write-fields">
+          <label class="np-row"><span>🧑 Name</span><input data-cat="name" maxlength="20" disabled autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="next"></label>
+          <label class="np-row"><span>📍 Place</span><input data-cat="place" maxlength="20" disabled autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="next"></label>
+          <label class="np-row"><span>🐾 Animal</span><input data-cat="animal" maxlength="20" disabled autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="next"></label>
+          <label class="np-row"><span>✏️ Thing</span><input data-cat="thing" maxlength="20" disabled autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="done"></label>
+        </div>
+        <p class="np-note" id="write-note">No peeking. No asking for help!</p>
+        <button class="btn btn-primary khc-start" id="done-btn" type="button" disabled>DONE!</button>
+      </div>
+
+      <div id="g-review" class="hidden">
+        <h2 id="review-title">Round result</h2>
+        <p class="khc-muted" id="review-help"></p>
+        <div class="np-table-wrap" id="review-table"></div>
+        <button class="btn btn-primary khc-start" id="next-btn" type="button">NEXT ROUND</button>
+      </div>
+    </section>
+
+    <section class="khc-panel hidden" id="result-panel">
+      <div class="np-trophy">🏆</div>
+      <h2 id="final-title">Final result</h2>
+      <p class="khc-muted" id="final-copy"></p>
+      <div class="np-table-wrap" id="final-table"></div>
+      <button class="btn btn-primary khc-start" id="play-again" type="button">PLAY AGAIN</button>
+      <a class="btn khc-start np-link-btn" href="npat.html">MAIN MENU</a>
+    </section>
+  </main>
+
+  <div class="np-handoff hidden" id="handoff" role="dialog" aria-live="assertive" aria-label="Pass the phone">
+    <div class="np-handoff-card">
+      <div class="np-handoff-icon" aria-hidden="true">📱➜</div>
+      <h3>Pass the phone to</h3>
+      <div class="np-handoff-name" id="handoff-name"></div>
+      <p id="handoff-copy"></p>
+      <button class="btn btn-primary" id="handoff-ready" type="button">I’M READY</button>
+    </div>
+  </div>
+
+  <dialog id="how-dialog">
+    <h2>How to play</h2>
+    <ol>
+      <li>Each round a random <b>letter</b> is picked. Everyone writes one word starting with it for <b>Name, Place, Animal</b> and <b>Thing</b>.</li>
+      <li>You get <b>25 seconds</b>. No peeking, no asking for help. With friends (2 to 10 players), each player takes their own 25 seconds on the same phone.</li>
+      <li><b>10 points</b> for a valid answer nobody else wrote. <b>5 points</b> if it matches another player’s word. <b>0</b> for a blank, an invalid word or a word starting with the wrong letter.</li>
+      <li>Bonus rule (optional): <b>15 points</b> if yours is the only valid answer in that column.</li>
+      <li>Fictional names like Goku or Batman only count if you switched them on before the game.</li>
+      <li>Words the game can’t check are marked <b>unchecked</b>. They count by default, but you can tap to reject one if it isn’t real.</li>
+      <li>Play the chosen number of rounds. Highest total wins!</li>
+    </ol>
+    <form method="dialog"><button class="btn btn-primary btn-small">GOT IT</button></form>
+  </dialog>
+
+  <script src="js/classroom-sounds.js"></script>
+  <script src="js/npat-data.js"></script>
+  <script src="js/npat.js"></script>
+</body>
+</html>

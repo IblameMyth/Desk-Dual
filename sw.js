@@ -1,4 +1,4 @@
-const CACHE_NAME = "desk-dual-classroom-games-v10";
+const CACHE_NAME = "desk-dual-classroom-games-v11";
 const CORE_ASSETS = [
   "/",
   "/index.html",
@@ -28,6 +28,7 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+  if (new URL(event.request.url).origin !== self.location.origin) return; // let Firebase/Google requests go straight to the network
 
   if (event.request.mode === "navigate") {
     event.respondWith(

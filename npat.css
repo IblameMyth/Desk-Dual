@@ -1,0 +1,90 @@
+/* Name Place Animal Thing — shares the classroom frame (style.css + behrupiye-ko-pakdo.css) */
+.np-page{overflow-x:hidden;-webkit-text-size-adjust:100%}
+.np-page .hidden{display:none!important}
+.np-page .np-logo{margin:4px auto 0;font-size:4.2rem;line-height:1;filter:drop-shadow(0 6px 2px rgba(20,14,8,.25));transform:rotate(-5deg)}
+.np-page .khc-title{font-size:clamp(2.2rem,8.5vw,3.9rem)}
+.np-page .khc-menu .btn.is-soon{color:#21180f;background:#eadfc8;border-style:dashed;box-shadow:0 6px 0 #3c2a1b;cursor:not-allowed}
+.np-page .khc-menu .tag{color:#493316;background:#f2cf53;border-radius:3px;padding:3px 7px;font:900 .65rem var(--font-body)}
+.np-page .khc-play{padding-bottom:calc(28px + env(safe-area-inset-bottom,0px))}
+.np-nav{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-bottom:8px}
+.np-nav .khc-home,.np-nav .rrc-menu-return{display:inline-flex;align-items:center;justify-content:center;margin:0;text-decoration:none;color:#21180f;padding:8px 12px;background:#eee2c9;border:3px solid #3c2a1b;border-radius:4px;box-shadow:0 5px 0 #3c2a1b;font:900 .78rem var(--font-body);letter-spacing:.04em}
+.np-link-btn{text-decoration:none;color:#21180f;background:#eee2c9;border:3px solid #3c2a1b;border-radius:4px;box-shadow:0 6px 0 #3c2a1b}
+
+/* writing screen */
+.np-top{display:flex;gap:14px;align-items:center;justify-content:center;margin:4px auto 12px}
+.np-letter{flex:none;display:grid;place-items:center;width:96px;height:96px;color:#f4e5bf;background:linear-gradient(135deg,#1c392d,#143027);border:6px ridge #79512f;border-radius:4px;box-shadow:inset 0 0 0 2px #d2b77c,0 5px 0 #4a2b19;font:4.2rem/1 var(--font-display);text-shadow:3px 3px 0 #9b4b35;transform:rotate(-2deg)}
+.np-letter.spin{animation:npSpin .12s linear infinite}
+@keyframes npSpin{50%{transform:rotate(2deg) scale(1.04)}}
+.np-clock{flex:1;max-width:260px}
+.np-who{min-height:1.2em;color:#725a3d;font:900 .8rem var(--font-body);letter-spacing:.06em;text-transform:uppercase}
+.np-time{display:flex;align-items:baseline;gap:6px;color:#284638}
+.np-time b{font:2.6rem/1 var(--font-display)}
+.np-time span{font:900 .8rem var(--font-body);color:#725a3d}
+.np-time.low b{color:#a83232;animation:npPulse .5s ease-in-out infinite alternate}
+@keyframes npPulse{to{transform:scale(1.12)}}
+.np-bar{height:12px;margin-top:4px;background:#e9dfc9;border:2px solid #68472c;border-radius:3px;overflow:hidden}
+.np-bar i{display:block;height:100%;width:100%;background:#32609a;transform-origin:left;transition:background .2s}
+.np-bar.low i{background:#a83232}
+.np-sheet-write{display:grid;gap:10px;margin:8px 0}
+.np-row{display:grid;grid-template-columns:96px minmax(0,1fr);align-items:center;gap:10px;font:900 .9rem var(--font-body);color:#62482e}
+.np-row input{width:100%;box-sizing:border-box;padding:12px 12px;border:2px solid #b49a70;border-radius:3px;background:#fffaf0;color:#382819;font:800 1.05rem var(--font-body)}
+.np-row input:focus{outline:3px solid #32609a;outline-offset:1px}
+.np-row input:disabled{background:#efe6d2;color:#8d7b5c}
+.np-note{min-height:1.3em;margin:6px 0 0;color:#a13a30;font:800 .85rem var(--font-body);text-align:center}
+
+/* result tables */
+.np-table-wrap{overflow-x:auto;margin:10px 0 6px}
+.np-table{width:100%;table-layout:fixed;border-collapse:collapse;background:#fffdf3;border:3px solid #68472c;font:800 .9rem var(--font-body);color:#382819}
+.np-table th,.np-table td{padding:8px 8px;border:1px solid #aac4e4;text-align:center;vertical-align:top}
+.np-table thead th{color:#f4e5bf;background:#1c392d;font:.95rem var(--font-display);text-transform:uppercase;letter-spacing:.03em;overflow-wrap:anywhere}
+.np-table tbody th,.np-table tfoot th{background:#f6ecd6;color:#284638;font:.9rem var(--font-display);text-align:left;white-space:nowrap}
+.np-table tfoot td,.np-table tfoot th{border-top:3px double #68472c;font-size:1.05rem}
+.np-table th:first-child{width:78px}
+.np-ans{display:block;font-weight:900;overflow-wrap:break-word;hyphens:auto}
+.np-ans.is-bad{color:#8d7b5c;text-decoration:line-through}
+.np-ans.is-empty{color:#b3a283}
+.np-why{display:block;margin-top:2px;color:#a13a30;font:800 .68rem var(--font-body)}
+.np-pts{display:inline-block;margin-top:4px;padding:2px 9px;border-radius:12px;color:#fff;background:#8d7b5c;font:.85rem var(--font-display)}
+.np-pts.p5{background:#c98a24}.np-pts.p10{background:#2f7a43}.np-pts.p15{background:#32609a}
+.np-chk{display:block;margin:5px auto 0;padding:3px 8px;color:#493316;background:#f2cf53;border:2px solid #3c2a1b;border-radius:3px;font:900 .66rem var(--font-body);cursor:pointer;touch-action:manipulation}
+.np-chk[aria-pressed="true"]{color:#fff;background:#a83232}
+.np-total{font:1.3rem var(--font-display)}
+.np-trophy{text-align:center;font-size:3.2rem}
+.np-win{background:#fff3c4}
+
+/* scoreboard + handoff */
+@media(max-width:540px){
+  .np-blackboard{height:auto;margin:0 0 10px;padding:8px;border-width:6px 6px 8px}
+  .np-blackboard .chalk-class,.np-blackboard .chalk-date,.np-blackboard .chalk-thought,.np-blackboard .chalk-sign,.np-blackboard .chalk-doodles{display:none}
+  .np-blackboard .np-scorebox{position:relative;left:auto;bottom:auto;width:100%;box-sizing:border-box}
+  .np-row{grid-template-columns:82px minmax(0,1fr)}
+  .np-letter{width:80px;height:80px;font-size:3.5rem}
+  .np-table th,.np-table td{padding:6px 4px;font-size:.8rem}
+}
+.np-handoff{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;padding:16px;background:#173c2f}
+.np-handoff-card{width:min(100%,340px);padding:20px 16px;text-align:center;color:#284638;background:#fff9eb;border:3px solid #3c2a1b;border-radius:8px;box-shadow:0 6px 0 #3c2a1b}
+.np-handoff-icon{font-size:2.4rem;line-height:1}
+.np-handoff-card h3{margin:6px 0 2px;font:1.2rem var(--font-display);color:#725a3d}
+.np-handoff-name{margin:0 0 8px;overflow:hidden;font:clamp(1.7rem,8vw,2.4rem)/1.1 var(--font-display);text-overflow:ellipsis;text-transform:uppercase;color:#32609a}
+.np-handoff-card p{margin:0 0 14px;color:#725a3d;font-weight:800;line-height:1.4}
+@media(prefers-reduced-motion:reduce){.np-letter.spin,.np-time.low b{animation:none}}
+
+/* per-player review cards (works for 2 to 10 players) */
+.np-cards{display:grid;gap:12px;margin:10px 0}
+.np-pcard{background:#fffdf3;border:3px solid #68472c;border-radius:4px;box-shadow:3px 4px 0 #68472c}
+.np-pcard-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;color:#f4e5bf;background:#1c392d;font:1.1rem var(--font-display);text-transform:uppercase}
+.np-pcard-head b{font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.np-pcard-head .np-total{color:#ffe38a}
+.np-prow{display:grid;grid-template-columns:86px minmax(0,1fr) auto;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid #aac4e4;font:800 .9rem var(--font-body);color:#382819}
+.np-prow:first-of-type{border-top:0}
+.np-plabel{color:#284638;font:.9rem var(--font-display)}
+.np-pans .np-chk{margin:4px 0 0}
+.np-prow .np-pts{margin:0}
+.np-rank{list-style:none;margin:0 0 12px;padding:0;counter-reset:r}
+.np-rank li{counter-increment:r;display:flex;align-items:center;gap:10px;padding:8px 12px;border:2px solid #c4a878;border-top-width:0;background:#fff9eb;font:1.05rem var(--font-display);color:#284638}
+.np-rank li:first-child{border-top-width:2px}
+.np-rank li::before{content:counter(r);flex:none;display:grid;place-items:center;width:26px;height:26px;color:#fff;background:#68472c;border-radius:50%;font-size:.85rem}
+.np-rank li span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.np-rank li.np-win{background:#fff3c4}
+.np-wide{table-layout:auto}
+.np-wide th:first-child{position:sticky;left:0;z-index:1}
