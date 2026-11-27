@@ -94,7 +94,11 @@ export async function finishRedirect() {
 
 export async function signOutUser() {
   const m = await load();
-  if (m) await m.signOut(m.auth);
+  if (m) {
+    try { await pushLocal(); } catch (_) {}   // save this account's latest progress first
+    await m.signOut(m.auth);
+  }
+  clearLocalAccountData();
 }
 
 /* ---------- local <-> cloud data ---------- */
@@ -117,6 +121,14 @@ function writeLocal(data) {
   }
 }
 
+/* Local data belongs to ONE account. Wipe it when the account changes so it can never leak into another one. */
+const PENDING_KEY_LOCAL = 'deskDuelPendingStatsV1';
+function clearLocalAccountData() {
+  for (const key of Object.values(KEYS)) { try { localStorage.removeItem(key); } catch (_) {} }
+  try { localStorage.removeItem(PENDING_KEY_LOCAL); } catch (_) {}
+  try { localStorage.removeItem(SYNCED_KEY); } catch (_) {}
+}
+
 /* Pen Fight progress: never lose levels or pens when merging two devices. */
 function mergeProgress(a, b) {
   if (!a) return b; if (!b) return a;
@@ -130,6 +142,9 @@ export async function syncNow() {
   const m = await load();
   const user = m?.auth.currentUser;
   if (!m || !user) return false;
+  let lastUid = null;
+  try { lastUid = localStorage.getItem(SYNCED_KEY); } catch (_) {}
+  if (lastUid && lastUid !== user.uid) clearLocalAccountData();   // different account on this device: start clean
   const ref = m.doc(m.db, 'users', user.uid);
   const snap = await m.getDoc(ref);
   const cloud = snap.exists() ? (snap.data().data || {}) : {};

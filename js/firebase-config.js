@@ -6,7 +6,10 @@
 /* On the live site, sign-in runs through this site's own address (vercel.json proxies /__/auth to
    Firebase). Mobile browsers block the login redirect when it goes to a different domain. */
 const host = location.hostname;
-const useOwnDomain = host !== 'localhost' && host !== '127.0.0.1' && host !== '';
+/* Only hosts whose /__/auth/handler is registered in Google Cloud (OAuth client -> Authorized redirect URIs)
+   may be used here. Preview URLs and LAN IPs (192.168.x.x) are NOT registered, so they use the default domain. */
+const OWN_DOMAINS = ['desk-dual.vercel.app'];
+const useOwnDomain = OWN_DOMAINS.includes(host);
 
 export const firebaseConfig = {
   apiKey: "AIzaSyDuqpSGUSgVXOEJaVY6I14wQ7k8uF5rjr0",
