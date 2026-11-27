@@ -3,7 +3,9 @@ import { cloudEnabled, signInWithGoogle, finishRedirect, syncNow, friendlyError,
 const button = document.getElementById('google-signin');
 const statusEl = document.getElementById('signin-status');
 const say = (message) => { statusEl.textContent = message; };
-const goHome = () => setTimeout(() => { window.location.href = 'index.html'; }, 800);
+const nextParam = new URLSearchParams(location.search).get('next') || '';
+const target = /^[a-z0-9-]+\.html$/i.test(nextParam) && nextParam !== 'signin.html' ? nextParam : 'index.html';
+const goHome = () => setTimeout(() => { window.location.href = target; }, 800);
 
 async function done(user) {
   say(`Welcome${user.displayName ? ', ' + user.displayName : ''}! Saving your progress…`);

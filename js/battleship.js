@@ -598,6 +598,7 @@
     state.busy = false;
     renderBattle();
     const name = state.players[w].name;
+    if (window.DeskStats) window.DeskStats.record('battleship', { inc: { [w === 0 ? 'wins' : 'losses']: 1, shipsDestroyed: sunkCount(state.fleets[1]) } });
     setMsg(name.toUpperCase() + ' SANK EVERYTHING!', 'is-sunk');
     if (state.mode === 'ai' && w === 1) sound()?.lose?.(); else sound()?.win?.();
     // match over: go straight to the result, no button to press

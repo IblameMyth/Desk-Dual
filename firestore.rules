@@ -1,10 +1,96 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Each signed-in player can read and write only their own save.
-    match /users/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+
+    /* ---------- helpers ---------- */
+    function signedIn() { return request.auth != null; }
+    function isOwner(uid) { return signedIn() && request.auth.uid == uid; }
+
+    // optional whole number between 0 and max
+    function num(d, k, max) { return !(k in d) || (d[k] is int && d[k] >= 0 && d[k] <= max); }
+    // on update a counter may only grow, and only by `step` per save
+    function up(k, step) {
+      return !(k in resource.data)
+        || (k in request.resource.data
+            && request.resource.data[k] is int
+            && request.resource.data[k] >= resource.data[k]
+            && request.resource.data[k] - resource.data[k] <= step);
     }
+    function stamped() { return request.resource.data.updatedAt == request.time; }
+
+    /* ---------- what each game may store ---------- */
+    function shape(g) {
+      let d = request.resource.data;
+      let big = 10000000;
+      return
+        (g == 'penfight' && d.keys().hasOnly(['pensUnlocked', 'level', 'wins', 'losses', 'updatedAt'])
+          && (!('pensUnlocked' in d) || (d.pensUnlocked is list && d.pensUnlocked.size() <= 10))
+          && (!('level' in d) || (d.level is int && d.level >= 1 && d.level <= 10))
+          && num(d, 'wins', big) && num(d, 'losses', big))
+        || (g == 'raja-rani' && d.keys().hasOnly(['rounds', 'wins', 'lastRole', 'timesRaja', 'timesRani', 'timesSipahi', 'timesChor', 'updatedAt'])
+          && (!('lastRole' in d) || d.lastRole in ['Raja', 'Rani', 'Sipahi', 'Chor'])
+          && num(d, 'rounds', big) && num(d, 'wins', big)
+          && num(d, 'timesRaja', big) && num(d, 'timesRani', big) && num(d, 'timesSipahi', big) && num(d, 'timesChor', big))
+        || (g == 'hand-cricket' && d.keys().hasOnly(['runs', 'wickets', 'highScore', 'updatedAt'])
+          && num(d, 'runs', big) && num(d, 'wickets', big) && num(d, 'highScore', 100000))
+        || (g == 'behrupiye-ko-pakdo' && d.keys().hasOnly(['correctGuesses', 'rounds', 'wins', 'updatedAt'])
+          && num(d, 'correctGuesses', big) && num(d, 'rounds', big) && num(d, 'wins', big))
+        || (g == 'stone-paper-scissors' && d.keys().hasOnly(['wins', 'losses', 'draws', 'updatedAt'])
+          && num(d, 'wins', big) && num(d, 'losses', big) && num(d, 'draws', big))
+        || (g == 'ashta-chamma' && d.keys().hasOnly(['wins', 'tokens', 'completedMatches', 'updatedAt'])
+          && num(d, 'wins', big) && num(d, 'tokens', big) && num(d, 'completedMatches', big))
+        || (g == 'chidiya-udd' && d.keys().hasOnly(['score', 'highScore', 'updatedAt'])
+          && num(d, 'score', 100000) && num(d, 'highScore', 100000))
+        || (g == 'chop-sticks' && d.keys().hasOnly(['wins', 'losses', 'updatedAt'])
+          && num(d, 'wins', big) && num(d, 'losses', big))
+        || (g == 'battleship' && d.keys().hasOnly(['wins', 'losses', 'shipsDestroyed', 'updatedAt'])
+          && num(d, 'wins', big) && num(d, 'losses', big) && num(d, 'shipsDestroyed', big))
+        || (g == 'pencil-tower' && d.keys().hasOnly(['highestTower', 'score', 'updatedAt'])
+          && num(d, 'highestTower', 100000) && num(d, 'score', big))
+        || (g == 'bottle-flip' && d.keys().hasOnly(['successfulFlips', 'bestStreak', 'updatedAt'])
+          && num(d, 'successfulFlips', big) && num(d, 'bestStreak', 100000))
+        || (g == 'npat' && d.keys().hasOnly(['score', 'rounds', 'validAnswers', 'totalAnswers', 'updatedAt'])
+          && num(d, 'score', big) && num(d, 'rounds', big) && num(d, 'validAnswers', big) && num(d, 'totalAnswers', big));
+    }
+
+    /* ---------- how each game's numbers may change on update ---------- */
+    function growth(g) {
+      return
+        (g == 'penfight' && up('level', 10) && up('wins', 5) && up('losses', 5)
+          && (!('pensUnlocked' in resource.data) || request.resource.data.pensUnlocked.size() >= resource.data.pensUnlocked.size()))
+        || (g == 'raja-rani' && up('rounds', 5) && up('wins', 2) && up('timesRaja', 5) && up('timesRani', 5) && up('timesSipahi', 5) && up('timesChor', 5))
+        || (g == 'hand-cricket' && up('runs', 1000) && up('wickets', 10) && up('highScore', 1000))
+        || (g == 'behrupiye-ko-pakdo' && up('correctGuesses', 5) && up('rounds', 20) && up('wins', 2))
+        || (g == 'stone-paper-scissors' && up('wins', 3) && up('losses', 3) && up('draws', 3))
+        || (g == 'ashta-chamma' && up('wins', 2) && up('tokens', 4) && up('completedMatches', 2))
+        || (g == 'chidiya-udd' && up('highScore', 1000))
+        || (g == 'chop-sticks' && up('wins', 2) && up('losses', 2))
+        || (g == 'battleship' && up('wins', 2) && up('losses', 2) && up('shipsDestroyed', 10))
+        || (g == 'pencil-tower' && up('highestTower', 1000) && up('score', 1000))
+        || (g == 'bottle-flip' && up('successfulFlips', 20) && up('bestStreak', 20))
+        || (g == 'npat' && up('score', 500) && up('rounds', 5) && up('validAnswers', 10) && up('totalAnswers', 10));
+    }
+
+    /* ---------- each signed-in player owns exactly one private area: /users/{theirUid}/... ---------- */
+    match /users/{uid} {
+      allow read: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['profile', 'data', 'updatedAt'])
+        && (!('profile' in request.resource.data) || request.resource.data.profile is map)
+        && (!('data' in request.resource.data) || request.resource.data.data is map)
+        && stamped();
+      allow delete: if false;
+
+      // users/{uid}/games/{game}: one small stats document per game
+      match /games/{game} {
+        allow read: if isOwner(uid);
+        allow create: if isOwner(uid) && shape(game) && stamped();
+        allow update: if isOwner(uid) && shape(game) && growth(game) && stamped();
+        allow delete: if false;
+      }
+    }
+
+    // everything else is closed
     match /{document=**} {
       allow read, write: if false;
     }

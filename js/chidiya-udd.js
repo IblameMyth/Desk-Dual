@@ -646,6 +646,7 @@ Cassowary||`, false, '🐾');
     });
     const winners = ranked.filter(p => p.rank === 1);
     const first = winners[0];
+    if (window.DeskStats) window.DeskStats.record('chidiya-udd', { set: { score: players[0].score }, max: { highScore: players[0].score } });
     const winnerNames = winners.map(p => p.name).join(' & ');
     const stayed = 'stayed on the bench the longest: ' + first.outRound +
       (first.outRound === 1 ? ' round' : ' rounds') + ' and ' + first.score + ' correct.';

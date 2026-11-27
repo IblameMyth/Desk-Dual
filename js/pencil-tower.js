@@ -345,6 +345,7 @@
     const name = state.players[p].name;
     const score = state.count;
     state.results[p].push(score);
+    if (p === 0 && window.DeskStats) window.DeskStats.record('pencil-tower', { inc: { score: score }, max: { highestTower: score } });
     state.done = state.seqIdx >= state.seq.length - 1;
     updateHud();
     isAiTurn() ? sound()?.lose?.() : sound()?.win?.();

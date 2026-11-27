@@ -281,6 +281,14 @@ async function main() {
     const playerWon = MODE === 'ai' && winner === 0;
     const reward = playerWon ? PEN_BY_ID[AI_BY_LEVEL[LEVEL].penId] : null;
     if (playerWon) completeLevel(LEVEL);
+    if (MODE === 'ai' && window.DeskStats) {
+      const saved = loadProgress();
+      window.DeskStats.record('penfight', {
+        inc: { [playerWon ? 'wins' : 'losses']: 1 },
+        max: { level: saved.unlockedLevel },
+        union: { pensUnlocked: saved.owned }
+      });
+    }
     const next = Math.min(10, LEVEL + 1);
     const buttons = [];
     if (playerWon && LEVEL < 10) {

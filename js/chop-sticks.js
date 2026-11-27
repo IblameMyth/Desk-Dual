@@ -561,6 +561,7 @@
     updateBoardScore();
     const winnerName = state.players[w].name;
     const seriesOver = state.scores[w] >= state.target;
+    if (seriesOver && window.DeskStats) window.DeskStats.record('chop-sticks', { inc: { [w === 0 ? 'wins' : 'losses']: 1 } });
     const youWon = state.mode === 'ai' ? w === 0 : true;
     youWon ? sound()?.win() : sound()?.lose();
     $('turn-title').textContent = winnerName + ' wins' + (seriesOver ? ' the match!' : ' the game!');

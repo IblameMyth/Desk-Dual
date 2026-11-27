@@ -130,6 +130,7 @@ function continueRound(message,counts){
 function finish(caught,counts){
  updateKhcBoard(caught?'BEHRUPIYA CAUGHT':'BEHRUPIYA ESCAPED');
  let chor=state.players[state.chor];
+ {const me=state.players[0];window.DeskStats&&window.DeskStats.record('behrupiye-ko-pakdo',{inc:{rounds:state.round,wins:(me.chor?!caught:caught)?1:0,correctGuesses:(caught&&!me.chor)?1:0}});}
  $('phase-title').textContent=caught?'Behrupiya caught!':'Behrupiya escaped!';$('phase-description').textContent='The secret words are revealed.';
  let rows=state.players.map((p,i)=>`<div class="khc-player"><b>${esc(p.name)} ${p.alive?'':'(out)'}</b><small>${p.chor?'🕵️ BEHRUPIYA':'📚 CLASSMATE'} · Word: <b>${esc(p.word)}</b></small><small>${counts[i]} vote(s) this round</small></div>`).join('');
  $('game-area').innerHTML=`<div class="khc-result"><div style="font-size:2.5rem">${caught?'🎉':'😈'}</div><h3>${caught?'The class caught the Behrupiya!':'The Behrupiya survived!'}</h3><p>${esc(chor.name)} was the Behrupiya.</p><p>Category: <b>${esc(state.category)}</b></p><p>Classmates' word: <b>${esc(state.common)}</b> · Behrupiya's word: <b>${esc(state.odd)}</b></p></div><h3 style="font-family:var(--font-display);margin:18px 0 8px">Classroom reveal</h3><div class="khc-player-grid">${rows}</div><button class="btn btn-primary khc-start" id="finish-round">VIEW VERDICT</button>`;

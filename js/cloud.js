@@ -139,24 +139,61 @@ export async function syncNow() {
   return true;
 }
 
-/* Record one finished match: recordResult('chop-sticks', 'win' | 'loss' | 'draw'). */
-export async function recordResult(game, result) {
-  const m = await load();
-  const user = m?.auth.currentUser;
-  if (!m || !user || !/^[a-z0-9-]{1,40}$/.test(game)) return;
-  const field = result === 'win' ? 'wins' : result === 'loss' ? 'losses' : 'draws';
-  await m.setDoc(m.doc(m.db, 'users', user.uid), {
-    stats: { [game]: { played: m.increment(1), [field]: m.increment(1) } },
-    updatedAt: m.serverTimestamp()
-  }, { merge: true });
+/* ---------- per-game stats: users/{uid}/games/{game} ----------
+   Every account has its own private documents. Firestore rules (firestore.rules) make sure
+   nobody can read or write another account's data and that numbers stay valid. */
+export const GAME_IDS = ['penfight', 'raja-rani', 'hand-cricket', 'behrupiye-ko-pakdo', 'stone-paper-scissors',
+  'ashta-chamma', 'chidiya-udd', 'chop-sticks', 'battleship', 'pencil-tower', 'bottle-flip', 'npat'];
+
+const PENDING_KEY = 'deskDuelPendingStatsV1';
+const readPending = () => { try { return JSON.parse(localStorage.getItem(PENDING_KEY) || '[]') || []; } catch (_) { return []; } };
+const writePending = (list) => { try { localStorage.setItem(PENDING_KEY, JSON.stringify(list.slice(-50))); } catch (_) {} };
+const whole = (v) => Math.max(0, Math.min(1e9, Math.round(Number(v) || 0)));
+
+/* recordGame('chop-sticks', { inc: { wins: 1 }, max: { highScore: 12 }, set: { lastRole: 'Raja' }, union: { pensUnlocked: ['pen1'] } }) */
+export async function recordGame(game, ops = {}, { queue = true } = {}) {
+  if (!GAME_IDS.includes(game)) return false;
+  try {
+    const m = await load();
+    const user = m?.auth.currentUser;
+    if (!m || !user) throw new Error('not signed in');
+    const ref = m.doc(m.db, 'users', user.uid, 'games', game);
+    await m.runTransaction(m.db, async (tx) => {
+      const snap = await tx.get(ref);
+      const cur = snap.exists() ? snap.data() : {};
+      const next = {};
+      for (const [k, v] of Object.entries(ops.inc || {})) next[k] = whole(cur[k]) + whole(v);
+      for (const [k, v] of Object.entries(ops.max || {})) next[k] = Math.max(whole(cur[k]), whole(v));
+      for (const [k, v] of Object.entries(ops.set || {})) next[k] = typeof v === 'number' ? whole(v) : String(v).slice(0, 30);
+      for (const [k, v] of Object.entries(ops.union || {})) {
+        next[k] = [...new Set([...(Array.isArray(cur[k]) ? cur[k] : []), ...v.map((x) => String(x).slice(0, 30))])].slice(0, 10);
+      }
+      tx.set(ref, { ...next, updatedAt: m.serverTimestamp() }, { merge: true });
+    });
+    return true;
+  } catch (err) {
+    if (queue && err?.code !== 'permission-denied') writePending([...readPending(), { game, ops }]);
+    return false;
+  }
 }
 
-export async function getStats() {
+/* Retry stats that could not be saved earlier (offline, closed tab, etc.). */
+export async function flushPending() {
+  const list = readPending();
+  if (!list.length) return;
+  writePending([]);
+  for (const item of list) await recordGame(item.game, item.ops);
+}
+
+/* All of this player's stats: { 'chop-sticks': { wins: 3, losses: 1 }, ... } */
+export async function getGameStats() {
   const m = await load();
   const user = m?.auth.currentUser;
   if (!m || !user) return {};
-  const snap = await m.getDoc(m.doc(m.db, 'users', user.uid));
-  return snap.exists() ? (snap.data().stats || {}) : {};
+  const snap = await m.getDocs(m.collection(m.db, 'users', user.uid, 'games'));
+  const out = {};
+  snap.forEach((d) => { out[d.id] = d.data(); });
+  return out;
 }
 
 export function friendlyError(error) {

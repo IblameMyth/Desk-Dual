@@ -194,7 +194,7 @@ function move(token){
  if(pos<24){const landed=(pos+p*6+3)%24;if(!safe.has(landed)){for(let q=0;q<4;q++)if(q!==p)state.tokens[q].forEach((v,i)=>{if(v>=0&&v<24&&(v+q*6+3)%24===landed){state.tokens[q][i]=-1;captured++;}});}}
  if(captured)state.captures[p]+=captured;
  $('token-choices').innerHTML='';state.roll=null;
- if(state.tokens[p].every(v=>v===28)){state.finished=true;render();$('finish').classList.remove('hidden');$('winner').textContent=`🏆 ${state.names[p]} wins Ashta Chamma!`;$('finish-copy').textContent='All four tokens reached the center. What a match!';message(`${state.names[p]} has brought all four tokens home!`);return;}
+ if(state.tokens[p].every(v=>v===28)){state.finished=true;window.DeskStats&&window.DeskStats.record('ashta-chamma',{inc:{wins:p===0?1:0,tokens:state.tokens[0].filter(v=>v===28).length,completedMatches:1}});render();$('finish').classList.remove('hidden');$('winner').textContent=`🏆 ${state.names[p]} wins Ashta Chamma!`;$('finish-copy').textContent='All four tokens reached the center. What a match!';message(`${state.names[p]} has brought all four tokens home!`);return;}
  const bonus=value===4||value===8||captured>0;
  if(bonus){state.bonusStreak++;if(state.bonusStreak>=3){message(`${state.names[p]} earned three bonus rolls in a row. Turn forfeited!`);state.bonusStreak=0;endTurn(true);return;}message(captured?`${state.names[p]} captured ${captured} token${captured>1?'s':''}! Bonus roll.`:`${state.names[p]} rolled ${value===8?'Ashta':'Chamma'}! Bonus roll.`);}
  else{state.bonusStreak=0;endTurn(false);return;}

@@ -591,6 +591,11 @@
     const [a, b] = state.scores;
     const w = a > b ? 0 : 1;
     const win = state.players[w];
+    if (window.DeskStats) {
+      let run = 0, best = 0, good = 0;
+      state.logs[0].forEach((r) => { if (r.kind === 'stand' || r.kind === 'cap') { good++; run++; best = Math.max(best, run); } else run = 0; });
+      window.DeskStats.record('bottle-flip', { inc: { successfulFlips: good }, max: { bestStreak: best } });
+    }
     $('match-result-title').textContent = (state.mode === 'ai' && win.ai) ? 'The AI wins!' : win.name + ' wins!';
     $('match-result-copy').textContent = state.mode === 'ai' && win.ai
       ? 'Steady hands this time. Ask for a rematch!'

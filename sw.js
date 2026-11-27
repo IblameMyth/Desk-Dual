@@ -1,10 +1,11 @@
-const CACHE_NAME = "desk-dual-classroom-games-v11";
+const CACHE_NAME = "desk-dual-classroom-games-v13";
 const CORE_ASSETS = [
   "/",
   "/index.html",
   "/style.css",
   "/index.css",
   "/js/main.js",
+  "/js/auth-gate.js",
   "/manifest.json",
   "/assets/icons/icon-192.png",
   "/assets/icons/icon-512.png"

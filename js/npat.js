@@ -215,7 +215,12 @@
     renderReview(); play('reveal'); window.scrollTo(0, 0);
   }
   function nextRound() {
-    G.log.push({ letter: cur.letter, pts: scoreRound(cur, G.bonus) }); G.r++;
+    const pts0 = scoreRound(cur, G.bonus); G.log.push({ letter: cur.letter, pts: pts0 });
+    try {
+      const mine = cur.ans[0];
+      window.DeskStats && window.DeskStats.record('npat', { inc: { score: pts0[0].total, rounds: 1, validAnswers: CATS.filter((c) => isValid(mine[c.key])).length, totalAnswers: CATS.length } });
+    } catch (_) {}
+    G.r++;
     if (G.r >= G.rounds) return finish();
     startRound();
   }

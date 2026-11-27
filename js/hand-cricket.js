@@ -240,6 +240,7 @@
     state.scores = [0, 0];
     state.balls = [0, 0];
     state.wickets = [0, 0];
+    state.statsSaved = false;
     state.innings = 1;
     state.target = null;
     state.waiting = false;
@@ -454,6 +455,10 @@
   function finishMatch() {
     const first = state.scores[0];
     const second = state.scores[1];
+    if (!state.statsSaved && window.DeskStats) {
+      state.statsSaved = true;
+      window.DeskStats.record('hand-cricket', { inc: { runs: first, wickets: state.wickets[1] }, max: { highScore: first } });
+    }
     const title = first === second
       ? 'Match tied!'
       : first > second ? `${state.players[0].name} wins!` : `${state.players[1].name} wins!`;
