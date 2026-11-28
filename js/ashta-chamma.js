@@ -9,15 +9,18 @@ for(let y=1;y<=7;y++)track.push([1,y]);
 for(let x=2;x<=7;x++)track.push([x,7]);
 for(let y=6;y>=1;y--)track.push([7,y]);
 for(let x=6;x>=2;x--)track.push([x,1]);
-// Per-player inner approach lanes; the final move enters the center.
-const lanes=[
- [[2,3],[3,3],[4,3],[3,4]],
- [[4,2],[4,3],[4,4],[3,4]],
- [[5,4],[4,4],[3,4],[3,3]],
- [[3,5],[3,4],[3,3],[4,3]]
-];
+// Inner path (clockwise spiral). Red's route is defined once; every other player uses the same route turned 90deg.
+// After the outer lap a token steps onto its entry cross, goes round the inner ring and finishes at the centre.
+const END=40; // pos 24..39 = inner path squares, pos 40 = centre HOME
+const redInner=[[2,6],[2,5],[2,4],[2,3],[2,2],[3,2],[4,2],[5,2],[6,2],[6,3],[6,4],[6,5],[6,6],[5,6],[4,6],[4,5]];
+const rotCell=(c,s)=>{let [x,y]=c;for(let i=0;i<((s%4)+4)%4;i++){const dx=x-4,dy=y-4;x=4+dy;y=4-dx;}return [x,y];};
+const lanes=[0,1,2,3].map(p=>redInner.map(c=>rotCell(c,p-1)));
 const safe=new Set([3,9,15,21]);
-const state={mode:'friends',names:NAMES.slice(),turn:0,roll:null,tokens:[],captures:[],bonusStreak:0,finished:false,aiTimer:null,rollTimer:null,legal:[],awaitingPass:false};
+// Safe squares (marked X): the four start squares and the four inner corner crosses. The centre is never capturable.
+const safeCells=new Set(['1,4','4,7','7,4','4,1','2,2','6,2','2,6','6,6']);
+const cellOf=(p,pos)=>pos<0||pos>=END?null:pos<24?track[(pos+p*6+3)%24]:lanes[p][pos-24];
+const keyOf=(p,pos)=>{const c=cellOf(p,pos);return c?c[0]+','+c[1]:null;};
+const state={mode:'friends',names:NAMES.slice(),turn:0,roll:null,tokens:[],captures:[],bonusStreak:0,finished:false,aiTimer:null,rollTimer:null,legal:[],awaitingPass:false,difficulty:'easy',lastMoved:null};
 const sound=()=>window.ClassroomSounds;
 const isAI=()=>state.mode==='ai'&&state.turn>0;
 const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -48,7 +51,9 @@ function showDice(shells,label,animate){
 function showSetup(panel){$('mode-menu').classList.toggle('hidden',!!panel);document.querySelectorAll('.ac-setup-panel').forEach(el=>el.classList.toggle('hidden',el.id!==panel));}
 function begin(mode){
  clearTimeout(state.aiTimer);clearTimeout(state.rollTimer);state.mode=mode;
- state.names=mode==='ai'?[($('name-one').value.trim()||'Player 1'),'Classroom AI 1','Classroom AI 2','Classroom AI 3']:
+ if(mode==='ai')state.difficulty=state.difficulty==='hard'?'hard':'easy';
+ const lvl=state.difficulty==='hard'?'Hard':'Easy';
+ state.names=mode==='ai'?[($('name-one').value.trim()||'Player 1'),'AI 1 ('+lvl+')','AI 2 ('+lvl+')','AI 3 ('+lvl+')']:
  [$('friend-one').value.trim()||'Player 1',$('friend-two').value.trim()||'Player 2',$('friend-three').value.trim()||'Player 3',$('friend-four').value.trim()||'Player 4'];
  if(mode==='friends'&&new Set(state.names.map(n=>n.toLowerCase())).size!==4){alert('Please enter four different player names.');return;}
  state.turn=0;state.roll=null;state.tokens=Array.from({length:4},()=>[-1,-1,-1,-1]);state.captures=[0,0,0,0];state.bonusStreak=0;state.finished=false;state.awaitingPass=false;state.legal=[];
@@ -58,8 +63,7 @@ function begin(mode){
 function cellKey(x,y){return `${x},${y}`;}
 function positionsFor(p){
  const out=new Map();
- state.tokens[p].forEach((pos,i)=>{if(pos>=0&&pos<24){const idx=(pos+p*6+3)%24;const [x,y]=track[idx];const k=cellKey(x,y);if(!out.has(k))out.set(k,[]);out.get(k).push({p,i});}
- else if(pos>=24&&pos<28){const [x,y]=lanes[p][pos-24];const k=cellKey(x,y);if(!out.has(k))out.set(k,[]);out.get(k).push({p,i});}});
+ state.tokens[p].forEach((pos,i)=>{const c=cellOf(p,pos);if(c){const k=cellKey(c[0],c[1]);if(!out.has(k))out.set(k,[]);out.get(k).push({p,i});}});
  return out;
 }
 function allOccupants(){const m=new Map();for(let p=0;p<4;p++)for(const [k,v] of positionsFor(p))m.set(k,[...(m.get(k)||[]),...v]);return m;}
@@ -71,12 +75,7 @@ function render(){
  for(let x=2;x<=7;x++)path.push(point(x,7));
  for(let y=6;y>=1;y--)path.push(point(7,y));
  for(let x=6;x>=2;x--)path.push(point(x,1));
- const lanePixels=[
-  [[140,195],[195,195],[250,195],[250,250]],
-  [[305,140],[305,195],[305,250],[250,250]],
-  [[360,305],[305,305],[250,305],[250,250]],
-  [[195,360],[195,305],[195,250],[250,250]]
- ];
+ const lanePixels=lanes.map(l=>l.map(([x,y])=>point(x,y)));
  // Each player's home cluster sits on the square where that player's tokens enter the track.
  const homePixels=[[85,250],[250,415],[415,250],[250,85]];
  const colors=['#ee7625','#c93637','#168044','#e8b51c'];
@@ -117,8 +116,8 @@ function render(){
    let xy=null;
    if(pos===-1)xy=[h[0]+homeOffsets[i][0],h[1]+homeOffsets[i][1]];
    else if(pos>=0&&pos<24)xy=path[(pos+p*6+3)%24];
-   else if(pos>=24&&pos<28)xy=lanePixels[p][pos-24];
-   else if(pos===28)xy=[250,250];
+   else if(pos>=24&&pos<END)xy=lanePixels[p][pos-24];
+   else if(pos===END)xy=[250,250];
    if(!xy)continue;
    pawns.push({p,i,pos,x:xy[0],y:xy[1],dx:0,dy:0,k:.82});
   }
@@ -127,10 +126,11 @@ function render(){
  pawns.filter(t=>t.pos>=0).forEach(t=>{const key=t.x+','+t.y;if(!stacks.has(key))stacks.set(key,[]);stacks.get(key).push(t);});
  stacks.forEach(list=>{if(list.length<2)return;const n=list.length;list.forEach((t,j)=>{t.dx=(j-(n-1)/2)*(n>2?10:12);t.dy=j%2?3:-3;t.k=n>2?.7:.76;});});
  pawns.sort((a,b)=>(a.y+a.dy)-(b.y+b.dy));
+ svg+=`<g><circle cx="250" cy="250" r="20" fill="#d9a17d" stroke="#3d2b20" stroke-width="2"/><text x="250" y="254" text-anchor="middle" font-family="Georgia,serif" font-size="10" font-weight="bold" fill="#35251d">HOME</text></g>`;
  const canPick=state.roll!==null&&!isAI()&&!state.finished;
  for(const t of pawns){
   const {p,i}=t,sel=canPick&&p===state.turn&&state.legal.includes(i);
-  svg+=`<g class="ac-goti ${COLORS[p]}${sel?' selectable':''}" data-p="${p}" data-i="${i}"${sel?` tabindex="0" role="button" aria-label="Move ${labels[p].toLowerCase()} token ${i+1}"`:''} transform="translate(${(t.x+t.dx).toFixed(1)} ${(t.y+t.dy-5).toFixed(1)}) scale(${t.k})">
+  svg+=`<g class="ac-goti ${COLORS[p]}${sel?' selectable':''}${state.lastMoved&&state.lastMoved.p===p&&state.lastMoved.i===i?' fx-landed':''}" data-p="${p}" data-i="${i}"${sel?` tabindex="0" role="button" aria-label="Move ${labels[p].toLowerCase()} token ${i+1}"`:''} transform="translate(${(t.x+t.dx).toFixed(1)} ${(t.y+t.dy-5).toFixed(1)}) scale(${t.k})">
    ${sel?`<ellipse class="ac-ring" cx="0" cy="13" rx="22" ry="9" fill="none" stroke="#fff4b8" stroke-width="3"/>`:''}
    <ellipse cx="2" cy="14" rx="17" ry="6" fill="#2a1a10" opacity=".3"/>
    <path d="M-15 13C-15 8-9 4-6-5H6C9 4 15 8 15 13C15 17 8 19 0 19C-8 19-15 17-15 13Z" fill="url(#gb${p})" stroke="${dark[p]}" stroke-width="1.4" stroke-linejoin="round"/>
@@ -141,9 +141,9 @@ function render(){
    <text x="0" y="11.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="8.5" font-weight="900" fill="#fff" stroke="${dark[p]}" stroke-width=".6" paint-order="stroke">${i+1}</text>
   </g>`;
  }
- svg+=`<g><circle cx="250" cy="250" r="20" fill="#d9a17d" stroke="#3d2b20" stroke-width="2"/><text x="250" y="254" text-anchor="middle" font-family="Georgia,serif" font-size="10" font-weight="bold" fill="#35251d">HOME</text></g></svg>`;
+ svg+=`</svg>`;
  board.innerHTML=svg;
- $('score').innerHTML=state.names.map((n,p)=>`<div class="${p===state.turn?'active':''}"><b>${EMOJI[p]} ${escapeHTML(n)}</b><span>${state.tokens[p].filter(v=>v===28).length}/4 HOME · ${state.captures[p]} CUT</span></div>`).join('');
+ $('score').innerHTML=state.names.map((n,p)=>`<div class="${p===state.turn?'active':''}"><b>${EMOJI[p]} ${escapeHTML(n)}</b><span>${state.tokens[p].filter(v=>v===END).length}/4 HOME · ${state.captures[p]} CUT</span></div>`).join('');
  $('roll').disabled=state.roll!==null||state.finished||isAI()||state.awaitingPass;
  $('roll').textContent=isAI()?'AI THINKING…':'ROLL COWRIES';
 }
@@ -151,18 +151,31 @@ function message(t){$('status').textContent=t;}
 function legalMoves(p,value){
  return state.tokens[p].map((pos,i)=>({pos,i})).filter(({pos})=>{
   if(pos===-1)return value===4||value===8;
-  const next=pos+value;if(next>28)return false;
+  const next=pos+value;if(next>END)return false;
   if(pos<24&&next>=24&&state.captures[p]===0)return false;
-  return pos<28;
+  return pos<END;
  });
 }
-function shellRoll(){const shells=Array.from({length:4},()=>Math.random()<.5?1:0),up=shells.reduce((a,b)=>a+b,0);return {shells,value:up===0?8:up};}
+// Traditional cowries give 4 and 8 only 6.25% each. Tuned odds: 4 (Chamma) 15%, 8 (Ashta) 12%,
+// and 1/2/3 share the remaining 73% in the natural 1:2:1 ratio (20.86% / 31.29% / 20.86%).
+const P_CHAMMA=.15,P_ASHTA=.12,P_REST=1-P_CHAMMA-P_ASHTA;
+const ROLL_P={1:P_REST*4/14,2:P_REST*6/14,3:P_REST*4/14,4:P_CHAMMA,8:P_ASHTA};
+function shellRoll(){
+ const r=Math.random();
+ if(r<P_CHAMMA)return {shells:[1,1,1,1],value:4};
+ if(r<P_CHAMMA+P_ASHTA)return {shells:[0,0,0,0],value:8};
+ let shells,up;
+ do{shells=Array.from({length:4},()=>Math.random()<.5?1:0);up=shells.reduce((a,b)=>a+b,0);}while(up===0||up===4);
+ return {shells,value:up};
+}
 function roll(){
  if(state.roll!==null||state.finished||state.awaitingPass||isAI()===false&&state.mode==='ai'&&state.turn>0)return;
  const {shells,value}=shellRoll();state.roll=value;state.legal=[];
  $('roll').disabled=true;$('token-choices').innerHTML='';
+ state.lastMoved=null;
  showDice(shells,'ROLLING…',true);
  sound()?.tap();
+ sound()?.rattle?.();
  clearTimeout(state.rollTimer);
  state.rollTimer=setTimeout(()=>resolveRoll(value),ROLL_MS);
 }
@@ -170,8 +183,9 @@ function resolveRoll(value){
  if(state.finished||state.roll!==value)return;
  const total=$('dice').querySelector('.roll-total');
  if(total)total.textContent=value===8?'ASHTA! · 8':value===4?'CHAMMA! · 4':'ROLLED '+value;
+ if(value===4||value===8){sound()?.coin?.();try{window.FX?.burstOn($('dice'),{count:24})}catch(_){}}
  const moves=legalMoves(state.turn,value);
- if(!moves.length){message(`${state.names[state.turn]} rolled ${value}. No legal move — turn passes.`);$('roll').disabled=true;state.aiTimer=setTimeout(()=>endTurn(false),850);return;}
+ if(!moves.length){message(`${state.names[state.turn]} rolled ${value}. No legal move — turn passes.`);if(!isAI())sound()?.error?.();$('roll').disabled=true;state.aiTimer=setTimeout(()=>endTurn(false),850);return;}
  if(isAI()){message(`${state.names[state.turn]} rolled ${value}. AI is choosing a token…`);render();state.aiTimer=setTimeout(()=>move(chooseAI(moves)),650);return;}
  message(`${state.names[state.turn]} rolled ${value}. Choose a highlighted token.`);
  state.legal=moves.map(m=>m.i);
@@ -179,22 +193,89 @@ function resolveRoll(value){
  moves.forEach(({i})=>{const b=document.createElement('button');b.className='ac-token-choice';b.type='button';b.textContent=`MOVE TOKEN ${i+1}`;b.addEventListener('click',()=>move(i));$('token-choices').appendChild(b);});
  render();
 }
-function chooseAI(moves){
- const p=state.turn,opponents=state.tokens;
+const trackIdx=(pos,p)=>(pos+p*6+3)%24;
+const ROLLS=[1,2,3,4,8];
+// A rival may step from v to v+d only if it is on the board and (for the inner path) has made a kill.
+const canStep=(q,v,d)=>{const nx=v+d;if(nx>END)return false;if(v<24&&nx>=24&&state.captures[q]===0)return false;return true;};
+// Chance that some rival lands on square `key` with its next roll.
+function hitChance(key,p){
+ let risk=0;
+ for(let q=0;q<4;q++){
+  if(q===p)continue;
+  for(const v of state.tokens[q]){
+   if(v<0||v>=END)continue;
+   for(const d of ROLLS)if(canStep(q,v,d)&&keyOf(q,v+d)===key)risk+=ROLL_P[d];
+  }
+ }
+ return Math.min(risk,1);
+}
+function captureCount(key,p){
+ let n=0;for(let q=0;q<4;q++)if(q!==p)n+=state.tokens[q].filter(v=>v>=0&&v<END&&keyOf(q,v)===key).length;return n;
+}
+// How likely my token, standing on `pos`, is to hit a rival (on an unsafe square) with its next roll.
+function huntChance(p,pos){
+ let sum=0;
+ for(let q=0;q<4;q++){
+  if(q===p)continue;
+  for(const v of state.tokens[q]){
+   if(v<0||v>=END)continue;
+   const tk=keyOf(q,v);if(safeCells.has(tk))continue;
+   for(const d of ROLLS)if(canStep(p,pos,d)&&keyOf(p,pos+d)===tk)sum+=ROLL_P[d];
+  }
+ }
+ return sum;
+}
+// EASY: plays casually. Often picks a random goti, often overlooks a kill, ignores danger entirely.
+function chooseEasy(moves){
+ const p=state.turn;
+ if(Math.random()<.45)return moves[Math.floor(Math.random()*moves.length)].i;
  const scored=moves.map(m=>{
-  const next=m.pos===-1?0:m.pos+state.roll,trackIdx=(next+p*6+3)%24;
-  let capture=0;if(next<24&&!safe.has(trackIdx))for(let q=0;q<4;q++)if(q!==p)capture+=opponents[q].filter(v=>v>=0&&v<24&&(v+q*6+3)%24===trackIdx).length;
-  return {...m,score:capture*120+(next===28?100:0)+(next>=24?35:0)+(m.pos===-1?16:0)+next+Math.random()*4};
+  const next=m.pos===-1?0:m.pos+state.roll,key=keyOf(p,next);
+  const cap=next<END&&!safeCells.has(key)?captureCount(key,p):0;
+  const sees=cap>0&&Math.random()<.4;           // misses a kill most of the time
+  return {...m,score:(sees?80:0)+(next===END?20:0)+next*.4+Math.random()*30};
  }).sort((a,b)=>b.score-a.score);
  return scored[0].i;
 }
+// HARD: weighs kills, safety, danger from every rival token, finishing, and hunting positions.
+function chooseHard(moves){
+ const p=state.turn,needKill=state.captures[p]===0;
+ const scored=moves.map(m=>{
+  const next=m.pos===-1?0:m.pos+state.roll,key=keyOf(p,next);
+  const onBoard=next<END,isSafe=onBoard&&safeCells.has(key);
+  let s=0;
+  // kills (extra valuable while the inner path is still locked)
+  if(onBoard&&!isSafe){const c=captureCount(key,p);if(c)s+=c*(needKill?170:120)+next*1.5;}
+  // progress / finishing
+  if(next===END)s+=110;
+  else if(next>=24)s+=35+next*1.6;              // on the inner path
+  else s+=next*1.2;
+  if(m.pos===-1)s+=needKill?22:30;              // bring more goti into play
+  if(isSafe)s+=14;
+  // danger: valuing what would be lost, and what danger is escaped by moving
+  const loss=(next+6)*3.2;
+  if(onBoard&&!isSafe){
+   const cap=captureCount(key,p);
+   s-=hitChance(key,p)*loss*(cap?.5:1);
+  }
+  if(m.pos>=0&&m.pos<END&&!safeCells.has(keyOf(p,m.pos)))s+=hitChance(keyOf(p,m.pos),p)*(m.pos+6)*3.2;
+  // hunting: stand within reach of a rival that is on an unsafe square
+  if(onBoard)s+=huntChance(p,next)*(needKill?28:12);
+  // locked at the gate without a kill: avoid wasting the last squares before the inner path
+  if(needKill&&next<24&&next>=20)s-=(next-19)*6;
+  return {...m,score:s+Math.random()*.5};
+ }).sort((a,b)=>b.score-a.score);
+ return scored[0].i;
+}
+function chooseAI(moves){return state.difficulty==='hard'?chooseHard(moves):chooseEasy(moves);}
 function move(token){
- if(state.roll===null)return;state.legal=[];const p=state.turn,value=state.roll;let pos=state.tokens[p][token];pos=pos===-1?0:pos+value;state.tokens[p][token]=pos;
+ if(state.roll===null)return;state.legal=[];const p=state.turn,value=state.roll;let pos=state.tokens[p][token];pos=pos===-1?0:pos+value;state.tokens[p][token]=pos;state.lastMoved={p,i:token};sound()?.step?.();
  let captured=0;
- if(pos<24){const landed=(pos+p*6+3)%24;if(!safe.has(landed)){for(let q=0;q<4;q++)if(q!==p)state.tokens[q].forEach((v,i)=>{if(v>=0&&v<24&&(v+q*6+3)%24===landed){state.tokens[q][i]=-1;captured++;}});}}
- if(captured)state.captures[p]+=captured;
+ if(pos<END){const lk=keyOf(p,pos);if(!safeCells.has(lk)){for(let q=0;q<4;q++)if(q!==p)state.tokens[q].forEach((v,i)=>{if(v>=0&&v<END&&keyOf(q,v)===lk){state.tokens[q][i]=-1;captured++;}});}}
+ if(captured){state.captures[p]+=captured;sound()?.boom?.();try{window.FX?.shake($('board'));window.FX?.burstOn($('board'),{count:30})}catch(_){}}
+ if(pos===END){sound()?.sparkle?.();try{window.FX?.burstOn($('board'),{count:20})}catch(_){}}
  $('token-choices').innerHTML='';state.roll=null;
- if(state.tokens[p].every(v=>v===28)){state.finished=true;window.DeskStats&&window.DeskStats.record('ashta-chamma',{inc:{wins:p===0?1:0,tokens:state.tokens[0].filter(v=>v===28).length,completedMatches:1}});render();$('finish').classList.remove('hidden');$('winner').textContent=`🏆 ${state.names[p]} wins Ashta Chamma!`;$('finish-copy').textContent='All four tokens reached the center. What a match!';message(`${state.names[p]} has brought all four tokens home!`);return;}
+ if(state.tokens[p].every(v=>v===END)){state.finished=true;window.DeskStats&&window.DeskStats.record('ashta-chamma',{inc:{wins:p===0?1:0,tokens:state.tokens[0].filter(v=>v===END).length,completedMatches:1}});render();$('finish').classList.remove('hidden');$('winner').textContent=`🏆 ${state.names[p]} wins Ashta Chamma!`;$('finish-copy').textContent='All four tokens reached the center. What a match!';message(`${state.names[p]} has brought all four tokens home!`);return;}
  const bonus=value===4||value===8||captured>0;
  if(bonus){state.bonusStreak++;if(state.bonusStreak>=3){message(`${state.names[p]} earned three bonus rolls in a row. Turn forfeited!`);state.bonusStreak=0;endTurn(true);return;}message(captured?`${state.names[p]} captured ${captured} token${captured>1?'s':''}! Bonus roll.`:`${state.names[p]} rolled ${value===8?'Ashta':'Chamma'}! Bonus roll.`);}
  else{state.bonusStreak=0;endTurn(false);return;}
@@ -212,6 +293,11 @@ $('open-ai').addEventListener('click',()=>showSetup('setup-ai'));
 $('open-friends').addEventListener('click',()=>showSetup('setup-friends'));
 $('open-how').addEventListener('click',()=>showSetup('how-panel'));
 document.querySelectorAll('.ac-back').forEach(b=>b.addEventListener('click',()=>showSetup(null)));
+document.querySelectorAll('.ac-diff-btn').forEach(b=>b.addEventListener('click',()=>{
+ state.difficulty=b.dataset.diff;
+ document.querySelectorAll('.ac-diff-btn').forEach(x=>{const on=x===b;x.classList.toggle('active',on);x.setAttribute('aria-checked',on?'true':'false');});
+ const d=$('diff-desc');if(d)d.textContent=state.difficulty==='hard'?'Hard: smart AIs that hunt your tokens, dodge danger and rarely miss a kill.':'Easy: relaxed AIs that miss kills and make mistakes choosing tokens.';
+}));
 $('start-ai').addEventListener('click',()=>begin('ai'));$('start-friends').addEventListener('click',()=>begin('friends'));
 $('board').addEventListener('click',e=>{const g=e.target.closest('.ac-goti.selectable');if(g)move(+g.dataset.i);});
 $('board').addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const g=e.target.closest('.ac-goti.selectable');if(g){e.preventDefault();move(+g.dataset.i);}});
