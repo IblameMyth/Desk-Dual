@@ -117,16 +117,20 @@
   function resolveRound(leftMove, rightMove) {
     state.waiting = true;
     $('move-grid').classList.add('hidden');
+    sound()?.swipe?.();
     const result = winner(leftMove, rightMove);
     if (window.DeskStats) window.DeskStats.record('stone-paper-scissors', { inc: { [result === 1 ? 'wins' : result === 2 ? 'losses' : 'draws']: 1 } });
     if (result === 1) {
       state.scores[0]++;
       sound()?.win();
+      sound()?.sparkle?.();
+      try { window.FX?.burstOn($('game-panel'), { count: 26 }); } catch (_) {}
     } else if (result === 2) {
       state.scores[1]++;
       sound()?.lose();
     } else {
       sound()?.chalk();
+      sound()?.clink?.();
     }
 
     const title = result === 0

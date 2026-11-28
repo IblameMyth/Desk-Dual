@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="style.css"><link rel="stylesheet" href="behrupiye-ko-pakdo.css"><link rel="stylesheet" href="stone-paper-scissors.css"><link rel="stylesheet" href="ashta-chamma.css">
 <title>Ashta Chamma - Desk Dual</title><script src="js/classroom-sounds.js"></script>
 <script src="js/auth-gate.js"></script>
+<link rel="stylesheet" href="fx.css">
 </head>
 <body class="menu-page khc-page ac-page sps-page">
 <svg class="ac-defs" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false">
@@ -54,6 +55,11 @@
 <section class="khc-panel hidden ac-setup-panel" id="setup-ai">
 <h2>Play with AI</h2><p class="khc-muted">You play as Player 1. Three classroom AIs join the match.</p>
 <label class="khc-field">Your name<input id="name-one" maxlength="18" placeholder="Your name" value=""></label>
+<div class="khc-field ac-diff-field">Difficulty
+<div class="ac-diff" role="radiogroup" aria-label="AI difficulty">
+<button class="ac-diff-btn active" type="button" role="radio" aria-checked="true" data-diff="easy">😊 EASY</button>
+<button class="ac-diff-btn" type="button" role="radio" aria-checked="false" data-diff="hard">😈 HARD</button>
+</div><small id="diff-desc" class="ac-diff-desc">Easy: relaxed AIs that miss kills and make mistakes choosing tokens.</small></div>
 <div class="ac-player-preview"><span>🔵 You</span><span>🔴 AI 1</span><span>🟢 AI 2</span><span>🟡 AI 3</span></div>
 <button class="btn btn-primary khc-start" id="start-ai" type="button">START GAME</button><button class="btn khc-start ac-back" type="button">BACK</button>
 </section>
@@ -73,9 +79,9 @@
 <ul class="ac-rules">
 <li>Each shell landing <b>mouth-up counts as 1</b> and <b>mouth-down counts as 0</b>, so a roll is worth 1, 2 or 3.</li>
 <li>Two special rolls: <b>4 “Chamma”</b> (all four mouth-up) and <b>8 “Ashta”</b> (all four mouth-down).</li>
-<li>Roll a 4 or 8 to bring a token onto the outer track. Chamma and Ashta also give a bonus roll.</li>
+<li>Roll a 4 or 8 to bring a token onto the outer track. Chamma and Ashta come up more often here than in the traditional game, and each gives a bonus roll.</li>
 <li>Move anti-clockwise around the outer ring. Capture a rival on an unsafe square to send that token home and earn another roll.</li>
-<li>Capture at least one rival before entering your inner path. Safe squares protect tokens.</li>
+<li>Capture at least one rival before entering the inner path. Safe squares (X) protect tokens, including the four inner corners.</li>
 <li>Three bonus rolls in a row forfeit that turn. The first player to bring all four tokens to the center wins.</li>
 </ul><button class="btn btn-primary khc-start ac-back" type="button">GOT IT</button>
 </section>
@@ -92,4 +98,5 @@
 </main>
 <div class="ac-pass hidden" id="pass-screen" role="dialog" aria-modal="true" aria-labelledby="pass-title"><div class="ac-pass-card"><div class="ac-pass-icon">📱</div><h2 id="pass-title">Pass the phone</h2><p id="pass-copy">Give the device to the next player.</p><button class="btn btn-primary" id="pass-ready" type="button">I'M READY</button></div></div>
 <script src="js/ashta-chamma.js"></script>
+<script src="js/fx.js"></script>
 </body></html>
