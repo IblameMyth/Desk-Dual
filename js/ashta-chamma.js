@@ -158,10 +158,10 @@ function legalMoves(p,value){
   return pos<28;
  });
 }
-// Traditional cowries give 4 and 8 only 1 time in 16 each (6.25%). Here each is boosted to 16%,
-// so entering tokens and earning bonus rolls feels far more frequent. 1/2/3 share the remaining 68%.
-const P_CHAMMA=.16,P_ASHTA=.16;
-const ROLL_P={1:.68*4/14,2:.68*6/14,3:.68*4/14,4:P_CHAMMA,8:P_ASHTA};
+// Traditional cowries give 4 and 8 only 6.25% each. Tuned odds: 4 (Chamma) 15%, 8 (Ashta) 12%,
+// and 1/2/3 share the remaining 73% in the natural 1:2:1 ratio (20.86% / 31.29% / 20.86%).
+const P_CHAMMA=.15,P_ASHTA=.12,P_REST=1-P_CHAMMA-P_ASHTA;
+const ROLL_P={1:P_REST*4/14,2:P_REST*6/14,3:P_REST*4/14,4:P_CHAMMA,8:P_ASHTA};
 function shellRoll(){
  const r=Math.random();
  if(r<P_CHAMMA)return {shells:[1,1,1,1],value:4};

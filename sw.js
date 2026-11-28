@@ -1,4 +1,4 @@
-const CACHE_NAME = "desk-dual-classroom-games-v16";
+const CACHE_NAME = "desk-dual-classroom-games-v17";
 const CORE_ASSETS = [
   "/",
   "/index.html",
