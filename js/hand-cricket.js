@@ -407,6 +407,7 @@
       $('ball-result').classList.remove('hidden');
       if (state.scores[state.batter] === 0) sound()?.duck();
       else sound()?.wicket();
+      try { window.FX?.shake($('game-panel')); } catch (_) {}
       return;
     }
 
@@ -426,7 +427,7 @@
     $('continue-round').textContent = chased ? 'MATCH RESULT' : oversFinished ? 'END INNINGS' : 'NEXT BALL';
     $('continue-round').classList.remove('hidden');
     updateBoard();
-    if (batterNumber >= 4) sound()?.boundary(batterNumber);
+    if (batterNumber >= 4) { sound()?.boundary(batterNumber); try { window.FX?.confetti({ count: batterNumber === 6 ? 100 : 50 }); } catch (_) {} }
     else sound()?.run(batterNumber);
   }
 

@@ -83,6 +83,17 @@ export const audio = {
   matchWin() {
     [523, 659, 784, 1047, 784, 1047].forEach((f, i) => tone({ freq: f, dur: 0.22, type: 'triangle', vol: 0.22, delay: i * 0.13 }));
   },
+  whoosh() {
+    noise({ dur: 0.26, vol: 0.06, freq: 700 });
+    tone({ freq: 240, freq2: 620, dur: 0.24, type: 'sine', vol: 0.04 });
+  },
+  sparkle() {
+    [1568, 1976, 2349, 2637].forEach((f, i) => tone({ freq: f, freq2: f * 1.04, dur: 0.12, type: 'sine', vol: 0.05, delay: i * 0.05 }));
+  },
+  thud() {
+    tone({ freq: 110, freq2: 55, dur: 0.16, type: 'sine', vol: 0.2 });
+    noise({ dur: 0.07, vol: 0.1, freq: 500 });
+  },
   bell() {
     tone({ freq: 880, freq2: 660, dur: 0.38, type: 'sine', vol: 0.16 });
     tone({ freq: 1320, freq2: 990, dur: 0.28, type: 'triangle', vol: 0.07, delay: 0.04 });

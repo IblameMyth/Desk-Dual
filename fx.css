@@ -1,0 +1,79 @@
+/* ==========================================================================
+   Desk Dual - shared animation layer (fx.css)
+   Purely additive. Uses the individual `translate` / `scale` / `rotate`
+   properties so it never overwrites the `transform` the games already use.
+   Everything is scoped to html.fx-ready, which js/fx.js only sets when the
+   player has not asked for reduced motion or low graphics.
+   ========================================================================== */
+#fx-layer{position:fixed;inset:0;pointer-events:none;z-index:2147483000;overflow:hidden}
+#fx-layer canvas{position:absolute;inset:0;width:100%;height:100%}
+.fx-ring{position:absolute;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;border:3px solid rgba(255,240,161,.95);box-shadow:0 0 0 2px rgba(60,42,27,.35);animation:fx-ring .55s ease-out forwards}
+.fx-spark{position:absolute;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:#fff0a1;animation:fx-spark .7s ease-out forwards}
+
+@keyframes fx-ring{from{opacity:.95;scale:1}to{opacity:0;scale:5}}
+@keyframes fx-spark{from{opacity:1;scale:1}to{opacity:0;scale:0;translate:var(--dx,0) var(--dy,-30px)}}
+@keyframes fx-rise{from{opacity:0;translate:0 16px;scale:.97}}
+@keyframes fx-fade{from{opacity:0}}
+@keyframes fx-pop{0%{opacity:0;scale:.9;translate:0 10px}60%{opacity:1;scale:1.025;translate:0 -2px}100%{scale:1;translate:0 0}}
+@keyframes fx-bob{0%,100%{translate:0 0}50%{translate:0 -6px}}
+@keyframes fx-sway{0%,100%{rotate:-1.2deg}50%{rotate:1.2deg}}
+@keyframes fx-pulse{0%,100%{scale:1}50%{scale:1.07}}
+@keyframes fx-bump{0%{scale:1}35%{scale:1.28;filter:brightness(1.25)}100%{scale:1}}
+@keyframes fx-slide{from{opacity:0;translate:-18px 0}}
+@keyframes fx-shake{0%,100%{translate:0 0}20%{translate:-6px 0}40%{translate:6px -2px}60%{translate:-4px 0}80%{translate:3px 0}}
+@keyframes fx-tada{0%{scale:1}10%,20%{scale:.92;rotate:-3deg}30%,50%,70%,90%{scale:1.1;rotate:3deg}40%,60%,80%{scale:1.1;rotate:-3deg}100%{scale:1;rotate:0deg}}
+@keyframes fx-wiggle{0%,100%{rotate:0deg}25%{rotate:-14deg}50%{rotate:12deg}75%{rotate:-8deg}}
+@keyframes fx-glow{0%,100%{filter:drop-shadow(0 0 0 rgba(255,240,161,0))}50%{filter:drop-shadow(0 0 9px rgba(255,240,161,.95))}}
+@keyframes fx-hop{0%,100%{translate:0 0}50%{translate:0 -5px}}
+@keyframes fx-flash{0%{filter:brightness(1)}30%{filter:brightness(1.7)}100%{filter:brightness(1)}}
+
+/* ---------- menus: staggered entrance, floating titles ---------- */
+.fx-ready .menu-buttons>*{animation:fx-rise .5s cubic-bezier(.2,.8,.3,1) backwards}
+.fx-ready .menu-buttons>*:nth-child(1){animation-delay:.08s}
+.fx-ready .menu-buttons>*:nth-child(2){animation-delay:.16s}
+.fx-ready .menu-buttons>*:nth-child(3){animation-delay:.24s}
+.fx-ready .menu-buttons>*:nth-child(4){animation-delay:.32s}
+.fx-ready .menu-buttons>*:nth-child(5){animation-delay:.4s}
+.fx-ready .khc-title,.fx-ready .title,.fx-ready .hc-title,.fx-ready .menu h1{animation:fx-bob 3.6s ease-in-out infinite}
+.fx-ready .sps-logo,.fx-ready .ac-logo,.fx-ready .hero,.fx-ready .bf-logo,.fx-ready .menu-logo{animation:fx-sway 4.2s ease-in-out infinite}
+.fx-ready .classroom-label{animation:fx-fade .8s .1s backwards}
+
+/* ---------- panels, dialogs, overlays ---------- */
+.fx-ready .khc-panel,.fx-ready .hc-panel,.fx-ready .rrc-panel,.fx-ready .pt-panel,.fx-ready .ac-setup-panel,.fx-ready .ac-finish{animation:fx-pop .42s cubic-bezier(.2,.8,.3,1) backwards}
+.fx-ready dialog[open]{animation:fx-pop .38s cubic-bezier(.2,.8,.3,1)}
+.fx-ready dialog[open]::backdrop{animation:fx-fade .3s}
+.fx-ready #handoff:not(.hidden),.fx-ready .ac-pass:not(.hidden){animation:fx-fade .25s}
+.fx-ready #handoff:not(.hidden)>*,.fx-ready .ac-pass:not(.hidden)>*{animation:fx-pop .45s cubic-bezier(.2,.8,.3,1) backwards}
+.fx-ready #result-panel h2,.fx-ready #end-panel h2,.fx-ready #match-result-title,.fx-ready #final-title,.fx-ready #winner{animation:fx-tada 1s .2s backwards}
+.fx-ready #toss-stage{animation:fx-bob 2.2s ease-in-out infinite}
+
+/* ---------- live-updating text ---------- */
+.fx-ready .fx-bump{animation:fx-bump .5s ease}
+.fx-ready .fx-bump-inline{display:inline-block}
+.fx-ready .fx-slide{animation:fx-slide .38s ease}
+.fx-ready .fx-pop{animation:fx-pop .42s cubic-bezier(.2,.8,.3,1)}
+.fx-ready .fx-shake{animation:fx-shake .42s ease}
+.fx-ready .fx-flash{animation:fx-flash .5s ease}
+.fx-ready #round-result:not(:empty),.fx-ready #ball-result:not(:empty),.fx-ready #callout:not(:empty){animation:fx-pop .4s cubic-bezier(.2,.8,.3,1)}
+
+/* ---------- buttons (hover devices only; the originals keep their own :active press) ---------- */
+@media (hover:hover){
+  .fx-ready .btn,.fx-ready .khc-actions button,.fx-ready .hc-number-grid button,.fx-ready .hc-toss-options button,.fx-ready .move-grid button{
+    transition:transform .08s ease,box-shadow .08s ease,translate .15s ease,filter .15s ease,background-color .15s ease;
+  }
+  .fx-ready .btn:hover:not(:disabled),.fx-ready .khc-actions button:hover:not(:disabled),.fx-ready .hc-number-grid button:hover:not(:disabled),.fx-ready .hc-toss-options button:hover:not(:disabled){translate:0 -2px;filter:brightness(1.06)}
+  .fx-ready .game-card.playable:hover .game-icon,.fx-ready .game-card:hover .game-icon{animation:fx-wiggle .6s ease}
+}
+.fx-ready .menu-buttons>.btn-primary:not(:disabled){animation:fx-rise .5s cubic-bezier(.2,.8,.3,1) backwards,fx-glow 2.6s 1s ease-in-out infinite}
+
+/* ---------- home page: cards rise in one by one ---------- */
+.fx-ready .game-card{animation:fx-rise .55s cubic-bezier(.2,.8,.3,1) backwards;animation-delay:calc(var(--i,0)*55ms)}
+.fx-ready .game-status.available{animation:fx-pulse 2.4s ease-in-out infinite}
+
+/* ---------- Ashta Chamma ---------- */
+.fx-ready .ac-goti.selectable{animation:fx-hop .75s ease-in-out infinite}
+.fx-ready .ac-score .active{animation:fx-glow 1.8s ease-in-out infinite}
+.fx-ready .ac-dice .roll-total{animation:fx-pop .4s cubic-bezier(.2,.8,.3,1)}
+.fx-ready .ac-token-choice{animation:fx-rise .3s ease backwards}
+@keyframes fx-land{0%{translate:0 -18px}55%{translate:0 2px}78%{translate:0 -4px}100%{translate:0 0}}
+.fx-ready .ac-board-svg .ac-goti.fx-landed{animation:fx-land .5s ease-out}

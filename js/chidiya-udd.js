@@ -536,6 +536,7 @@ Cassowary||`, false, '🐾');
     });
     showAnimal(state.current);
     sound()?.reveal();
+    sound()?.whoosh?.();
     $('turn-title').textContent = 'Can it fly?';
     $('turn-description').textContent = 'You have 2 seconds! Tap UDD! only if it can fly. Miss a flier or slip on a non-flier and you are out!';
     $('round-result').classList.add('hidden');
@@ -552,12 +553,14 @@ Cassowary||`, false, '🐾');
       p.score++;
       p.outcome = 'right';
       sound()?.run(3);
+      sound()?.coin?.();
     } else {
       p.alive = false;
       p.outcome = 'wrong';
       p.outRound = state.round;
       p.outOrder = ++state.outCounter;
       sound()?.duck();
+      sound()?.error?.();
     }
     renderSeat(i);
     updateScoreboard();
