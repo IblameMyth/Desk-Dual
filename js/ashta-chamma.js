@@ -1,6 +1,14 @@
 (() => {
 'use strict';
 const $=id=>document.getElementById(id);
+// Menu buttons are wired first and independently, so a problem further down the file can never leave them dead.
+(function wireMenu(){
+ const on=(sel,panel)=>document.querySelectorAll(sel).forEach(b=>b.addEventListener('click',()=>{
+  const menu=document.getElementById('mode-menu');if(menu)menu.classList.toggle('hidden',!!panel);
+  document.querySelectorAll('.ac-setup-panel').forEach(el=>el.classList.toggle('hidden',el.id!==panel));
+ }));
+ on('#open-ai','setup-ai');on('#open-friends','setup-friends');on('#open-how','how-panel');on('.ac-back',null);
+})();
 const COLORS=['p0','p1','p2','p3'],EMOJI=['🟠','🔴','🟢','🟡'];
 const NAMES=['Player 1','Player 2','Player 3','Player 4'];
 // 24 outer-ring squares, ordered anti-clockwise.
@@ -16,10 +24,37 @@ const redInner=[[2,6],[2,5],[2,4],[2,3],[2,2],[3,2],[4,2],[5,2],[6,2],[6,3],[6,4
 const rotCell=(c,s)=>{let [x,y]=c;for(let i=0;i<((s%4)+4)%4;i++){const dx=x-4,dy=y-4;x=4+dy;y=4-dx;}return [x,y];};
 const lanes=[0,1,2,3].map(p=>redInner.map(c=>rotCell(c,p-1)));
 const safe=new Set([3,9,15,21]);
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> a54de0472d2b61c7c03ab44f5188221cf1363034
+>>>>>>> 70df0492085132648d5d9b8f28c759176940b485
+>>>>>>> 940939d48223a16beb7ac72666a8aa6aca0cd04b
+>>>>>>> 1bde72da3c487354667d602f1103492418317014
 // Safe squares (marked X): the four start squares and the four inner corner crosses. The centre is never capturable.
 const safeCells=new Set(['1,4','4,7','7,4','4,1','2,2','6,2','2,6','6,6']);
 const cellOf=(p,pos)=>pos<0||pos>=END?null:pos<24?track[(pos+p*6+3)%24]:lanes[p][pos-24];
 const keyOf=(p,pos)=>{const c=cellOf(p,pos);return c?c[0]+','+c[1]:null;};
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 096f60e50cfec5e35c3b0122331a7069f1148148
+>>>>>>> a54de0472d2b61c7c03ab44f5188221cf1363034
+>>>>>>> 70df0492085132648d5d9b8f28c759176940b485
+>>>>>>> 940939d48223a16beb7ac72666a8aa6aca0cd04b
+>>>>>>> 1bde72da3c487354667d602f1103492418317014
 const state={mode:'friends',names:NAMES.slice(),turn:0,roll:null,tokens:[],captures:[],bonusStreak:0,finished:false,aiTimer:null,rollTimer:null,legal:[],awaitingPass:false,difficulty:'easy',lastMoved:null};
 const sound=()=>window.ClassroomSounds;
 const isAI=()=>state.mode==='ai'&&state.turn>0;
@@ -194,33 +229,151 @@ function resolveRoll(value){
  render();
 }
 const trackIdx=(pos,p)=>(pos+p*6+3)%24;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> a54de0472d2b61c7c03ab44f5188221cf1363034
+>>>>>>> 70df0492085132648d5d9b8f28c759176940b485
+>>>>>>> 940939d48223a16beb7ac72666a8aa6aca0cd04b
+>>>>>>> 1bde72da3c487354667d602f1103492418317014
 const ROLLS=[1,2,3,4,8];
 // A rival may step from v to v+d only if it is on the board and (for the inner path) has made a kill.
 const canStep=(q,v,d)=>{const nx=v+d;if(nx>END)return false;if(v<24&&nx>=24&&state.captures[q]===0)return false;return true;};
 // Chance that some rival lands on square `key` with its next roll.
 function hitChance(key,p){
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+// Chance that an opponent token, sitting `d` squares behind a square, lands on it with its next roll.
+function hitChance(target,p){
+>>>>>>> 096f60e50cfec5e35c3b0122331a7069f1148148
+>>>>>>> a54de0472d2b61c7c03ab44f5188221cf1363034
+>>>>>>> 70df0492085132648d5d9b8f28c759176940b485
+>>>>>>> 940939d48223a16beb7ac72666a8aa6aca0cd04b
+>>>>>>> 1bde72da3c487354667d602f1103492418317014
  let risk=0;
  for(let q=0;q<4;q++){
   if(q===p)continue;
   for(const v of state.tokens[q]){
+<<<<<<< HEAD
    if(v<0||v>=END)continue;
    for(const d of ROLLS)if(canStep(q,v,d)&&keyOf(q,v+d)===key)risk+=ROLL_P[d];
+=======
+<<<<<<< HEAD
+   if(v<0||v>=END)continue;
+   for(const d of ROLLS)if(canStep(q,v,d)&&keyOf(q,v+d)===key)risk+=ROLL_P[d];
+=======
+<<<<<<< HEAD
+   if(v<0||v>=END)continue;
+   for(const d of ROLLS)if(canStep(q,v,d)&&keyOf(q,v+d)===key)risk+=ROLL_P[d];
+=======
+<<<<<<< HEAD
+   if(v<0||v>=END)continue;
+   for(const d of ROLLS)if(canStep(q,v,d)&&keyOf(q,v+d)===key)risk+=ROLL_P[d];
+=======
+<<<<<<< HEAD
+   if(v<0||v>=END)continue;
+   for(const d of ROLLS)if(canStep(q,v,d)&&keyOf(q,v+d)===key)risk+=ROLL_P[d];
+=======
+   if(v<0||v>=24)continue;
+   const d=(target-trackIdx(v,q)+24)%24;
+   if(d>0&&ROLL_P[d]&&v+d<24)risk+=ROLL_P[d];
+>>>>>>> 096f60e50cfec5e35c3b0122331a7069f1148148
+>>>>>>> a54de0472d2b61c7c03ab44f5188221cf1363034
+>>>>>>> 70df0492085132648d5d9b8f28c759176940b485
+>>>>>>> 940939d48223a16beb7ac72666a8aa6aca0cd04b
+>>>>>>> 1bde72da3c487354667d602f1103492418317014
   }
  }
  return Math.min(risk,1);
 }
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> a54de0472d2b61c7c03ab44f5188221cf1363034
+>>>>>>> 70df0492085132648d5d9b8f28c759176940b485
+>>>>>>> 940939d48223a16beb7ac72666a8aa6aca0cd04b
+>>>>>>> 1bde72da3c487354667d602f1103492418317014
 function captureCount(key,p){
  let n=0;for(let q=0;q<4;q++)if(q!==p)n+=state.tokens[q].filter(v=>v>=0&&v<END&&keyOf(q,v)===key).length;return n;
 }
 // How likely my token, standing on `pos`, is to hit a rival (on an unsafe square) with its next roll.
 function huntChance(p,pos){
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+function captureCount(target,p){
+ let n=0;for(let q=0;q<4;q++)if(q!==p)n+=state.tokens[q].filter(v=>v>=0&&v<24&&trackIdx(v,q)===target).length;return n;
+}
+// How many rival tokens sit just ahead of a square, i.e. could be hunted from there next turn.
+function huntChance(target,p){
+>>>>>>> 096f60e50cfec5e35c3b0122331a7069f1148148
+>>>>>>> a54de0472d2b61c7c03ab44f5188221cf1363034
+>>>>>>> 70df0492085132648d5d9b8f28c759176940b485
+>>>>>>> 940939d48223a16beb7ac72666a8aa6aca0cd04b
+>>>>>>> 1bde72da3c487354667d602f1103492418317014
  let sum=0;
  for(let q=0;q<4;q++){
   if(q===p)continue;
   for(const v of state.tokens[q]){
+<<<<<<< HEAD
    if(v<0||v>=END)continue;
    const tk=keyOf(q,v);if(safeCells.has(tk))continue;
    for(const d of ROLLS)if(canStep(p,pos,d)&&keyOf(p,pos+d)===tk)sum+=ROLL_P[d];
+=======
+<<<<<<< HEAD
+   if(v<0||v>=END)continue;
+   const tk=keyOf(q,v);if(safeCells.has(tk))continue;
+   for(const d of ROLLS)if(canStep(p,pos,d)&&keyOf(p,pos+d)===tk)sum+=ROLL_P[d];
+=======
+<<<<<<< HEAD
+   if(v<0||v>=END)continue;
+   const tk=keyOf(q,v);if(safeCells.has(tk))continue;
+   for(const d of ROLLS)if(canStep(p,pos,d)&&keyOf(p,pos+d)===tk)sum+=ROLL_P[d];
+=======
+<<<<<<< HEAD
+   if(v<0||v>=END)continue;
+   const tk=keyOf(q,v);if(safeCells.has(tk))continue;
+   for(const d of ROLLS)if(canStep(p,pos,d)&&keyOf(p,pos+d)===tk)sum+=ROLL_P[d];
+=======
+<<<<<<< HEAD
+   if(v<0||v>=END)continue;
+   const tk=keyOf(q,v);if(safeCells.has(tk))continue;
+   for(const d of ROLLS)if(canStep(p,pos,d)&&keyOf(p,pos+d)===tk)sum+=ROLL_P[d];
+=======
+   if(v<0||v>=24)continue;
+   const t=trackIdx(v,q);if(safe.has(t))continue;
+   const d=(t-target+24)%24;
+   if(d>0&&ROLL_P[d])sum+=ROLL_P[d];
+>>>>>>> 096f60e50cfec5e35c3b0122331a7069f1148148
+>>>>>>> a54de0472d2b61c7c03ab44f5188221cf1363034
+>>>>>>> 70df0492085132648d5d9b8f28c759176940b485
+>>>>>>> 940939d48223a16beb7ac72666a8aa6aca0cd04b
+>>>>>>> 1bde72da3c487354667d602f1103492418317014
   }
  }
  return sum;
@@ -230,10 +383,41 @@ function chooseEasy(moves){
  const p=state.turn;
  if(Math.random()<.45)return moves[Math.floor(Math.random()*moves.length)].i;
  const scored=moves.map(m=>{
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> a54de0472d2b61c7c03ab44f5188221cf1363034
+>>>>>>> 70df0492085132648d5d9b8f28c759176940b485
+>>>>>>> 940939d48223a16beb7ac72666a8aa6aca0cd04b
+>>>>>>> 1bde72da3c487354667d602f1103492418317014
   const next=m.pos===-1?0:m.pos+state.roll,key=keyOf(p,next);
   const cap=next<END&&!safeCells.has(key)?captureCount(key,p):0;
   const sees=cap>0&&Math.random()<.4;           // misses a kill most of the time
   return {...m,score:(sees?80:0)+(next===END?20:0)+next*.4+Math.random()*30};
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+  const next=m.pos===-1?0:m.pos+state.roll,ti=trackIdx(next,p);
+  const cap=next<24&&!safe.has(ti)?captureCount(ti,p):0;
+  const sees=cap>0&&Math.random()<.4;           // misses a kill most of the time
+  return {...m,score:(sees?80:0)+(next===28?20:0)+next*.4+Math.random()*30};
+>>>>>>> 096f60e50cfec5e35c3b0122331a7069f1148148
+>>>>>>> a54de0472d2b61c7c03ab44f5188221cf1363034
+>>>>>>> 70df0492085132648d5d9b8f28c759176940b485
+>>>>>>> 940939d48223a16beb7ac72666a8aa6aca0cd04b
+>>>>>>> 1bde72da3c487354667d602f1103492418317014
  }).sort((a,b)=>b.score-a.score);
  return scored[0].i;
 }
@@ -241,6 +425,19 @@ function chooseEasy(moves){
 function chooseHard(moves){
  const p=state.turn,needKill=state.captures[p]===0;
  const scored=moves.map(m=>{
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> a54de0472d2b61c7c03ab44f5188221cf1363034
+>>>>>>> 70df0492085132648d5d9b8f28c759176940b485
+>>>>>>> 940939d48223a16beb7ac72666a8aa6aca0cd04b
+>>>>>>> 1bde72da3c487354667d602f1103492418317014
   const next=m.pos===-1?0:m.pos+state.roll,key=keyOf(p,next);
   const onBoard=next<END,isSafe=onBoard&&safeCells.has(key);
   let s=0;
@@ -249,11 +446,46 @@ function chooseHard(moves){
   // progress / finishing
   if(next===END)s+=110;
   else if(next>=24)s+=35+next*1.6;              // on the inner path
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+  const next=m.pos===-1?0:m.pos+state.roll,ti=trackIdx(next,p);
+  const onTrack=next<24,isSafe=onTrack&&safe.has(ti);
+  let s=0;
+  // kills (extra valuable while the inner path is still locked)
+  if(onTrack&&!isSafe){const c=captureCount(ti,p);if(c)s+=c*(needKill?170:120)+next*1.5;}
+  // progress / finishing
+  if(next===28)s+=110;
+  else if(next>=24)s+=45+next*2;                // inside a safe inner lane
+>>>>>>> 096f60e50cfec5e35c3b0122331a7069f1148148
+>>>>>>> a54de0472d2b61c7c03ab44f5188221cf1363034
+>>>>>>> 70df0492085132648d5d9b8f28c759176940b485
+>>>>>>> 940939d48223a16beb7ac72666a8aa6aca0cd04b
+>>>>>>> 1bde72da3c487354667d602f1103492418317014
   else s+=next*1.2;
   if(m.pos===-1)s+=needKill?22:30;              // bring more goti into play
   if(isSafe)s+=14;
   // danger: valuing what would be lost, and what danger is escaped by moving
   const loss=(next+6)*3.2;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> a54de0472d2b61c7c03ab44f5188221cf1363034
+>>>>>>> 70df0492085132648d5d9b8f28c759176940b485
+>>>>>>> 940939d48223a16beb7ac72666a8aa6aca0cd04b
+>>>>>>> 1bde72da3c487354667d602f1103492418317014
   if(onBoard&&!isSafe){
    const cap=captureCount(key,p);
    s-=hitChance(key,p)*loss*(cap?.5:1);
@@ -263,6 +495,29 @@ function chooseHard(moves){
   if(onBoard)s+=huntChance(p,next)*(needKill?28:12);
   // locked at the gate without a kill: avoid wasting the last squares before the inner path
   if(needKill&&next<24&&next>=20)s-=(next-19)*6;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+  if(onTrack&&!isSafe){
+   const cap=captureCount(ti,p); // landing on a kill square removes that rival's threat only partly; keep simple
+   s-=hitChance(ti,p)*loss*(cap?.5:1);
+  }
+  if(m.pos>=0&&m.pos<24&&!safe.has(trackIdx(m.pos,p)))s+=hitChance(trackIdx(m.pos,p),p)*(m.pos+6)*3.2;
+  // hunting: stand 1-4 or 8 squares behind a rival that is on an unsafe square
+  if(onTrack&&needKill)s+=huntChance(ti,p)*28;else if(onTrack)s+=huntChance(ti,p)*12;
+  // locked at the gate without a kill: avoid wasting the last squares before the inner path
+  if(needKill&&onTrack&&next>=20)s-=(next-19)*6;
+>>>>>>> 096f60e50cfec5e35c3b0122331a7069f1148148
+>>>>>>> a54de0472d2b61c7c03ab44f5188221cf1363034
+>>>>>>> 70df0492085132648d5d9b8f28c759176940b485
+>>>>>>> 940939d48223a16beb7ac72666a8aa6aca0cd04b
+>>>>>>> 1bde72da3c487354667d602f1103492418317014
   return {...m,score:s+Math.random()*.5};
  }).sort((a,b)=>b.score-a.score);
  return scored[0].i;
@@ -271,9 +526,39 @@ function chooseAI(moves){return state.difficulty==='hard'?chooseHard(moves):choo
 function move(token){
  if(state.roll===null)return;state.legal=[];const p=state.turn,value=state.roll;let pos=state.tokens[p][token];pos=pos===-1?0:pos+value;state.tokens[p][token]=pos;state.lastMoved={p,i:token};sound()?.step?.();
  let captured=0;
+<<<<<<< HEAD
  if(pos<END){const lk=keyOf(p,pos);if(!safeCells.has(lk)){for(let q=0;q<4;q++)if(q!==p)state.tokens[q].forEach((v,i)=>{if(v>=0&&v<END&&keyOf(q,v)===lk){state.tokens[q][i]=-1;captured++;}});}}
  if(captured){state.captures[p]+=captured;sound()?.boom?.();try{window.FX?.shake($('board'));window.FX?.burstOn($('board'),{count:30})}catch(_){}}
  if(pos===END){sound()?.sparkle?.();try{window.FX?.burstOn($('board'),{count:20})}catch(_){}}
+=======
+<<<<<<< HEAD
+ if(pos<END){const lk=keyOf(p,pos);if(!safeCells.has(lk)){for(let q=0;q<4;q++)if(q!==p)state.tokens[q].forEach((v,i)=>{if(v>=0&&v<END&&keyOf(q,v)===lk){state.tokens[q][i]=-1;captured++;}});}}
+ if(captured){state.captures[p]+=captured;sound()?.boom?.();try{window.FX?.shake($('board'));window.FX?.burstOn($('board'),{count:30})}catch(_){}}
+ if(pos===END){sound()?.sparkle?.();try{window.FX?.burstOn($('board'),{count:20})}catch(_){}}
+=======
+<<<<<<< HEAD
+ if(pos<END){const lk=keyOf(p,pos);if(!safeCells.has(lk)){for(let q=0;q<4;q++)if(q!==p)state.tokens[q].forEach((v,i)=>{if(v>=0&&v<END&&keyOf(q,v)===lk){state.tokens[q][i]=-1;captured++;}});}}
+ if(captured){state.captures[p]+=captured;sound()?.boom?.();try{window.FX?.shake($('board'));window.FX?.burstOn($('board'),{count:30})}catch(_){}}
+ if(pos===END){sound()?.sparkle?.();try{window.FX?.burstOn($('board'),{count:20})}catch(_){}}
+=======
+<<<<<<< HEAD
+ if(pos<END){const lk=keyOf(p,pos);if(!safeCells.has(lk)){for(let q=0;q<4;q++)if(q!==p)state.tokens[q].forEach((v,i)=>{if(v>=0&&v<END&&keyOf(q,v)===lk){state.tokens[q][i]=-1;captured++;}});}}
+ if(captured){state.captures[p]+=captured;sound()?.boom?.();try{window.FX?.shake($('board'));window.FX?.burstOn($('board'),{count:30})}catch(_){}}
+ if(pos===END){sound()?.sparkle?.();try{window.FX?.burstOn($('board'),{count:20})}catch(_){}}
+=======
+<<<<<<< HEAD
+ if(pos<END){const lk=keyOf(p,pos);if(!safeCells.has(lk)){for(let q=0;q<4;q++)if(q!==p)state.tokens[q].forEach((v,i)=>{if(v>=0&&v<END&&keyOf(q,v)===lk){state.tokens[q][i]=-1;captured++;}});}}
+ if(captured){state.captures[p]+=captured;sound()?.boom?.();try{window.FX?.shake($('board'));window.FX?.burstOn($('board'),{count:30})}catch(_){}}
+ if(pos===END){sound()?.sparkle?.();try{window.FX?.burstOn($('board'),{count:20})}catch(_){}}
+=======
+ if(pos<24){const landed=(pos+p*6+3)%24;if(!safe.has(landed)){for(let q=0;q<4;q++)if(q!==p)state.tokens[q].forEach((v,i)=>{if(v>=0&&v<24&&(v+q*6+3)%24===landed){state.tokens[q][i]=-1;captured++;}});}}
+ if(captured){state.captures[p]+=captured;sound()?.boom?.();try{window.FX?.shake($('board'));window.FX?.burstOn($('board'),{count:30})}catch(_){}}
+ if(pos===28){sound()?.sparkle?.();try{window.FX?.burstOn($('board'),{count:20})}catch(_){}}
+>>>>>>> 096f60e50cfec5e35c3b0122331a7069f1148148
+>>>>>>> a54de0472d2b61c7c03ab44f5188221cf1363034
+>>>>>>> 70df0492085132648d5d9b8f28c759176940b485
+>>>>>>> 940939d48223a16beb7ac72666a8aa6aca0cd04b
+>>>>>>> 1bde72da3c487354667d602f1103492418317014
  $('token-choices').innerHTML='';state.roll=null;
  if(state.tokens[p].every(v=>v===END)){state.finished=true;window.DeskStats&&window.DeskStats.record('ashta-chamma',{inc:{wins:p===0?1:0,tokens:state.tokens[0].filter(v=>v===END).length,completedMatches:1}});render();$('finish').classList.remove('hidden');$('winner').textContent=`🏆 ${state.names[p]} wins Ashta Chamma!`;$('finish-copy').textContent='All four tokens reached the center. What a match!';message(`${state.names[p]} has brought all four tokens home!`);return;}
  const bonus=value===4||value===8||captured>0;
@@ -289,19 +574,47 @@ function endTurn(keepMessage){
 function scheduleAI(){if(state.finished||!isAI())return;state.aiTimer=setTimeout(roll,900);}
 function readyPass(){state.awaitingPass=false;$('pass-screen').classList.add('hidden');render();message(`${state.names[state.turn]}'s turn. Roll the cowries!`);}
 function backToMenu(){clearTimeout(state.aiTimer);clearTimeout(state.rollTimer);state.roll=null;state.legal=[];$('game').classList.add('hidden');$('setup').classList.remove('hidden');$('pass-screen').classList.add('hidden');showSetup(null);}
+<<<<<<< HEAD
+const on_=(id,t,f,o)=>{const e=document.getElementById(id);if(e)e.addEventListener(t,f,o);};
+=======
+<<<<<<< HEAD
+const on_=(id,t,f,o)=>{const e=document.getElementById(id);if(e)e.addEventListener(t,f,o);};
+=======
 $('open-ai').addEventListener('click',()=>showSetup('setup-ai'));
 $('open-friends').addEventListener('click',()=>showSetup('setup-friends'));
 $('open-how').addEventListener('click',()=>showSetup('how-panel'));
 document.querySelectorAll('.ac-back').forEach(b=>b.addEventListener('click',()=>showSetup(null)));
+<<<<<<< HEAD
+=======
+>>>>>>> 70df0492085132648d5d9b8f28c759176940b485
+>>>>>>> 940939d48223a16beb7ac72666a8aa6aca0cd04b
+>>>>>>> 1bde72da3c487354667d602f1103492418317014
 document.querySelectorAll('.ac-diff-btn').forEach(b=>b.addEventListener('click',()=>{
  state.difficulty=b.dataset.diff;
  document.querySelectorAll('.ac-diff-btn').forEach(x=>{const on=x===b;x.classList.toggle('active',on);x.setAttribute('aria-checked',on?'true':'false');});
  const d=$('diff-desc');if(d)d.textContent=state.difficulty==='hard'?'Hard: smart AIs that hunt your tokens, dodge danger and rarely miss a kill.':'Easy: relaxed AIs that miss kills and make mistakes choosing tokens.';
 }));
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 940939d48223a16beb7ac72666a8aa6aca0cd04b
+on_('start-ai','click',()=>begin('ai'));on_('start-friends','click',()=>begin('friends'));
+on_('board','click',e=>{const g=e.target.closest('.ac-goti.selectable');if(g)move(+g.dataset.i);});
+on_('board','keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const g=e.target.closest('.ac-goti.selectable');if(g){e.preventDefault();move(+g.dataset.i);}});
+on_('roll','click',roll);on_('restart','click',backToMenu);on_('finish-menu','click',backToMenu);
+on_('pass-ready','click',readyPass);on_('play-again','click',()=>begin(state.mode));
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 1bde72da3c487354667d602f1103492418317014
 $('start-ai').addEventListener('click',()=>begin('ai'));$('start-friends').addEventListener('click',()=>begin('friends'));
 $('board').addEventListener('click',e=>{const g=e.target.closest('.ac-goti.selectable');if(g)move(+g.dataset.i);});
 $('board').addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const g=e.target.closest('.ac-goti.selectable');if(g){e.preventDefault();move(+g.dataset.i);}});
 $('roll').addEventListener('click',roll);$('restart').addEventListener('click',backToMenu);$('finish-menu').addEventListener('click',backToMenu);
 $('pass-ready').addEventListener('click',readyPass);$('play-again').addEventListener('click',()=>begin(state.mode));
+>>>>>>> 70df0492085132648d5d9b8f28c759176940b485
+>>>>>>> 940939d48223a16beb7ac72666a8aa6aca0cd04b
 document.addEventListener('click',e=>{if(e.target.closest('button'))sound()?.tap();});
 })();
