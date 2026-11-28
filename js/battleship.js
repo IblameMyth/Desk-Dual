@@ -546,9 +546,13 @@
     return coord(idx) + ' · MISS';
   }
   function playSound(r) {
-    if (r.sunk) sound()?.bell?.();
-    else if (r.hit) sound()?.desk?.();
-    else sound()?.chalk?.();
+    if (r.sunk) { sound()?.boom?.(); sound()?.bell?.(); }
+    else if (r.hit) { sound()?.boom?.(); sound()?.desk?.(); }
+    else { sound()?.splash?.(); sound()?.chalk?.(); }
+    try {
+      const fx = window.FX;
+      if (fx && r.hit) { fx.shake($('play-area')); fx.burstOn($('callout'), { count: r.sunk ? 34 : 18 }); }
+    } catch (_) {}
   }
 
   $('fire-btn').addEventListener('click', () => {

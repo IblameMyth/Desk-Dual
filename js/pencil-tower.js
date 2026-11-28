@@ -329,10 +329,12 @@
     stage.classList.add('shake');
     showBanner('CRASH!', 'bad', 1500);
     sound()?.wicket?.();
+    sound()?.boom?.();
     updateHud();
   }
 
   function settled() {
+    sound()?.pop?.();
     state.count++;
     falling = null;
     beginTurn();

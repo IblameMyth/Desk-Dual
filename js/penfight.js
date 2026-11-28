@@ -8,6 +8,13 @@ document.querySelectorAll('[data-view]').forEach((section) => { section.hidden =
 if (view === 'menu') import('./main.js');
 if (view === 'levels') import('./levels.js');
 if (view === 'friends') import('./friends-setup.js');
+// The level-select and friends-setup screens had no click feedback: add soft sounds there (never blocks the page).
+if (view === 'levels' || view === 'friends') {
+  import('./audio.js').then(({ audio }) => {
+    document.addEventListener('pointerdown', () => audio.unlock(), { once: true });
+    document.addEventListener('click', (event) => { if (event.target.closest('button, a.btn, .btn')) audio.click(); });
+  }).catch(() => {});
+}
 async function loadPhysicsEngine() {
   if (window.Matter) return true;
   // Prefer the bundled local engine: gameplay must not depend on a third-party
