@@ -503,6 +503,7 @@
       const to = handEls[o][m.to];
       from.slot.classList.add(p === (state.mode === 'friends' ? state.view : 0) ? 'strike-up' : 'strike-down');
       later(() => to.slot.classList.add('is-hit'), 220);
+      sound()?.swipe?.();
       sound()?.desk();
       later(() => {
         from.slot.classList.remove('strike-up', 'strike-down');
@@ -511,11 +512,13 @@
         state.g = applyMove(g, m);
         const after = state.g.hands[o][m.to];
         pop(o, m.to, after === 0 ? 'OUT!' : '+' + g.hands[p][m.from], after === 0 ? 'bad' : '');
-        if (after === 0 && before > 0) sound()?.duck();
+        if (after === 0 && before > 0) { sound()?.duck(); sound()?.boom?.(); try { window.FX?.shake($('board')); } catch (_) {} }
+        else sound()?.thud?.();
         finishMove();
       }, 520);
     } else {
       handEls[p].forEach(h => h.slot.classList.add('is-split'));
+      sound()?.sparkle?.();
       sound()?.chalk();
       later(() => {
         handEls[p].forEach(h => h.slot.classList.remove('is-split'));

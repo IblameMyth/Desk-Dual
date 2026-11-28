@@ -130,6 +130,79 @@
     desk() {
       noise(0.09, 900, 0.14);
       tone(150, 0.12, { type: 'sine', volume: 0.12, frequencyTo: 80 });
+    },
+
+    /* ---- extra effects (added for the animation + sound upgrade) ---- */
+    hover() {
+      tone(900, 0.03, { type: 'sine', volume: 0.022, frequencyTo: 1050 });
+    },
+    pop() {
+      tone(380, 0.09, { type: 'sine', volume: 0.12, frequencyTo: 760 });
+      noise(0.03, 2600, 0.03);
+    },
+    whoosh() {
+      noise(0.28, 700, 0.07);
+      tone(240, 0.26, { type: 'sine', volume: 0.04, frequencyTo: 620 });
+    },
+    coin() {
+      tone(988, 0.07, { type: 'square', volume: 0.07 });
+      tone(1319, 0.28, { type: 'square', volume: 0.07, delay: 0.07 });
+    },
+    sparkle() {
+      [1568, 1976, 2349, 2637].forEach((f, i) =>
+        tone(f, 0.12, { type: 'sine', volume: 0.05, delay: i * 0.05, frequencyTo: f * 1.04 }));
+    },
+    tick() {
+      tone(1500, 0.025, { type: 'square', volume: 0.04 });
+    },
+    countdown(final) {
+      tone(final ? 1046 : 660, final ? 0.34 : 0.11, { type: 'triangle', volume: final ? 0.16 : 0.1 });
+    },
+    error() {
+      tone(200, 0.16, { type: 'sawtooth', volume: 0.07, frequencyTo: 140 });
+      tone(160, 0.2, { type: 'sawtooth', volume: 0.06, delay: 0.12, frequencyTo: 110 });
+    },
+    rattle() {
+      for (let i = 0; i < 9; i++) {
+        noise(0.045, 2200 + Math.random() * 1800, 0.07, i * 0.085 + Math.random() * 0.03);
+        tone(1100 + Math.random() * 500, 0.04, { type: 'triangle', volume: 0.035, delay: i * 0.085 });
+      }
+    },
+    step() {
+      tone(330, 0.07, { type: 'triangle', volume: 0.1, frequencyTo: 250 });
+      noise(0.03, 1200, 0.05);
+    },
+    clink() {
+      tone(1760, 0.18, { type: 'sine', volume: 0.07, frequencyTo: 1500 });
+      tone(2637, 0.1, { type: 'sine', volume: 0.04, delay: 0.01 });
+    },
+    splash() {
+      noise(0.45, 600, 0.13);
+      noise(0.25, 1800, 0.06, 0.05);
+      tone(300, 0.3, { type: 'sine', volume: 0.07, frequencyTo: 120 });
+    },
+    boom() {
+      noise(0.5, 220, 0.2);
+      tone(110, 0.5, { type: 'sawtooth', volume: 0.14, frequencyTo: 40 });
+      noise(0.25, 1400, 0.08, 0.04);
+    },
+    thud() {
+      tone(110, 0.16, { type: 'sine', volume: 0.2, frequencyTo: 55 });
+      noise(0.07, 500, 0.1);
+    },
+    swipe() {
+      noise(0.14, 2600, 0.05);
+      tone(500, 0.12, { type: 'triangle', volume: 0.04, frequencyTo: 1100 });
+    },
+    fanfare() {
+      [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, i) =>
+        tone(f, i === 6 ? 0.5 : 0.17, { type: 'triangle', volume: 0.15, delay: i * 0.11 }));
+      tone(262, 0.9, { type: 'sine', volume: 0.08, delay: 0.1 });
+      noise(0.3, 3200, 0.04, 0.75);
+    },
+    whistle() {
+      tone(1900, 0.16, { type: 'sine', volume: 0.09, frequencyTo: 2300 });
+      tone(2300, 0.22, { type: 'sine', volume: 0.09, delay: 0.17, frequencyTo: 1900 });
     }
   };
 

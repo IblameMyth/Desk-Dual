@@ -17,7 +17,7 @@ const lanes=[
  [[3,5],[3,4],[3,3],[4,3]]
 ];
 const safe=new Set([3,9,15,21]);
-const state={mode:'friends',names:NAMES.slice(),turn:0,roll:null,tokens:[],captures:[],bonusStreak:0,finished:false,aiTimer:null,rollTimer:null,legal:[],awaitingPass:false,difficulty:'easy'};
+const state={mode:'friends',names:NAMES.slice(),turn:0,roll:null,tokens:[],captures:[],bonusStreak:0,finished:false,aiTimer:null,rollTimer:null,legal:[],awaitingPass:false,difficulty:'easy',lastMoved:null};
 const sound=()=>window.ClassroomSounds;
 const isAI=()=>state.mode==='ai'&&state.turn>0;
 const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -129,10 +129,11 @@ function render(){
  pawns.filter(t=>t.pos>=0).forEach(t=>{const key=t.x+','+t.y;if(!stacks.has(key))stacks.set(key,[]);stacks.get(key).push(t);});
  stacks.forEach(list=>{if(list.length<2)return;const n=list.length;list.forEach((t,j)=>{t.dx=(j-(n-1)/2)*(n>2?10:12);t.dy=j%2?3:-3;t.k=n>2?.7:.76;});});
  pawns.sort((a,b)=>(a.y+a.dy)-(b.y+b.dy));
+ svg+=`<g><circle cx="250" cy="250" r="20" fill="#d9a17d" stroke="#3d2b20" stroke-width="2"/><text x="250" y="254" text-anchor="middle" font-family="Georgia,serif" font-size="10" font-weight="bold" fill="#35251d">HOME</text></g>`;
  const canPick=state.roll!==null&&!isAI()&&!state.finished;
  for(const t of pawns){
   const {p,i}=t,sel=canPick&&p===state.turn&&state.legal.includes(i);
-  svg+=`<g class="ac-goti ${COLORS[p]}${sel?' selectable':''}" data-p="${p}" data-i="${i}"${sel?` tabindex="0" role="button" aria-label="Move ${labels[p].toLowerCase()} token ${i+1}"`:''} transform="translate(${(t.x+t.dx).toFixed(1)} ${(t.y+t.dy-5).toFixed(1)}) scale(${t.k})">
+  svg+=`<g class="ac-goti ${COLORS[p]}${sel?' selectable':''}${state.lastMoved&&state.lastMoved.p===p&&state.lastMoved.i===i?' fx-landed':''}" data-p="${p}" data-i="${i}"${sel?` tabindex="0" role="button" aria-label="Move ${labels[p].toLowerCase()} token ${i+1}"`:''} transform="translate(${(t.x+t.dx).toFixed(1)} ${(t.y+t.dy-5).toFixed(1)}) scale(${t.k})">
    ${sel?`<ellipse class="ac-ring" cx="0" cy="13" rx="22" ry="9" fill="none" stroke="#fff4b8" stroke-width="3"/>`:''}
    <ellipse cx="2" cy="14" rx="17" ry="6" fill="#2a1a10" opacity=".3"/>
    <path d="M-15 13C-15 8-9 4-6-5H6C9 4 15 8 15 13C15 17 8 19 0 19C-8 19-15 17-15 13Z" fill="url(#gb${p})" stroke="${dark[p]}" stroke-width="1.4" stroke-linejoin="round"/>
@@ -143,7 +144,7 @@ function render(){
    <text x="0" y="11.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="8.5" font-weight="900" fill="#fff" stroke="${dark[p]}" stroke-width=".6" paint-order="stroke">${i+1}</text>
   </g>`;
  }
- svg+=`<g><circle cx="250" cy="250" r="20" fill="#d9a17d" stroke="#3d2b20" stroke-width="2"/><text x="250" y="254" text-anchor="middle" font-family="Georgia,serif" font-size="10" font-weight="bold" fill="#35251d">HOME</text></g></svg>`;
+ svg+=`</svg>`;
  board.innerHTML=svg;
  $('score').innerHTML=state.names.map((n,p)=>`<div class="${p===state.turn?'active':''}"><b>${EMOJI[p]} ${escapeHTML(n)}</b><span>${state.tokens[p].filter(v=>v===28).length}/4 HOME · ${state.captures[p]} CUT</span></div>`).join('');
  $('roll').disabled=state.roll!==null||state.finished||isAI()||state.awaitingPass;
@@ -174,8 +175,10 @@ function roll(){
  if(state.roll!==null||state.finished||state.awaitingPass||isAI()===false&&state.mode==='ai'&&state.turn>0)return;
  const {shells,value}=shellRoll();state.roll=value;state.legal=[];
  $('roll').disabled=true;$('token-choices').innerHTML='';
+ state.lastMoved=null;
  showDice(shells,'ROLLING…',true);
  sound()?.tap();
+ sound()?.rattle?.();
  clearTimeout(state.rollTimer);
  state.rollTimer=setTimeout(()=>resolveRoll(value),ROLL_MS);
 }
@@ -183,8 +186,9 @@ function resolveRoll(value){
  if(state.finished||state.roll!==value)return;
  const total=$('dice').querySelector('.roll-total');
  if(total)total.textContent=value===8?'ASHTA! · 8':value===4?'CHAMMA! · 4':'ROLLED '+value;
+ if(value===4||value===8){sound()?.coin?.();try{window.FX?.burstOn($('dice'),{count:24})}catch(_){}}
  const moves=legalMoves(state.turn,value);
- if(!moves.length){message(`${state.names[state.turn]} rolled ${value}. No legal move — turn passes.`);$('roll').disabled=true;state.aiTimer=setTimeout(()=>endTurn(false),850);return;}
+ if(!moves.length){message(`${state.names[state.turn]} rolled ${value}. No legal move — turn passes.`);if(!isAI())sound()?.error?.();$('roll').disabled=true;state.aiTimer=setTimeout(()=>endTurn(false),850);return;}
  if(isAI()){message(`${state.names[state.turn]} rolled ${value}. AI is choosing a token…`);render();state.aiTimer=setTimeout(()=>move(chooseAI(moves)),650);return;}
  message(`${state.names[state.turn]} rolled ${value}. Choose a highlighted token.`);
  state.legal=moves.map(m=>m.i);
@@ -267,10 +271,11 @@ function chooseHard(moves){
 }
 function chooseAI(moves){return state.difficulty==='hard'?chooseHard(moves):chooseEasy(moves);}
 function move(token){
- if(state.roll===null)return;state.legal=[];const p=state.turn,value=state.roll;let pos=state.tokens[p][token];pos=pos===-1?0:pos+value;state.tokens[p][token]=pos;
+ if(state.roll===null)return;state.legal=[];const p=state.turn,value=state.roll;let pos=state.tokens[p][token];pos=pos===-1?0:pos+value;state.tokens[p][token]=pos;state.lastMoved={p,i:token};sound()?.step?.();
  let captured=0;
  if(pos<24){const landed=(pos+p*6+3)%24;if(!safe.has(landed)){for(let q=0;q<4;q++)if(q!==p)state.tokens[q].forEach((v,i)=>{if(v>=0&&v<24&&(v+q*6+3)%24===landed){state.tokens[q][i]=-1;captured++;}});}}
- if(captured)state.captures[p]+=captured;
+ if(captured){state.captures[p]+=captured;sound()?.boom?.();try{window.FX?.shake($('board'));window.FX?.burstOn($('board'),{count:30})}catch(_){}}
+ if(pos===28){sound()?.sparkle?.();try{window.FX?.burstOn($('board'),{count:20})}catch(_){}}
  $('token-choices').innerHTML='';state.roll=null;
  if(state.tokens[p].every(v=>v===28)){state.finished=true;window.DeskStats&&window.DeskStats.record('ashta-chamma',{inc:{wins:p===0?1:0,tokens:state.tokens[0].filter(v=>v===28).length,completedMatches:1}});render();$('finish').classList.remove('hidden');$('winner').textContent=`🏆 ${state.names[p]} wins Ashta Chamma!`;$('finish-copy').textContent='All four tokens reached the center. What a match!';message(`${state.names[p]} has brought all four tokens home!`);return;}
  const bonus=value===4||value===8||captured>0;

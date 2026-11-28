@@ -375,6 +375,7 @@
     state.plan = buildPlan(T.p, T.c, T.g);
     bottle.held = false;
     sound()?.page?.();
+    sound()?.whoosh?.();
   }
 
   function land() {
@@ -399,7 +400,10 @@
     renderScores(true, i);
     renderLog();
     showBanner(info.text, info.cls, 1700);
-    if (info.pts > 0) sound()?.win?.(); else sound()?.lose?.();
+    if (info.pts > 0) {
+      sound()?.win?.(); sound()?.sparkle?.();
+      if (plan.kind === 'stand' || plan.kind === 'cap') { try { window.FX?.confetti({ count: 60 }); } catch (_) {} }
+    } else sound()?.lose?.();
     if (info.pts === 0) {
       stage.classList.remove('shake');
       void stage.offsetWidth;

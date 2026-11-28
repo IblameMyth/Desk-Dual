@@ -144,9 +144,9 @@
     const card = $('letter-card'); card.classList.add('spin');
     let ticks = 0;
     const spin = setInterval(() => {
-      card.textContent = D.letters[Math.floor(Math.random() * D.letters.length)]; if (ticks++ % 3 === 0) play('tap');
+      card.textContent = D.letters[Math.floor(Math.random() * D.letters.length)]; if (ticks++ % 3 === 0) play('tick');
       if (ticks > 8) {
-        clearInterval(spin); card.classList.remove('spin'); card.textContent = cur.letter; play('bell');
+        clearInterval(spin); card.classList.remove('spin'); card.textContent = cur.letter; play('bell'); play('sparkle');
         inputs().forEach((i) => { i.disabled = false; }); $('done-btn').disabled = false;
         if (G.mode === 'friends') $('who-label').textContent = G.players[who] + ' writes';
         else $('who-label').textContent = G.players[0] + ' writes';
@@ -165,7 +165,7 @@
     clearInterval(timer);
     timer = setInterval(() => {
       const left = (deadline - Date.now()) / 1000; setTime(left);
-      const whole = Math.ceil(left); if (whole <= 5 && whole > 0 && whole !== lastWhole) play('tap'); lastWhole = whole;
+      const whole = Math.ceil(left); if (whole <= 5 && whole > 0 && whole !== lastWhole) play('countdown'); lastWhole = whole;
       if (left <= 0) submit(true);
     }, 100);
   }

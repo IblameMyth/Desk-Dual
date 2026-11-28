@@ -163,7 +163,7 @@ async function main() {
         if (speed < 0.5) return;
         stats.collisions++;
         audio.hit(speed);
-        if (speed > 8) vibrate(15);
+        if (speed > 8) { vibrate(15); audio.thud(); try { window.FX?.shake(document.getElementById('stage')); } catch (_) {} }
       };
     } else if (physics.size.w !== d.w || physics.size.h !== d.h) {
       input.cancel();
@@ -211,6 +211,7 @@ async function main() {
     clearTimeout(endTimer);
     audio.unlock();
     audio.bell();
+    audio.whoosh();
     ui.hideOverlay();
     const portrait = physics.size.h > physics.size.w;
     players.forEach((p, i) => physics.resetPen(p.id, spawnFor(i, portrait)));
@@ -267,6 +268,8 @@ async function main() {
     if (winner !== null) {
       scores[winner]++;
       audio.roundWin();
+      audio.sparkle();
+      try { window.FX?.burst(innerWidth / 2, innerHeight / 2, { count: 36 }); } catch (_) {}
       vibrate([30, 40, 30]);
     }
     hud.setScores(scores[0], scores[1]);
@@ -431,6 +434,7 @@ async function main() {
       if (!fallAt && players.some((p) => physics.penStatus(p.id).centerOut)) {
         fallAt = now;
         audio.fall();
+        audio.thud();
       }
       const rested = physics.allResting();
       const timedOut = now - moveStart > MAX_MOVE_MS;
