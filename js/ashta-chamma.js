@@ -17,7 +17,7 @@ const lanes=[
  [[3,5],[3,4],[3,3],[4,3]]
 ];
 const safe=new Set([3,9,15,21]);
-const state={mode:'friends',names:NAMES.slice(),turn:0,roll:null,tokens:[],captures:[],bonusStreak:0,finished:false,aiTimer:null,rollTimer:null,legal:[],awaitingPass:false};
+const state={mode:'friends',names:NAMES.slice(),turn:0,roll:null,tokens:[],captures:[],bonusStreak:0,finished:false,aiTimer:null,rollTimer:null,legal:[],awaitingPass:false,difficulty:'easy'};
 const sound=()=>window.ClassroomSounds;
 const isAI=()=>state.mode==='ai'&&state.turn>0;
 const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -48,7 +48,9 @@ function showDice(shells,label,animate){
 function showSetup(panel){$('mode-menu').classList.toggle('hidden',!!panel);document.querySelectorAll('.ac-setup-panel').forEach(el=>el.classList.toggle('hidden',el.id!==panel));}
 function begin(mode){
  clearTimeout(state.aiTimer);clearTimeout(state.rollTimer);state.mode=mode;
- state.names=mode==='ai'?[($('name-one').value.trim()||'Player 1'),'Classroom AI 1','Classroom AI 2','Classroom AI 3']:
+ if(mode==='ai')state.difficulty=state.difficulty==='hard'?'hard':'easy';
+ const lvl=state.difficulty==='hard'?'Hard':'Easy';
+ state.names=mode==='ai'?[($('name-one').value.trim()||'Player 1'),'AI 1 ('+lvl+')','AI 2 ('+lvl+')','AI 3 ('+lvl+')']:
  [$('friend-one').value.trim()||'Player 1',$('friend-two').value.trim()||'Player 2',$('friend-three').value.trim()||'Player 3',$('friend-four').value.trim()||'Player 4'];
  if(mode==='friends'&&new Set(state.names.map(n=>n.toLowerCase())).size!==4){alert('Please enter four different player names.');return;}
  state.turn=0;state.roll=null;state.tokens=Array.from({length:4},()=>[-1,-1,-1,-1]);state.captures=[0,0,0,0];state.bonusStreak=0;state.finished=false;state.awaitingPass=false;state.legal=[];
@@ -156,7 +158,18 @@ function legalMoves(p,value){
   return pos<28;
  });
 }
-function shellRoll(){const shells=Array.from({length:4},()=>Math.random()<.5?1:0),up=shells.reduce((a,b)=>a+b,0);return {shells,value:up===0?8:up};}
+// Traditional cowries give 4 and 8 only 1 time in 16 each (6.25%). Here each is boosted to 16%,
+// so entering tokens and earning bonus rolls feels far more frequent. 1/2/3 share the remaining 68%.
+const P_CHAMMA=.16,P_ASHTA=.16;
+const ROLL_P={1:.68*4/14,2:.68*6/14,3:.68*4/14,4:P_CHAMMA,8:P_ASHTA};
+function shellRoll(){
+ const r=Math.random();
+ if(r<P_CHAMMA)return {shells:[1,1,1,1],value:4};
+ if(r<P_CHAMMA+P_ASHTA)return {shells:[0,0,0,0],value:8};
+ let shells,up;
+ do{shells=Array.from({length:4},()=>Math.random()<.5?1:0);up=shells.reduce((a,b)=>a+b,0);}while(up===0||up===4);
+ return {shells,value:up};
+}
 function roll(){
  if(state.roll!==null||state.finished||state.awaitingPass||isAI()===false&&state.mode==='ai'&&state.turn>0)return;
  const {shells,value}=shellRoll();state.roll=value;state.legal=[];
@@ -179,15 +192,80 @@ function resolveRoll(value){
  moves.forEach(({i})=>{const b=document.createElement('button');b.className='ac-token-choice';b.type='button';b.textContent=`MOVE TOKEN ${i+1}`;b.addEventListener('click',()=>move(i));$('token-choices').appendChild(b);});
  render();
 }
-function chooseAI(moves){
- const p=state.turn,opponents=state.tokens;
+const trackIdx=(pos,p)=>(pos+p*6+3)%24;
+// Chance that an opponent token, sitting `d` squares behind a square, lands on it with its next roll.
+function hitChance(target,p){
+ let risk=0;
+ for(let q=0;q<4;q++){
+  if(q===p)continue;
+  for(const v of state.tokens[q]){
+   if(v<0||v>=24)continue;
+   const d=(target-trackIdx(v,q)+24)%24;
+   if(d>0&&ROLL_P[d]&&v+d<24)risk+=ROLL_P[d];
+  }
+ }
+ return Math.min(risk,1);
+}
+function captureCount(target,p){
+ let n=0;for(let q=0;q<4;q++)if(q!==p)n+=state.tokens[q].filter(v=>v>=0&&v<24&&trackIdx(v,q)===target).length;return n;
+}
+// How many rival tokens sit just ahead of a square, i.e. could be hunted from there next turn.
+function huntChance(target,p){
+ let sum=0;
+ for(let q=0;q<4;q++){
+  if(q===p)continue;
+  for(const v of state.tokens[q]){
+   if(v<0||v>=24)continue;
+   const t=trackIdx(v,q);if(safe.has(t))continue;
+   const d=(t-target+24)%24;
+   if(d>0&&ROLL_P[d])sum+=ROLL_P[d];
+  }
+ }
+ return sum;
+}
+// EASY: plays casually. Often picks a random goti, often overlooks a kill, ignores danger entirely.
+function chooseEasy(moves){
+ const p=state.turn;
+ if(Math.random()<.45)return moves[Math.floor(Math.random()*moves.length)].i;
  const scored=moves.map(m=>{
-  const next=m.pos===-1?0:m.pos+state.roll,trackIdx=(next+p*6+3)%24;
-  let capture=0;if(next<24&&!safe.has(trackIdx))for(let q=0;q<4;q++)if(q!==p)capture+=opponents[q].filter(v=>v>=0&&v<24&&(v+q*6+3)%24===trackIdx).length;
-  return {...m,score:capture*120+(next===28?100:0)+(next>=24?35:0)+(m.pos===-1?16:0)+next+Math.random()*4};
+  const next=m.pos===-1?0:m.pos+state.roll,ti=trackIdx(next,p);
+  const cap=next<24&&!safe.has(ti)?captureCount(ti,p):0;
+  const sees=cap>0&&Math.random()<.4;           // misses a kill most of the time
+  return {...m,score:(sees?80:0)+(next===28?20:0)+next*.4+Math.random()*30};
  }).sort((a,b)=>b.score-a.score);
  return scored[0].i;
 }
+// HARD: weighs kills, safety, danger from every rival token, finishing, and hunting positions.
+function chooseHard(moves){
+ const p=state.turn,needKill=state.captures[p]===0;
+ const scored=moves.map(m=>{
+  const next=m.pos===-1?0:m.pos+state.roll,ti=trackIdx(next,p);
+  const onTrack=next<24,isSafe=onTrack&&safe.has(ti);
+  let s=0;
+  // kills (extra valuable while the inner path is still locked)
+  if(onTrack&&!isSafe){const c=captureCount(ti,p);if(c)s+=c*(needKill?170:120)+next*1.5;}
+  // progress / finishing
+  if(next===28)s+=110;
+  else if(next>=24)s+=45+next*2;                // inside a safe inner lane
+  else s+=next*1.2;
+  if(m.pos===-1)s+=needKill?22:30;              // bring more goti into play
+  if(isSafe)s+=14;
+  // danger: valuing what would be lost, and what danger is escaped by moving
+  const loss=(next+6)*3.2;
+  if(onTrack&&!isSafe){
+   const cap=captureCount(ti,p); // landing on a kill square removes that rival's threat only partly; keep simple
+   s-=hitChance(ti,p)*loss*(cap?.5:1);
+  }
+  if(m.pos>=0&&m.pos<24&&!safe.has(trackIdx(m.pos,p)))s+=hitChance(trackIdx(m.pos,p),p)*(m.pos+6)*3.2;
+  // hunting: stand 1-4 or 8 squares behind a rival that is on an unsafe square
+  if(onTrack&&needKill)s+=huntChance(ti,p)*28;else if(onTrack)s+=huntChance(ti,p)*12;
+  // locked at the gate without a kill: avoid wasting the last squares before the inner path
+  if(needKill&&onTrack&&next>=20)s-=(next-19)*6;
+  return {...m,score:s+Math.random()*.5};
+ }).sort((a,b)=>b.score-a.score);
+ return scored[0].i;
+}
+function chooseAI(moves){return state.difficulty==='hard'?chooseHard(moves):chooseEasy(moves);}
 function move(token){
  if(state.roll===null)return;state.legal=[];const p=state.turn,value=state.roll;let pos=state.tokens[p][token];pos=pos===-1?0:pos+value;state.tokens[p][token]=pos;
  let captured=0;
@@ -212,6 +290,11 @@ $('open-ai').addEventListener('click',()=>showSetup('setup-ai'));
 $('open-friends').addEventListener('click',()=>showSetup('setup-friends'));
 $('open-how').addEventListener('click',()=>showSetup('how-panel'));
 document.querySelectorAll('.ac-back').forEach(b=>b.addEventListener('click',()=>showSetup(null)));
+document.querySelectorAll('.ac-diff-btn').forEach(b=>b.addEventListener('click',()=>{
+ state.difficulty=b.dataset.diff;
+ document.querySelectorAll('.ac-diff-btn').forEach(x=>{const on=x===b;x.classList.toggle('active',on);x.setAttribute('aria-checked',on?'true':'false');});
+ const d=$('diff-desc');if(d)d.textContent=state.difficulty==='hard'?'Hard: smart AIs that hunt your tokens, dodge danger and rarely miss a kill.':'Easy: relaxed AIs that miss kills and make mistakes choosing tokens.';
+}));
 $('start-ai').addEventListener('click',()=>begin('ai'));$('start-friends').addEventListener('click',()=>begin('friends'));
 $('board').addEventListener('click',e=>{const g=e.target.closest('.ac-goti.selectable');if(g)move(+g.dataset.i);});
 $('board').addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const g=e.target.closest('.ac-goti.selectable');if(g){e.preventDefault();move(+g.dataset.i);}});
