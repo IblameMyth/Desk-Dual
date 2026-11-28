@@ -136,3 +136,11 @@
   .ac-score b{font-size:.7rem}
 }
 @media(prefers-reduced-motion:reduce){.ac-ring{animation:none}}
+
+/* ---------- AI difficulty selector ---------- */
+.ac-diff{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ac-diff-btn{padding:11px 8px;color:#21180f;background:#fff9eb;border:3px solid #3c2a1b;border-radius:4px;box-shadow:0 4px 0 #3c2a1b;font:900 .9rem var(--font-body);letter-spacing:.05em;cursor:pointer;touch-action:manipulation}
+.ac-diff-btn.active{background:#32609a;color:#fff}
+.ac-diff-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #3c2a1b}
+.ac-diff-desc{font-weight:700;color:#725a3d;line-height:1.4}
+.ac-player-preview span{overflow-wrap:anywhere}

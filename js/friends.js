@@ -129,6 +129,7 @@ export async function startFriendsGame() {
   function startRound(showBanner = true) {
     audio.unlock();
     audio.bell();
+    audio.whoosh();
     players.forEach(p => p.eliminated=false);
     turn=(round-1)%players.length; phase='aim'; fallAt=0; stats={collisions:0,strongest:0};
     const portrait=physics.size.h>physics.size.w;
@@ -176,6 +177,8 @@ export async function startFriendsGame() {
       const winnerIndex=players.indexOf(winner);
       scores[winnerIndex]++;
       audio.roundWin();
+      audio.sparkle();
+      try{window.FX&&window.FX.burst(innerWidth/2,innerHeight/2,{count:36})}catch(_){}
       vibrate([30,40,30]);
     }
     hud.setScores(scores);
@@ -234,7 +237,7 @@ export async function startFriendsGame() {
         const pen=PEN_BY_ID[p.penId]||STARTER;
         physics.addPen(p.id,{...spawnFor(i,portrait,players.length),skin:`p${(i%2)+1}`,asset:pen.asset,modelId:pen.id,strength:pen.strength||1});
       });
-      physics.onCollision=({speed})=>{if(speed<.5)return;stats.collisions++;audio.hit(speed);if(speed>8)vibrate(15);};
+      physics.onCollision=({speed})=>{if(speed<.5)return;stats.collisions++;audio.hit(speed);if(speed>8){vibrate(15);audio.thud();try{window.FX&&window.FX.shake(document.getElementById('stage'))}catch(_){}}};
     } else if(physics.size.w!==d.w||physics.size.h!==d.h){
       input.cancel(); physics.resize(d.w,d.h,d.playArea); const portrait=d.h>d.w;
       players.forEach((p,i)=>physics.resetPen(p.id,spawnFor(i,portrait,players.length)));
@@ -270,7 +273,7 @@ export async function startFriendsGame() {
     } else {hud.setPower(0);hud.setHint(phase==='move'?'Sliding... wait for the pens to stop.':'');}
     if(phase==='move'){
       needDraw=true;
-      if(!fallAt && players.some((p)=>!p.eliminated&&physics.penStatus(p.id).centerOut)){fallAt=now;audio.fall();}
+      if(!fallAt && players.some((p)=>!p.eliminated&&physics.penStatus(p.id).centerOut)){fallAt=now;audio.fall();audio.thud();}
       const rested=physics.allResting(),timedOut=now-moveStart>MAX_MOVE_MS;
       if((fallAt&&now-fallAt>FALL_DELAY_MS)||(!fallAt&&rested)||timedOut){if(!rested)physics.freeze();resolveShot();}
     }
